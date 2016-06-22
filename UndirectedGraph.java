@@ -1,4 +1,5 @@
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class UndirectedGraph<E,A> implements Graph<E,A>{
 
@@ -19,14 +20,28 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 	}
 
 	@Override
-	public int degree(Vertex v) {
+	public int degree(Vertex<E> v) {
 		// TODO Auto-generated method stub
-		return 0;
+		Iterator<Edge> iterator = connectingEdges(v);
+		int i = 0;
+		while(iterator.hasNext()){
+			i++;
+			iterator.next();
+		}
+		return i;
 	}
 
 	@Override
-	public boolean containsEdge(Vertex v0, Vertex v1) {
+	public boolean containsEdge(Vertex<E> v0, Vertex<E> v1) {
 		// TODO Auto-generated method stub
+		Iterator<Edge> iterator = edges();
+		while(iterator.hasNext()){
+			UnEdge<A> edge = (UnEdge<A>)iterator.next();
+			if((edge.source.equals(v0) && edge.destination.equals(v1)) ||
+					(edge.source.equals(v1) && edge.destination.equals(v0))){
+				return true;
+			}
+		}
 		return false;
 	}
 
@@ -55,7 +70,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 	}
 
 	@Override
-	public Edge<A> addEdge(Vertex v0, Vertex v1) {
+	public Edge<A> addEdge(Vertex<E> v0, Vertex<E> v1) {
 		// TODO Auto-generated method stub
 		UnEdge<A> edge = new UnEdge<A>(null,v0,v1,null,null);
 		UnEdge<A> curr = firstEdge;
@@ -70,7 +85,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 	}
 
 	@Override
-	public Edge<A> addEdge(Vertex v0, Vertex v1, A attr) {
+	public Edge<A> addEdge(Vertex<E> v0, Vertex<E> v1, A attr) {
 		// TODO Auto-generated method stub
 		UnEdge<A> edge = new UnEdge<A>(attr,v0,v1,null,null);
 		UnEdge<A> curr = firstEdge;
@@ -85,59 +100,217 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 	}
 
 	@Override
-	public void removeVertex(Vertex v) {
+	public void removeVertex(Vertex<E> v) {
 		// TODO Auto-generated method stub
 		
-		UnVertex<E> curr = firstVertex;
-		if(curr == null)
-			return; //vertex DLL was empty
-		while(curr!=null){
-			if(curr.equals(v)){ //found
-				UnVertex<E> before = curr.pred;
-				UnVertex<E> next = curr.succ;
-				if(before==null)
-					firstVertex = next; //if v is first, remove from first
-				else{ //else remove from its position
-					before.succ = next;
-					next.pred = before;
-				}
-				size--; //decrement the size of the graph
-				
-				//remove all edges that connect to vertex v
-			}
-			curr = curr.succ;
+		UnVertex<E> remVertex = (UnVertex<E>)v;
+		UnVertex<E> before = remVertex.pred;
+		UnVertex<E> next = remVertex.succ;
+		if(before==null)
+			firstVertex = next; //if v is first, remove from first
+		else{ //else remove from its position
+			before.succ = next;
+			if(next!=null)
+				next.pred = before;
 		}
+		size--; //decrement the size of the graph
 		
+		//remove all edges that connect to vertex v
+		Iterator<Edge> it = connectingEdges(v);
+		while(it.hasNext()){
+			UnEdge<A> e = (UnEdge<A>)it.next();
+			removeEdge(e);
+		}
 	}
 
 	@Override
-	public void removeEdge(Edge e) {
+	public void removeEdge(Edge<A> e) {
 		// TODO Auto-generated method stub
-		
+		UnEdge<A> reEdge = (UnEdge<A>)e;
+		UnEdge<A> pre = reEdge.pred;
+		UnEdge<A> post = reEdge.succ;
+		if(pre==null)
+			firstEdge = post;
+		else{
+			pre.succ = post;
+			if(post != null)
+				post.pred = pre;
+		}
 	}
 
 	@Override
 	public Iterator<Vertex> vertices() {
 		// TODO Auto-generated method stub
-		return null;
+		return new VertexIterator();
 	}
 
 	@Override
 	public Iterator<Edge> edges() {
 		// TODO Auto-generated method stub
-		return null;
+		return new EdgeIterator();
 	}
 
 	@Override
-	public Iterator<Vertex> neighbours(Vertex v) {
+	public Iterator<Vertex> neighbours(Vertex<E> v) {
 		// TODO Auto-generated method stub
-		return null;
+		return new VertexNeighbourIterator(v);
 	}
 
 	@Override
-	public Iterator<Edge> connectingEdges(Vertex v) {
+	public Iterator<Edge> connectingEdges(Vertex<E> v) {
 		// TODO Auto-generated method stub
-		return null;
+		return new VertexEdgesIterator(v);
+	}
+	
+	private class VertexNeighbourIterator implements Iterator<Vertex>{
+		
+		private UnVertex<E> vertex;
+		private UnEdge<A> pos;
+		
+		public VertexNeighbourIterator(Vertex<E> v){
+			this.vertex = (UnVertex<E>)v;
+			//look for the first edge containing vertex v and move pos there
+			UnEdge<A> curr = firstEdge;
+			
+			while(curr != null){
+				if(curr.source.equals(vertex) || curr.destination.equals(vertex)){
+					pos = curr;
+					break;
+				}else{
+					curr=curr.succ;
+				}
+			}
+		}
+		
+		@Override
+		public boolean hasNext() {
+			// TODO Auto-generated method stub
+			UnEdge<A> curr = pos; 
+			while(curr != null){
+				if(curr.source.equals(vertex) || curr.destination.equals(vertex)){
+					pos = curr;
+					return true;
+				}
+				else
+					curr = curr.succ;
+			}
+			return false;
+		}
+
+		@Override
+		public Vertex<E> next() {
+			// TODO Auto-generated method stub
+			Vertex<E> current = null;
+			if(pos.source.equals(vertex))
+				current = pos.destination;
+			else
+				current = pos.source;
+			pos = pos.succ;
+			return current;
+		}
+		
+	}
+	
+	private class EdgeIterator implements Iterator<Edge>{
+
+		private UnEdge<A> pos;
+		
+		public EdgeIterator(){
+			pos = firstEdge;
+		}
+		
+		@Override
+		public boolean hasNext() {
+			// TODO Auto-generated method stub
+			return (pos != null);
+		}
+
+		@Override
+		public Edge<A> next() {
+			// TODO Auto-generated method stub
+			if(!hasNext())
+				throw new NoSuchElementException();
+			
+			Edge<A> edge = pos;
+			pos = pos.succ;
+			return edge;
+			
+		}
+		
+	}
+	
+	private class VertexIterator implements Iterator<Vertex>{
+
+		private UnVertex<E> post;
+		
+		public VertexIterator(){
+			post = firstVertex;
+		}
+		
+		@Override
+		public boolean hasNext() {
+			// TODO Auto-generated method stub
+			return (post != null);
+		}
+
+		@Override
+		public Vertex<E> next() {
+			// TODO Auto-generated method stub
+			if(!hasNext())
+				throw new NoSuchElementException();
+			
+			Vertex<E> vertex = post;
+			post = post.succ;
+			return vertex;
+			
+		}
+		
+	}
+	
+	private class VertexEdgesIterator implements Iterator<Edge>{
+
+		private UnVertex<E> vertex;
+		private UnEdge<A> pos;
+		
+		public VertexEdgesIterator(Vertex<E> v){
+			this.vertex = (UnVertex<E>)v;
+			//look for the first edge containing vertex v and move pos there
+			UnEdge<A> curr = firstEdge;
+			while(curr != null){
+				if(curr.source.equals(v) || curr.destination.equals(v)){
+					pos = curr;
+					break;
+				}
+				else
+					curr = curr.succ;
+			}
+		}
+		
+		@Override
+		public boolean hasNext() {
+			// TODO Auto-generated method stub
+			//the method checks the edges list and looks for the next edge that links vertex
+			UnEdge<A> curr = pos; 
+			while(curr != null){
+				if(curr.source.equals(vertex) || curr.destination.equals(vertex)){
+					pos = curr;
+					return true;
+				}
+				else
+					curr = curr.succ;
+			}
+			
+			return false;
+		}
+
+		@Override
+		public Edge<A> next() {
+			// TODO Auto-generated method stub
+			Edge<A> current = pos;
+			pos = pos.succ;
+			return current;
+		}
+		
 	}
 	
 	public class UnVertex<E> implements Vertex<E>{
@@ -168,12 +341,12 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 	public class UnEdge<A> implements Edge<A>{
 		
 		private A attribute;
-		public Edge<A> pred;
-		public Edge<A> succ;
-		private Vertex<E> source;
-		private Vertex<E> destination;
+		public UnEdge<A> pred;
+		public UnEdge<A> succ;
+		protected Vertex<E> source;
+		protected Vertex<E> destination;
 		
-		public UnEdge(A attr, Vertex<E> source, Vertex<E> destination, Edge<A> pred, Edge<A> succ){
+		public UnEdge(A attr, Vertex<E> source, Vertex<E> destination, UnEdge<A> pred, UnEdge<A> succ){
 			this.attribute = attr;
 			this.pred = pred;
 			this.succ = succ;
@@ -201,6 +374,14 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 			v[1] = destination;
 			return v;
 		}
+		
+//		public Vertex<E> getSource(){
+//			return source;
+//		}
+//		
+//		public Vertex<E> getDestination(){
+//			return destination;
+//		}
 	}
 
 }
