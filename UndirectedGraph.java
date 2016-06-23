@@ -103,6 +103,24 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 	public void removeVertex(Vertex<E> v) {
 		// TODO Auto-generated method stub
 		
+		//remove all edges that connect to vertex v
+//		for(;;){
+//			Iterator<Edge> it = connectingEdges(v);
+//			if(it.hasNext()){
+//				UnEdge<A> e = (UnEdge<A>)it.next();
+//				System.out.println("Removing " + e.source.getElement()+", "+e.destination.getElement()+", ");
+//				removeEdge(e);
+//			}else
+//				break;
+//		}
+		
+		Iterator<Edge> it = connectingEdges(v);
+		while(it.hasNext()){
+			UnEdge<A> e = (UnEdge<A>)it.next();
+			removeEdge(e);
+		}
+		
+		//then remove v
 		UnVertex<E> remVertex = (UnVertex<E>)v;
 		UnVertex<E> before = remVertex.pred;
 		UnVertex<E> next = remVertex.succ;
@@ -114,13 +132,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 				next.pred = before;
 		}
 		size--; //decrement the size of the graph
-		
-		//remove all edges that connect to vertex v
-		Iterator<Edge> it = connectingEdges(v);
-		while(it.hasNext()){
-			UnEdge<A> e = (UnEdge<A>)it.next();
-			removeEdge(e);
-		}
+
 	}
 
 	@Override
@@ -129,8 +141,11 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		UnEdge<A> reEdge = (UnEdge<A>)e;
 		UnEdge<A> pre = reEdge.pred;
 		UnEdge<A> post = reEdge.succ;
-		if(pre==null)
+		if(pre==null){
 			firstEdge = post;
+			if(post != null)
+				post.pred = pre;
+		}
 		else{
 			pre.succ = post;
 			if(post != null)
@@ -375,13 +390,6 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 			return v;
 		}
 		
-//		public Vertex<E> getSource(){
-//			return source;
-//		}
-//		
-//		public Vertex<E> getDestination(){
-//			return destination;
-//		}
 	}
 
 }
