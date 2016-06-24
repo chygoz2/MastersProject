@@ -1,5 +1,4 @@
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class UndirectedGraph<E,A> implements Graph<E,A>{
 
@@ -175,6 +174,58 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 	public Iterator<Edge> connectingEdges(Vertex<E> v) {
 		// TODO Auto-generated method stub
 		return new VertexEdgesIterator(v);
+	}
+	
+	public List<Vertex<E>> depthFirstTraversal(Vertex<E> start){
+		Stack<Vertex<E>> vertexStack = new Stack<Vertex<E>>();
+		List<Vertex<E>> list = new ArrayList<Vertex<E>>();
+		Set<Vertex<E>> visited = new HashSet<Vertex<E>>();
+		
+		vertexStack.push(start);
+		visited.add(start);
+		
+		while(!vertexStack.isEmpty()){
+			Vertex<E> v = vertexStack.pop();
+			list.add(v);
+			//get vertex v's neighbours
+			Iterator<Vertex> vNeighbours = this.neighbours(v);
+			while(vNeighbours.hasNext()){
+				Vertex<E> w = vNeighbours.next();
+				if(!visited.contains(w)){
+					vertexStack.push(w);
+					visited.add(w);
+				}
+			}
+			
+		}
+		
+		return list;
+	}
+	
+	public List<Vertex<E>> breadthFirstTraversal(Vertex<E> start){
+		Queue<Vertex<E>> vertexQueue = new LinkedList<Vertex<E>>();
+		List<Vertex<E>> list = new ArrayList<Vertex<E>>();
+		Set<Vertex<E>> visited = new HashSet<Vertex<E>>();
+		
+		vertexQueue.add(start);
+		visited.add(start);
+		
+		while(!vertexQueue.isEmpty()){
+			Vertex<E> v = vertexQueue.remove();
+			list.add(v);
+			//get vertex v's neighbours
+			Iterator<Vertex> vNeighbours = this.neighbours(v);
+			while(vNeighbours.hasNext()){
+				Vertex<E> w = vNeighbours.next();
+				if(!visited.contains(w)){
+					vertexQueue.add(w);
+					visited.add(w);
+				}
+			}
+			
+		}
+		
+		return list;
 	}
 	
 	private class VertexNeighbourIterator implements Iterator<Vertex>{
@@ -382,7 +433,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		}
 
 		@Override
-		public Vertex[] getVertices() {
+		public Vertex<E>[] getVertices() {
 			// TODO Auto-generated method stub
 			Vertex<E> [] v = (UnVertex<E> [])(new Object[2]);
 			v[0] = source;

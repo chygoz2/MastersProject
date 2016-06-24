@@ -1,6 +1,6 @@
 import static org.junit.Assert.*;
 
-import java.util.Iterator;
+import java.util.*;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -184,6 +184,7 @@ public class UndirectedGraphTest {
 		}
 		
 		assertEquals("2, 3, 1, ", out2);
+		assertEquals(3,graph.size());
 	}
 
 	@Test
@@ -323,6 +324,66 @@ public class UndirectedGraphTest {
 		}
 		
 		assertEquals("4, 3, 1, 3, ", out);
+	}
+	
+	@Test
+	public void testDepthFirstTraversal(){
+		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
+		
+		Vertex<Integer> v1 = graph.addVertex(1);
+		Vertex<Integer> v2 = graph.addVertex(3);
+		Vertex<Integer> v3 = graph.addVertex(4);
+		Vertex<Integer> v4 = graph.addVertex(2);
+		Vertex<Integer> v5 = graph.addVertex(5);
+		graph.addEdge(v1, v2);
+		graph.addEdge(v3, v2);
+		Edge<Integer> e3 = graph.addEdge(v3, v4);
+		graph.addEdge(v1, v3);
+		graph.addEdge(v1, v5);
+		
+		List<Vertex<Integer>> list = new ArrayList<Vertex<Integer>>();
+		list.add(v2); list.add(v1); list.add(v5); list.add(v3); list.add(v4); 
+		
+		Iterator<Vertex> it = graph.vertices();
+		
+		String out = "";
+		while (it.hasNext()){
+			Vertex<Integer> v = it.next();
+			out += v.getElement()+", ";
+		}
+		
+		assertTrue(list.equals(graph.depthFirstTraversal(v2)));
+		assertEquals("5, 2, 4, 3, 1, ", out);
+	}
+	
+	@Test
+	public void testBreadthFirstTraversal(){
+		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
+		
+		Vertex<Integer> v1 = graph.addVertex(1);
+		Vertex<Integer> v2 = graph.addVertex(3);
+		Vertex<Integer> v3 = graph.addVertex(4);
+		Vertex<Integer> v4 = graph.addVertex(2);
+		Vertex<Integer> v5 = graph.addVertex(5);
+		graph.addEdge(v1, v2);
+		graph.addEdge(v3, v2);
+		Edge<Integer> e3 = graph.addEdge(v3, v4);
+		graph.addEdge(v1, v3);
+		graph.addEdge(v1, v5);
+		
+		List<Vertex<Integer>> list = new ArrayList<Vertex<Integer>>();
+		list.add(v2); list.add(v3); list.add(v1); list.add(v4); list.add(v5); 
+		
+		Iterator<Vertex> it = graph.vertices();
+		
+		String out = "";
+		while (it.hasNext()){
+			Vertex<Integer> v = it.next();
+			out += v.getElement()+", ";
+		}
+		
+		assertTrue(list.equals(graph.breadthFirstTraversal(v2)));
+		assertEquals("5, 2, 4, 3, 1, ", out);
 	}
 
 }
