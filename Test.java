@@ -14,7 +14,7 @@ public class Test {
 		
 		
 		//Testing graph stuff
-		UndirectedGraph graph = new UndirectedGraph<Integer,Integer>();
+		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
 		System.out.println("Graph size is "+graph.size());
 		
 		Vertex<Integer> v1 = graph.addVertex(1);
