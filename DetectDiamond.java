@@ -30,6 +30,33 @@ public class DetectDiamond {
 			System.out.println("Vertex: "+ v.getElement() + ", degree: " + graph.degree(v));
 		}
 		
+		
+		//create adjacency lists for each vertex of low degree G[N(x)]
+		//System.out.println("Printing out subgraphs");
+		for(Vertex<Integer> ve: lowDegreeVertices){
+//			UndirectedGraph vGraph = getNeighbourGraph(graph, ve);
+//			
+//			System.out.println("Graph size is "+vGraph.size());
+//			Iterator<Vertex> it = vGraph.vertices();
+//			
+//			System.out.println("Graph vertices");
+//			while (it.hasNext()){
+//				Vertex<Integer> v = it.next();
+//				System.out.print(v.getElement()+", ");
+//			}
+//			System.out.println("\nGraph edges:");
+//			Iterator<Edge> it2 = vGraph.edges();
+//			while (it2.hasNext()){
+//				UndirectedGraph.UnEdge edge = (UndirectedGraph.UnEdge)it2.next();
+//				System.out.print("\n"+edge.source.getElement()+", "+ edge.destination.getElement());
+//			}
+//			System.out.println();
+//			break;
+			
+			
+		}
+		
+		
 	}
 	
 	//method to partition the vertices into low degree vertices and high degree vertices
@@ -67,4 +94,17 @@ public class DetectDiamond {
 		
 		return vertices;
 	}
+	
+	//method to create subgraph induced by a vertex v
+//	public static UndirectedGraph getNeighbourGraph(UndirectedGraph graph, Vertex v){
+//		UndirectedGraph g = new UndirectedGraph();
+//		Iterator<Vertex> neighbours = graph.neighbours(v);
+//		while(neighbours.hasNext()){
+//			Vertex neighbour = neighbours.next();
+//			g.addVertex(neighbour.getElement());
+//			//g.addEdge(v, neighbour);
+//		}
+//		return g;
+//	}
+	
 }
