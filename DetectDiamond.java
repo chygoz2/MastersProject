@@ -31,29 +31,18 @@ public class DetectDiamond {
 		}
 		
 		
-		//create adjacency lists for each vertex of low degree G[N(x)]
-		//System.out.println("Printing out subgraphs");
-		for(Vertex<Integer> ve: lowDegreeVertices){
-//			UndirectedGraph vGraph = getNeighbourGraph(graph, ve);
-//			
-//			System.out.println("Graph size is "+vGraph.size());
-//			Iterator<Vertex> it = vGraph.vertices();
-//			
-//			System.out.println("Graph vertices");
-//			while (it.hasNext()){
-//				Vertex<Integer> v = it.next();
-//				System.out.print(v.getElement()+", ");
-//			}
-//			System.out.println("\nGraph edges:");
-//			Iterator<Edge> it2 = vGraph.edges();
-//			while (it2.hasNext()){
-//				UndirectedGraph.UnEdge edge = (UndirectedGraph.UnEdge)it2.next();
-//				System.out.print("\n"+edge.source.getElement()+", "+ edge.destination.getElement());
-//			}
-//			System.out.println();
-//			break;
-			
-			
+		System.out.println("Testing neighbourhood graph");
+		UndirectedGraph graph2 = getNeighbourGraph(graph, v1);
+		
+		printGraph(graph2);
+		
+		//print out components
+		System.out.println("Getting components graph formed by the neighbourhood of v1");
+		List<UndirectedGraph> graph2Comps = getComponents(graph2);
+		for(int i=0; i<graph2Comps.size(); i++){
+			System.out.println("Printing out component: "+(i+1));
+			printGraph(graph2Comps.get(i));
+			System.out.println();
 		}
 		
 		
@@ -95,16 +84,81 @@ public class DetectDiamond {
 		return vertices;
 	}
 	
-	//method to create subgraph induced by a vertex v
-//	public static UndirectedGraph getNeighbourGraph(UndirectedGraph graph, Vertex v){
-//		UndirectedGraph g = new UndirectedGraph();
-//		Iterator<Vertex> neighbours = graph.neighbours(v);
-//		while(neighbours.hasNext()){
-//			Vertex neighbour = neighbours.next();
-//			g.addVertex(neighbour.getElement());
-//			//g.addEdge(v, neighbour);
-//		}
-//		return g;
-//	}
+	//method to create subgraph in the neighbourhood of vertex v
+	public static UndirectedGraph getNeighbourGraph(UndirectedGraph graph, Vertex v){
+		//get v's neighbours;
+		List<Vertex> neighbours = new ArrayList<Vertex>();
+		Iterator<Vertex> it = graph.neighbours(v);
+		while(it.hasNext()){
+			neighbours.add(it.next());
+		}
+		
+		return makeGraphFromVertexSet(graph, neighbours);
+	}
 	
+	
+	public static List<UndirectedGraph> getComponents(UndirectedGraph graph){
+		List<UndirectedGraph> components = new ArrayList<UndirectedGraph>();
+		//get vertices list
+		List<Vertex> vertices = new ArrayList<Vertex>();
+		Iterator<Vertex> it = graph.vertices();
+		while(it.hasNext()){
+			vertices.add(it.next());
+		}
+		
+		System.out.println("Printing result of depth first traversal");
+		List<Vertex> compList2 = graph.depthFirstTraversal(vertices.get(0));
+		//System.out.println(graph.containsEdge(vertices.get(0), vertices.get(1)));
+		for(Vertex v: compList2){
+			System.out.print(v.getElement()+",");
+		}
+		System.out.println();
+		//find components
+		while(!vertices.isEmpty()){
+			List<Vertex> compList = graph.depthFirstTraversal(vertices.get(0));
+			components.add(makeGraphFromVertexSet(graph, compList));
+			vertices.removeAll(compList);
+		}
+		
+		return components;
+	}
+	
+	public static UndirectedGraph makeGraphFromVertexSet(UndirectedGraph graph, List<Vertex> vertices){
+		UndirectedGraph g1 = new UndirectedGraph();
+		Map<Vertex,Vertex> newVertices = new HashMap<Vertex,Vertex>();
+		
+		//add the vertices
+		for(Vertex ve: vertices){
+			newVertices.put(ve, g1.addVertex(ve.getElement()));
+		}
+		
+		//add any edges
+		for(Vertex one: newVertices.keySet()){
+			for(Vertex two: newVertices.keySet()){
+				if(graph.containsEdge(one, two))
+					if(!g1.containsEdge(newVertices.get(one), newVertices.get(two)))
+							g1.addEdge(newVertices.get(one), newVertices.get(two));
+			}
+		}
+		
+		return g1;
+	}
+	
+	public static void printGraph(UndirectedGraph graph2){
+		System.out.println("Graph size is "+graph2.size());
+		Iterator<Vertex> it = graph2.vertices();
+		
+		System.out.println("Graph vertices");
+		while (it.hasNext()){
+			Vertex<Integer> v = it.next();
+			System.out.print(v.getElement()+", ");
+		}
+		System.out.println("\nGraph edges:");
+		Iterator<Edge> it2 = graph2.edges();
+		while (it2.hasNext()){
+			UndirectedGraph.UnEdge edge = (UndirectedGraph.UnEdge)it2.next();
+			System.out.print("{"+edge.source.getElement()+", "+ edge.destination.getElement()+"},");
+		}
+		System.out.println();
+	}
 }

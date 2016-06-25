@@ -1,15 +1,15 @@
 import java.util.Iterator;
 
-import Jama.Matrix;
+//import Jama.Matrix;
 
 public class Test {
 	public static void main(String [] args){
 		double[][] a = {{1,2,3},{4,5,6},{7,8,9}};
-		Matrix mA = new Matrix(a);
+		//Matrix mA = new Matrix(a);
 		//System.out.println(mA.getRowDimension() + " is the row dimension");
 		//System.out.println(mA.getColumnDimension() + " is the column dimension");
 		//mA.print(3, 2);
-		Matrix squareMatrix = mA.times(mA);
+		//Matrix squareMatrix = mA.times(mA);
 		//squareMatrix.print(3, 0);
 		
 		
@@ -87,6 +87,16 @@ public class Test {
 			//System.out.println("True");
 			Vertex<Integer> v = it3.next();
 			System.out.print(v.getElement()+", ");
+		}
+		
+		System.out.println();
+		System.out.println("Printing out adjacency matrix. A: ");
+		int[][] A = graph.getAdjacencyMatrix();
+		for(int i=0; i<A.length; i++){
+			for(int j=0; j<A[i].length; j++){
+				System.out.print(A[i][j]+" ");
+			}
+			System.out.println();
 		}
 	}
 }

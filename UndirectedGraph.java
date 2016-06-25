@@ -102,17 +102,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 	public void removeVertex(Vertex<E> v) {
 		// TODO Auto-generated method stub
 		
-		//remove all edges that connect to vertex v
-//		for(;;){
-//			Iterator<Edge> it = connectingEdges(v);
-//			if(it.hasNext()){
-//				UnEdge<A> e = (UnEdge<A>)it.next();
-//				System.out.println("Removing " + e.source.getElement()+", "+e.destination.getElement()+", ");
-//				removeEdge(e);
-//			}else
-//				break;
-//		}
-		
+		//remove all edges that connect to vertex v	
 		Iterator<Edge> it = connectingEdges(v);
 		while(it.hasNext()){
 			UnEdge<A> e = (UnEdge<A>)it.next();
@@ -226,6 +216,29 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		}
 		
 		return list;
+	}
+	
+	public int[][] getAdjacencyMatrix(){
+		int[][] A = new int[size][size];
+		UnVertex<E> curr = firstVertex;
+		int i=0, j=0;
+		UnVertex<E> next = firstVertex;
+		while(curr!=null){
+			while(next != null){
+				if(containsEdge(curr,next))
+					A[i][j] = 1;
+				else
+					A[i][j] = 0;
+				next = next.succ;
+				j++;
+			}
+			curr = curr.succ;
+			i++; j=0;
+			next = firstVertex;
+		}
+		
+		
+		return A;
 	}
 	
 	private class VertexNeighbourIterator implements Iterator<Vertex>{
