@@ -166,13 +166,13 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		return new VertexEdgesIterator(v);
 	}
 	
-	public List<Vertex<E>> depthFirstTraversal(Vertex<E> start){
+	public List<Vertex<E>> depthFirstTraversal(Vertex<E> startV){
+		UnVertex<E> start = (UnVertex<E>)startV;
 		Stack<Vertex<E>> vertexStack = new Stack<Vertex<E>>();
 		List<Vertex<E>> list = new ArrayList<Vertex<E>>();
-		Set<Vertex<E>> visited = new HashSet<Vertex<E>>();
 		
 		vertexStack.push(start);
-		visited.add(start);
+		start.visited = true;
 		
 		while(!vertexStack.isEmpty()){
 			Vertex<E> v = vertexStack.pop();
@@ -180,25 +180,25 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 			//get vertex v's neighbours
 			Iterator<Vertex> vNeighbours = this.neighbours(v);
 			while(vNeighbours.hasNext()){
-				Vertex<E> w = vNeighbours.next();
-				if(!visited.contains(w)){
+				UnVertex<E> w = (UnVertex<E>)vNeighbours.next();
+				if(!w.visited){
 					vertexStack.push(w);
-					visited.add(w);
+					w.visited = true;
 				}
 			}
 			
 		}
-		
+		this.resetVisited();
 		return list;
 	}
 	
-	public List<Vertex<E>> breadthFirstTraversal(Vertex<E> start){
+	public List<Vertex<E>> breadthFirstTraversal(Vertex<E> startV){
+		UnVertex<E> start = (UnVertex<E>)startV;
 		Queue<Vertex<E>> vertexQueue = new LinkedList<Vertex<E>>();
 		List<Vertex<E>> list = new ArrayList<Vertex<E>>();
-		Set<Vertex<E>> visited = new HashSet<Vertex<E>>();
 		
 		vertexQueue.add(start);
-		visited.add(start);
+		start.visited = true;
 		
 		while(!vertexQueue.isEmpty()){
 			Vertex<E> v = vertexQueue.remove();
@@ -206,16 +206,24 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 			//get vertex v's neighbours
 			Iterator<Vertex> vNeighbours = this.neighbours(v);
 			while(vNeighbours.hasNext()){
-				Vertex<E> w = vNeighbours.next();
-				if(!visited.contains(w)){
+				UnVertex<E> w = (UnVertex<E>)vNeighbours.next();
+				if(!w.visited){
 					vertexQueue.add(w);
-					visited.add(w);
+					w.visited = true;
 				}
 			}
 			
 		}
-		
+		this.resetVisited();
 		return list;
+	}
+	
+	public void resetVisited(){
+		UnVertex<E> curr = firstVertex;
+		while(curr != null){
+			curr.visited = false;
+			curr = curr.succ;
+		}
 	}
 	
 	public int[][] getAdjacencyMatrix(){
@@ -239,6 +247,16 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		
 		
 		return A;
+	}
+	
+	public void printAdjacencyMatrix(){
+		int[][] A = this.getAdjacencyMatrix();
+		for(int i=0; i<A.length; i++){
+			for(int j=0; j<A[i].length; j++){
+				System.out.print(A[i][j]+" ");
+			}
+			System.out.println();
+		}
 	}
 	
 	private class VertexNeighbourIterator implements Iterator<Vertex>{
@@ -397,11 +415,13 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		private E elem;
 		public UnVertex<E> pred;
 		public UnVertex<E> succ;
+		private boolean visited;
 		
 		public UnVertex(E elem, UnVertex<E> pred, UnVertex<E> succ){
 			this.elem = elem;
 			this.pred = pred;
 			this.succ = succ;
+			visited = false;
 		}
 		@Override
 		public E getElement() {
@@ -414,7 +434,6 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 			// TODO Auto-generated method stub
 			this.elem = elem;
 		}
-		
 	}
 	
 	public class UnEdge<A> implements Edge<A>{

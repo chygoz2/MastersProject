@@ -14,11 +14,12 @@ public class DetectDiamond {
 		graph.addEdge(v3, v4);
 		graph.addEdge(v1, v3);
 		graph.addEdge(v1, v5);
+		graph.addEdge(v3, v5);
 		
 		Set[] verticesPartition = partitionVertices(graph);
 		
-		Set<Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
-		Set<Vertex<Integer>> highDegreeVertices = verticesPartition[1];
+		Set<Vertex> lowDegreeVertices = verticesPartition[0];
+		Set<Vertex> highDegreeVertices = verticesPartition[1];
 		
 		System.out.println("Printing low degree vertices degrees");
 		for(Vertex v: lowDegreeVertices){
@@ -30,21 +31,87 @@ public class DetectDiamond {
 			System.out.println("Vertex: "+ v.getElement() + ", degree: " + graph.degree(v));
 		}
 		
+		//////////////////////////////////////////////////////////////////
+		//Get find components of graphs in the neighbourhood of each of the low degree vertices.
+		//also find the cliques in the process
 		
-		System.out.println("Testing neighbourhood graph");
-		UndirectedGraph graph2 = getNeighbourGraph(graph, v1);
-		
-		printGraph(graph2);
-		
-		//print out components
-		System.out.println("Getting components graph formed by the neighbourhood of v1");
-		List<UndirectedGraph> graph2Comps = getComponents(graph2);
-		for(int i=0; i<graph2Comps.size(); i++){
-			System.out.println("Printing out component: "+(i+1));
-			printGraph(graph2Comps.get(i));
+		Map phase1Results = phaseOne(highDegreeVertices, graph);
+		System.out.println(phase1Results.get("diamondFound"));
+		List<UndirectedGraph> cli = (List<UndirectedGraph>)phase1Results.get("cliques");
+		for(UndirectedGraph g: cli){
+			printGraph(g);
 			System.out.println();
 		}
+		System.out.println("Print out one such diamond");
+		if((boolean)phase1Results.get("diamondFound")){
+			printGraph((UndirectedGraph)phase1Results.get("diamond"));
+		}
 		
+//		System.out.println("Testing neighbourhood graph");
+//		UndirectedGraph graph2 = getNeighbourGraph(graph, v1);
+//		
+//		printGraph(graph2);
+//		
+//		//print out components
+//		System.out.println("Getting components graph formed by the neighbourhood of v1");
+//		List<UndirectedGraph> graph2Comps = getComponents(graph2);
+//		for(int i=0; i<graph2Comps.size(); i++){
+//			System.out.println("Printing out component: "+(i+1));
+//			printGraph(graph2Comps.get(i));
+//			graph2Comps.get(i).printAdjacencyMatrix();
+//			System.out.println("Is component a clique? " + checkIfClique(graph2Comps.get(i)));
+//			System.out.println();
+//		}
+//		
+//		System.out.println("Is there a P3 in graph? " + checkP3InComponent(graph));
+	}
+	
+	public static Map phaseOne(Set<Vertex> lowDegreeVertices, UndirectedGraph graph){
+		Map phaseOneResults = new HashMap();
+		boolean diamondFound = false;
+		
+		//Create list for storing cliques
+		List<UndirectedGraph> cliques = new ArrayList<UndirectedGraph>();
+		
+		for(Vertex v: lowDegreeVertices){
+			UndirectedGraph graph2 = getNeighbourGraph(graph, v);
+			//System.out.println("Getting components graph formed by the neighbourhood of v");
+			List<UndirectedGraph> graph2Comps = getComponents(graph2); //get components of the induced neighbour graph
+
+			//check if each component is a clique
+			for(UndirectedGraph graphC: graph2Comps){
+				boolean isClique = checkIfClique(graphC);
+				if(isClique){
+					cliques.add(graphC); //add component to cliques list to be used in phase 2
+				}else{
+					//if component is not a clique, check if it contains a P3 and thus a diamond
+					boolean hasP3 = checkP3InComponent(graphC);
+					if(hasP3){
+						//if has P3 is true, then the graph contains a diamond
+						diamondFound = true;
+						//produce one such diamond 
+						
+						if(phaseOneResults.get("diamond") == null){
+							List<Vertex> diamondVertices = new ArrayList<Vertex>();
+							Iterator<Vertex> dIt = graphC.vertices();
+							diamondVertices.add(v); //add the vertex which has the P3 in its neighbourhood
+							while(dIt.hasNext())
+								diamondVertices.add(dIt.next());
+							phaseOneResults.put("diamond", makeGraphFromVertexSet(graph, diamondVertices));
+						}
+					}
+				}
+			}
+		}
+		
+		phaseOneResults.put("diamondFound", diamondFound);
+		phaseOneResults.put("cliques", cliques);
+		
+		return phaseOneResults;
+		
+	}
+	
+	public static void phaseTwo(List<UndirectedGraph> cliques, UndirectedGraph graph){
 		
 	}
 	
@@ -106,12 +173,6 @@ public class DetectDiamond {
 			vertices.add(it.next());
 		}
 		
-		System.out.println("Printing result of depth first traversal");
-		List<Vertex> compList2 = graph.depthFirstTraversal(vertices.get(0));
-		//System.out.println(graph.containsEdge(vertices.get(0), vertices.get(1)));
-		for(Vertex v: compList2){
-			System.out.print(v.getElement()+",");
-		}
 		System.out.println();
 		//find components
 		while(!vertices.isEmpty()){
@@ -161,4 +222,41 @@ public class DetectDiamond {
 		}
 		System.out.println();
 	}
+	
+	public static boolean checkIfClique(UndirectedGraph graph){
+		int[][] A = graph.getAdjacencyMatrix();
+		
+		for(int i=0; i<A.length; i++){
+			for(int j=0; j<A.length; j++){
+				if(i!=j && A[i][j] != 1)
+					return false;
+			}
+		}
+		return true;
+	}
+	
+	public static boolean checkP3InComponent(UndirectedGraph graph){
+		//if the no of vertices in graph is less than 3, then graph cannot have a p3
+		if(graph.size()<3)
+			return false;
+		
+		Iterator<Vertex> vIt = graph.vertices(); //gets the vertex iterator
+		
+		while(vIt.hasNext()){
+			Vertex v = vIt.next();
+			//do a breadth first search on each vertex of graph in search for a P3
+			//stop once a p3 has been found
+			List<Vertex> bfVertices = graph.breadthFirstTraversal(v);
+			Vertex v1 = bfVertices.get(0);
+			Vertex v2 = bfVertices.get(1);
+			Vertex v3 = bfVertices.get(2);
+			
+			if(!(graph.containsEdge(v1, v2) && graph.containsEdge(v2, v3) &&
+					graph.containsEdge(v1, v3)))
+				return true;
+		}
+	
+		return false;
+	}
+	
 }
