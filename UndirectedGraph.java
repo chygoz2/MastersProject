@@ -413,8 +413,8 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 	public class UnVertex<E> implements Vertex<E>{
 		
 		private E elem;
-		public UnVertex<E> pred;
-		public UnVertex<E> succ;
+		private UnVertex<E> pred;
+		private UnVertex<E> succ;
 		private boolean visited;
 		
 		public UnVertex(E elem, UnVertex<E> pred, UnVertex<E> succ){
@@ -441,8 +441,8 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		private A attribute;
 		public UnEdge<A> pred;
 		public UnEdge<A> succ;
-		protected Vertex<E> source;
-		protected Vertex<E> destination;
+		private Vertex<E> source;
+		private Vertex<E> destination;
 		
 		public UnEdge(A attr, Vertex<E> source, Vertex<E> destination, UnEdge<A> pred, UnEdge<A> succ){
 			this.attribute = attr;
@@ -471,6 +471,14 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 			v[0] = source;
 			v[1] = destination;
 			return v;
+		}
+		
+		public Vertex<E> getSource(){
+			return source;
+		}
+		
+		public Vertex<E> getDestination(){
+			return destination;
 		}
 		
 	}

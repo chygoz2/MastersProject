@@ -123,7 +123,7 @@ public class UndirectedGraphTest {
 		String out = "";
 		while (it.hasNext()){
 			UndirectedGraph.UnEdge e = (UndirectedGraph.UnEdge) it.next();
-			out += e.source.getElement()+", "+e.destination.getElement()+", ";
+			out += e.getSource().getElement()+", "+e.getDestination().getElement()+", ";
 		}
 		
 		assertEquals("4, 3, 1, 3, ", out);
@@ -136,7 +136,7 @@ public class UndirectedGraphTest {
 		out = "";
 		while (it.hasNext()){
 			UndirectedGraph.UnEdge e = (UndirectedGraph.UnEdge) it.next();
-			out += e.source.getElement()+", "+e.destination.getElement()+", ";
+			out += e.getSource().getElement()+", "+e.getDestination().getElement()+", ";
 		}
 		
 		assertEquals("1, 4, 4, 2, 4, 3, 1, 3, ", out);
@@ -170,7 +170,7 @@ public class UndirectedGraphTest {
 		String out = "";
 		while (it.hasNext()){
 			UndirectedGraph.UnEdge e = (UndirectedGraph.UnEdge) it.next();
-			out += e.source.getElement()+", "+e.destination.getElement()+", ";
+			out += e.getSource().getElement()+", "+e.getDestination().getElement()+", ";
 		}
 		
 		assertEquals("1, 3, ", out);
@@ -209,7 +209,7 @@ public class UndirectedGraphTest {
 		String out = "";
 		while (it.hasNext()){
 			UndirectedGraph.UnEdge e = (UndirectedGraph.UnEdge) it.next();
-			out += e.source.getElement()+", "+e.destination.getElement()+", ";
+			out += e.getSource().getElement()+", "+e.getDestination().getElement()+", ";
 		}
 		
 		assertEquals("4, 3, 1, 3, ", out);
@@ -259,7 +259,7 @@ public class UndirectedGraphTest {
 		String out = "";
 		while (it.hasNext()){
 			UndirectedGraph.UnEdge e = (UndirectedGraph.UnEdge)it.next();
-			out += e.source.getElement()+", "+e.destination.getElement()+", ";
+			out += e.getSource().getElement()+", "+e.getDestination().getElement()+", ";
 		}
 		
 		assertEquals("4, 2, 4, 3, 1, 3, ", out);
@@ -320,7 +320,7 @@ public class UndirectedGraphTest {
 		String out = "";
 		while (it.hasNext()){
 			UndirectedGraph.UnEdge e = (UndirectedGraph.UnEdge) it.next();
-			out += e.source.getElement()+", "+e.destination.getElement()+", ";
+			out += e.getSource().getElement()+", "+e.getDestination().getElement()+", ";
 		}
 		
 		assertEquals("4, 3, 1, 3, ", out);

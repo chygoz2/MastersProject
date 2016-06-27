@@ -39,7 +39,7 @@ public class Test {
 		Iterator<Edge> it2 = graph.edges();
 		while (it2.hasNext()){
 			UndirectedGraph.UnEdge edge = (UndirectedGraph.UnEdge)it2.next();
-			System.out.print("\n"+edge.source.getElement()+", "+ edge.destination.getElement());
+			System.out.print("\n"+edge.getSource().getElement()+", "+ edge.getDestination().getElement());
 		}
 		System.out.println();
 		System.out.println("The degree of vertex v3 whose element is "+v3.getElement()+" is "+graph.degree(v3));

@@ -37,11 +37,16 @@ public class DetectDiamond {
 		
 		Map phase1Results = phaseOne(highDegreeVertices, graph);
 		System.out.println(phase1Results.get("diamondFound"));
-		List<UndirectedGraph> cli = (List<UndirectedGraph>)phase1Results.get("cliques");
-		for(UndirectedGraph g: cli){
-			printGraph(g);
-			System.out.println();
+		Map cli = (HashMap)phase1Results.get("cliques");
+		for(Object g: cli.keySet()){
+			Collection c = (Collection)cli.get(g);
+			for(Object z: c){
+				System.out.println("Printing out cliques");
+				printGraph((UndirectedGraph)z);
+				System.out.println();
+			}	
 		}
+		
 		System.out.println("Print out one such diamond");
 		if((boolean)phase1Results.get("diamondFound")){
 			printGraph((UndirectedGraph)phase1Results.get("diamond"));
@@ -70,11 +75,14 @@ public class DetectDiamond {
 		Map phaseOneResults = new HashMap();
 		boolean diamondFound = false;
 		
-		//Create list for storing cliques
-		List<UndirectedGraph> cliques = new ArrayList<UndirectedGraph>();
+		//create a map for storing cliques and which vertex's neighbourhood they are in
+		Map vertexCliques = new HashMap();
 		
 		for(Vertex v: lowDegreeVertices){
 			UndirectedGraph graph2 = getNeighbourGraph(graph, v);
+			//Create list for storing cliques in the neighbourhood of vertex v
+			List<UndirectedGraph> cliques = new ArrayList<UndirectedGraph>();
+			
 			//System.out.println("Getting components graph formed by the neighbourhood of v");
 			List<UndirectedGraph> graph2Comps = getComponents(graph2); //get components of the induced neighbour graph
 
@@ -85,27 +93,31 @@ public class DetectDiamond {
 					cliques.add(graphC); //add component to cliques list to be used in phase 2
 				}else{
 					//if component is not a clique, check if it contains a P3 and thus a diamond
-					boolean hasP3 = checkP3InComponent(graphC);
+					Map result = checkP3InComponent(graphC);
+					boolean hasP3 = (boolean) result.get("hasP3");
 					if(hasP3){
 						//if has P3 is true, then the graph contains a diamond
 						diamondFound = true;
-						//produce one such diamond 
 						
-						if(phaseOneResults.get("diamond") == null){
-							List<Vertex> diamondVertices = new ArrayList<Vertex>();
-							Iterator<Vertex> dIt = graphC.vertices();
-							diamondVertices.add(v); //add the vertex which has the P3 in its neighbourhood
-							while(dIt.hasNext())
-								diamondVertices.add(dIt.next());
-							phaseOneResults.put("diamond", makeGraphFromVertexSet(graph, diamondVertices));
+						//produce one such diamond 
+						if(phaseOneResults.get("diamond") == null){ //check if a diamond was previously stored
+							UndirectedGraph dTemp = (UndirectedGraph)result.get("p3Graph");
+							Iterator<Vertex> dIt = dTemp.vertices();
+							Vertex nVertex = dTemp.addVertex(v.getElement());
+							while(dIt.hasNext()){
+								dTemp.addEdge(nVertex, dIt.next());
+							}
+							phaseOneResults.put("diamond", dTemp);
 						}
 					}
 				}
 			}
+			
+			vertexCliques.put(v, cliques);
 		}
 		
 		phaseOneResults.put("diamondFound", diamondFound);
-		phaseOneResults.put("cliques", cliques);
+		phaseOneResults.put("cliques", vertexCliques);
 		
 		return phaseOneResults;
 		
@@ -136,7 +148,7 @@ public class DetectDiamond {
 		
 
 		//calculate D for vertex partitioning
-		double alpha = 2.376;
+		double alpha = 2.376; //constant from Coppersmith-Winograd matrix multiplication algorithm
 		double pow = (alpha-1)/(alpha+1);
 		double D = Math.pow(noOfEdges, pow);
 		
@@ -218,7 +230,7 @@ public class DetectDiamond {
 		Iterator<Edge> it2 = graph2.edges();
 		while (it2.hasNext()){
 			UndirectedGraph.UnEdge edge = (UndirectedGraph.UnEdge)it2.next();
-			System.out.print("{"+edge.source.getElement()+", "+ edge.destination.getElement()+"},");
+			System.out.print("{"+edge.getSource().getElement()+", "+ edge.getDestination().getElement()+"},");
 		}
 		System.out.println();
 	}
@@ -235,10 +247,14 @@ public class DetectDiamond {
 		return true;
 	}
 	
-	public static boolean checkP3InComponent(UndirectedGraph graph){
+	//checks if a P3 exists in component and returns one
+	public static Map checkP3InComponent(UndirectedGraph graph){
 		//if the no of vertices in graph is less than 3, then graph cannot have a p3
-		if(graph.size()<3)
-			return false;
+		Map result = new HashMap();
+		if(graph.size()<3){
+			result.put("hasP3", false);
+			return result;
+		}
 		
 		Iterator<Vertex> vIt = graph.vertices(); //gets the vertex iterator
 		
@@ -252,11 +268,16 @@ public class DetectDiamond {
 			Vertex v3 = bfVertices.get(2);
 			
 			if(!(graph.containsEdge(v1, v2) && graph.containsEdge(v2, v3) &&
-					graph.containsEdge(v1, v3)))
-				return true;
+					graph.containsEdge(v1, v3))){
+				result.put("hasP3", true);
+				List<Vertex> vert = new ArrayList<Vertex>();
+				vert.add(v1); vert.add(v2); vert.add(v3);
+				result.put("p3Graph", makeGraphFromVertexSet(graph, vert));
+				break;
+			}
 		}
 	
-		return false;
+		return result;
 	}
 	
 }
