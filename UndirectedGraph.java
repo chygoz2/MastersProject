@@ -5,11 +5,13 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 	private UnVertex<E> firstVertex;
 	private UnEdge<A> firstEdge;
 	private int size;
+	private Map<Integer,Vertex<E>> vertexIdMap;
 	
 	public UndirectedGraph(){
 		firstVertex = null;
 		firstEdge = null;
 		size = 0;
+		vertexIdMap = new HashMap<Integer,Vertex<E>>();
 	}
 	
 	@Override
@@ -121,6 +123,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 				next.pred = before;
 		}
 		size--; //decrement the size of the graph
+		mapVertexToId();
 
 	}
 
@@ -226,8 +229,8 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		}
 	}
 	
-	public int[][] getAdjacencyMatrix(){
-		int[][] A = new int[size][size];
+	public double[][] getAdjacencyMatrix(){
+		double[][] A = new double[size][size];
 		UnVertex<E> curr = firstVertex;
 		int i=0, j=0;
 		UnVertex<E> next = firstVertex;
@@ -250,13 +253,33 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 	}
 	
 	public void printAdjacencyMatrix(){
-		int[][] A = this.getAdjacencyMatrix();
+		double[][] A = this.getAdjacencyMatrix();
 		for(int i=0; i<A.length; i++){
 			for(int j=0; j<A[i].length; j++){
 				System.out.print(A[i][j]+" ");
 			}
 			System.out.println();
 		}
+	}
+	
+	public void mapVertexToId(){
+		int i = 0;
+		UnVertex<E> curr = firstVertex;
+		while(curr!=null){
+			vertexIdMap.put(i,curr);
+			curr.setId(i);
+			i++;
+			curr = curr.succ;
+		}
+	}
+	
+	public void setVertexId(Vertex<E> v, int i){
+		((UnVertex<E>)v).setId(i);
+		vertexIdMap.put(i, v);
+	}
+	
+	public Vertex getVertexWithId(int i){
+		return vertexIdMap.get(i);
 	}
 	
 	private class VertexNeighbourIterator implements Iterator<Vertex>{
@@ -416,6 +439,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		private UnVertex<E> pred;
 		private UnVertex<E> succ;
 		private boolean visited;
+		private int id;
 		
 		public UnVertex(E elem, UnVertex<E> pred, UnVertex<E> succ){
 			this.elem = elem;
@@ -433,6 +457,14 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		public void setElement(E elem) {
 			// TODO Auto-generated method stub
 			this.elem = elem;
+		}
+		
+		public void setId(int id){
+			this.id = id;
+		}
+		
+		public int getId(){
+			return this.id;
 		}
 	}
 	

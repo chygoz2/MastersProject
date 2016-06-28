@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JApplet;
-import javax.swing.JFrame;
-
 import org.jgraph.JGraph;
 import org.jgraph.graph.DefaultGraphCell;
 import org.jgraph.graph.GraphConstants;
