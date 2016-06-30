@@ -76,6 +76,7 @@ public class DetectDiamond {
 			}
 		}
 		
+		phaseThree(graph, lowDegreeVertices);
 	}
 	
 	public static Map phaseOne(Set<Vertex> lowDegreeVertices, UndirectedGraph graph){
@@ -170,7 +171,7 @@ public class DetectDiamond {
 					int zId = z.getId();
 					
 					//perform check 
-					if(squareA.get(yId, zId) > cliq.size()-1){ //then and z have a common neighbor
+					if(squareA.get(yId, zId) > cliq.order()-1){ //then y and z have a common neighbor
 						//outside the closed neighbourhood of x and hence a diamond can found
 						//get y's and z's neighbours from the main graph and put them in a set
 						Iterator yIt = graph.neighbours(graph.getVertexWithId(y.getId()));
@@ -185,13 +186,14 @@ public class DetectDiamond {
 							zNeigh.add(zIt.next());
 						}
 						
-						//Remove x from both sets, remove y from z's neighbourhood and remove z from y's neighbourhood
-						yNeigh.remove(graph.getVertexWithId(z.getId()));
-						zNeigh.remove(graph.getVertexWithId(y.getId()));
+//						//remove y from z's neighbourhood and remove z from y's neighbourhood
+//						yNeigh.remove(graph.getVertexWithId(z.getId()));
+//						zNeigh.remove(graph.getVertexWithId(y.getId()));
 						
 						 
 						//and then find the union of both sets to find vertices common in y and z's neighbourhood
-						yNeigh.retainAll(zNeigh); //yNeigh now contains vertices common to both y and z excluding x
+						yNeigh.retainAll(zNeigh); //yNeigh now contains vertices common to both y and z 
+						//remove x from the neighbourhood 
 						yNeigh.remove(graph.getVertexWithId(((UndirectedGraph.UnVertex)lowVertex).getId()));
 				
 						
@@ -340,7 +342,7 @@ public class DetectDiamond {
 	}
 	
 	public static void printGraph(UndirectedGraph graph2){
-		System.out.println("Graph size is "+graph2.size());
+		System.out.println("Graph size is "+graph2.order());
 		Iterator<Vertex> it = graph2.vertices();
 		
 		System.out.println("Graph vertices");
@@ -373,7 +375,7 @@ public class DetectDiamond {
 	public static Map checkP3InComponent(UndirectedGraph graph){
 		//if the no of vertices in graph is less than 3, then graph cannot have a p3
 		Map result = new HashMap();
-		if(graph.size()<3){
+		if(graph.order()<3){
 			result.put("hasP3", false);
 			return result;
 		}

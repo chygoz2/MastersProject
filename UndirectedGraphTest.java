@@ -8,7 +8,7 @@ import org.junit.Test;
 public class UndirectedGraphTest {
 
 	@Test
-	public void testSize() {
+	public void testOrder() {
 		//fail("Not yet implemented");
 		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
 		
@@ -19,10 +19,10 @@ public class UndirectedGraphTest {
 		graph.addEdge(v1, v2);
 		graph.addEdge(v3, v2);
 		graph.addEdge(v3, v4);
-		graph.addEdge(v1, v3);
 		
-		assertEquals("Graph size",4,graph.size());
-		assertFalse("Graph size 2", 3==graph.size());
+		assertEquals("Graph order",4,graph.order());
+		assertEquals("Graph size",3,graph.size());
+		assertFalse("Graph order 2", 3==graph.order());
 	}
 
 	@Test
@@ -78,9 +78,9 @@ public class UndirectedGraphTest {
 		graph.addEdge(v3, v4);
 		graph.addEdge(v1, v3);
 		
-		assertFalse(0==graph.size());
+		assertFalse(0==graph.order());
 		graph.clear();
-		assertTrue(0==graph.size());
+		assertTrue(0==graph.order());
 	}
 
 	@Test
@@ -102,7 +102,7 @@ public class UndirectedGraphTest {
 		}
 		
 		assertEquals("2, 4, 3, 1, ", out);
-		assertEquals(4,graph.size());
+		assertEquals(4,graph.order());
 	
 	}
 
@@ -162,7 +162,7 @@ public class UndirectedGraphTest {
 		Edge<Integer> e3 = graph.addEdge(v3, v4);
 		graph.addEdge(v1, v3);
 		
-		graph.removeVertex(v3);
+		graph.removeVertex(v4);
 		
 		
 		Iterator<Edge> it = graph.edges();
@@ -173,8 +173,8 @@ public class UndirectedGraphTest {
 			out += e.getSource().getElement()+", "+e.getDestination().getElement()+", ";
 		}
 		
-		assertEquals("1, 3, ", out);
-	
+		assertEquals("1, 4, 4, 3, 1, 3, ", out);
+		assertEquals(3,graph.size());
 		Iterator<Vertex> it2 = graph.vertices();
 		
 		String out2 = "";
@@ -183,8 +183,9 @@ public class UndirectedGraphTest {
 			out2 += v.getElement()+", ";
 		}
 		
-		assertEquals("2, 3, 1, ", out2);
-		assertEquals(3,graph.size());
+		assertEquals("4, 3, 1, ", out2);
+		assertEquals(3,graph.order());
+		
 	}
 
 	@Test
@@ -234,7 +235,7 @@ public class UndirectedGraphTest {
 		}
 		
 		assertEquals("2, 4, 3, 1, ", out);
-		assertEquals(4,graph.size());
+		assertEquals(4,graph.order());
 	}
 
 	@Test

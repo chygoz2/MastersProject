@@ -17,6 +17,12 @@ public class AdjacencyMatrixGraph<E,A> implements Graph<E,A> {
 	}
 
 	@Override
+	public int order() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
 	public int degree(Vertex<E> v) {
 		// TODO Auto-generated method stub
 		return 0;
