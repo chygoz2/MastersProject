@@ -2,7 +2,23 @@ import java.util.*;
 
 public class DetectClaw {
 	public static void main(String [] args){
+		UndirectedGraph graph = new UndirectedGraph();
+		Vertex v1 = graph.addVertex(1);
+		Vertex v2 = graph.addVertex(2);
+		Vertex v3 = graph.addVertex(3);
+		Vertex v4 = graph.addVertex(4);
 		
+		graph.addEdge(v1, v2);
+		graph.addEdge(v3, v2);
+		graph.addEdge(v4, v2);
+		
+		Map phase1Result = phaseOne(graph);
+		if((boolean)phase1Result.get("clawFound")){
+			UndirectedGraph claw = (UndirectedGraph)phase1Result.get("claw");
+			DetectDiamond.printGraph(claw);
+		}else{
+			//Map phase2Result = phaseTwo(graph);
+		}
 	}
 	
 	public static Map phaseOne(UndirectedGraph graph){

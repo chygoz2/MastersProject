@@ -5,7 +5,7 @@ public class AdjacencyListGraph {
 	private Set<Integer> [] adjList;
 	
 	public AdjacencyListGraph(int max){
-		adjList = (Set<Integer>[])new Object[max];
+		adjList = new Set[max];
 		order = 0;
 		size = 0;
 	}
@@ -58,9 +58,20 @@ public class AdjacencyListGraph {
 	}
 	
 	public void removeVertex(int v){
+		//remove edges containing vertex
+		for(Set<Integer> s: adjList){
+			if(s!=null){
+				if(s.remove(v))
+					size--;
+			}
+		}
+		
+		//then remove vertex
 		validateVertex(v);
 		adjList[v] = null;
 		order--;
+		
+
 	}
 	
 	public void removeEdge(int v1, int v2){
@@ -89,6 +100,56 @@ public class AdjacencyListGraph {
 		return true;
 	}
 	
+	public List<Integer> depthFirstTraversal(int start){
+		Stack<Integer> vertexStack = new Stack<Integer>();
+		List<Integer> list = new ArrayList<Integer>();
+		boolean[] visited = new boolean[adjList.length];
+		
+		vertexStack.push(start);
+		visited[start] = true;
+		
+		while(!vertexStack.isEmpty()){
+			Integer v = vertexStack.pop();
+			list.add(v);
+			//get vertex v's neighbours
+			Iterator<Integer> vNeighbours = this.neighbours(v);
+			while(vNeighbours.hasNext()){
+				Integer w = vNeighbours.next();
+				if(!visited[w]){
+					vertexStack.push(w);
+					visited[w] = true;
+				}
+			}
+			
+		}
+		return list;
+	}
+	
+	public List<Integer> breadthFirstTraversal(int start){
+		Queue<Integer> vertexQueue = new LinkedList<Integer>();
+		List<Integer> list = new ArrayList<Integer>();
+		boolean[] visited = new boolean[adjList.length];
+		
+		vertexQueue.add(start);
+		visited[start] = true;
+		
+		while(!vertexQueue.isEmpty()){
+			Integer v = vertexQueue.remove();
+			list.add(v);
+			//get vertex v's neighbours
+			Iterator<Integer> vNeighbours = this.neighbours(v);
+			while(vNeighbours.hasNext()){
+				Integer w = vNeighbours.next();
+				if(!visited[w]){
+					vertexQueue.add(w);
+					visited[w] = true;
+				}
+			}
+			
+		}
+		return list;
+	}
+	
 	private class VertexIterator implements Iterator, Iterable{
 		private int pos=0;
 		
@@ -104,7 +165,7 @@ public class AdjacencyListGraph {
 			if(pos>=adjList.length)
 				return false;
 			while(true){
-				if(adjList[pos]==null)
+				if(pos<adjList.length && adjList[pos]==null)
 					pos++;
 				else if(pos<adjList.length)
 					return true;

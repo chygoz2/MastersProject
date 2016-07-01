@@ -18,6 +18,10 @@ public class ListSimplicialVertices {
 		graph.addEdge(v1, v3);
 		graph.addEdge(v1, v5);
 		graph.addEdge(v3, v5);
+		graph.addEdge(v2, v5);
+//		graph.addEdge(v2, v4);
+//		graph.addEdge(v1, v4);
+//		graph.addEdge(v4, v5);
 		
 		
 		graph.mapVertexToId();
@@ -75,18 +79,19 @@ public class ListSimplicialVertices {
 				
 				boolean isSimplicial = true;
 				
-				for(Vertex one: vNeigh1){
-					if(!isSimplicial)
-						break;
-					for(Vertex two: vNeigh2){
-						if(!one.equals(two)){ //prevent checking if a vertex has an edge with itself
-							if(!graph.containsEdge(one, two)){
-								isSimplicial = false;
-								break;
+				here:
+					for(Vertex one: vNeigh1){
+//						if(!isSimplicial)
+//							break;
+						for(Vertex two: vNeigh2){
+							if(!one.equals(two)){ //prevent checking if a vertex has an edge with itself
+								if(!graph.containsEdge(one, two)){
+									isSimplicial = false;
+									break here;
+								}
 							}
 						}
 					}
-				}
 				if(isSimplicial){
 					simplicialFound = true;
 					simplicialVertices.add(v);
@@ -104,7 +109,7 @@ public class ListSimplicialVertices {
 		
 		for(Vertex v: highDegreeVertices){
 			Iterable<Vertex> vNeigh = (Iterable<Vertex>)graph.neighbours(v);
-			boolean allContained = true;;
+			boolean allContained = true;
 			for(Vertex vv: vNeigh){
 				if(!highDegreeVertices.contains(vv)){
 					markedVertices.add(v);
@@ -124,37 +129,64 @@ public class ListSimplicialVertices {
 	}
 
 	public static Map phaseFour(UndirectedGraph graph, List<Vertex> markedVertices){
-//		Map phaseFourResults = new HashMap();
-//		
-//		double[][] adj = graph.getAdjacencyMatrix();
-//		
-//		//put 1's on the diagonal
-//		for(int i=0;i<adj.length;i++){
-//			adj[i][i] = 1;
-//		}
-//		
-//		//square the resulting adjacency matrix
-//		Matrix A = new Matrix(adj);
-//		Matrix aSquared = A.times(A);
-//		
-//		aSquared.print(3, 0);
+		Map phaseFourResults = new HashMap();
 		
-		//get vertices of the new graph
-		Set<Vertex> gSet = new HashSet<Vertex>();
+		//create a map between vertices and matrix indices
+		Map<Vertex, Integer> vertexIndexMap = new HashMap<Vertex, Integer>();
+		int a = 0;
+		
 		for(Vertex v: (Iterable<Vertex>)graph.vertices()){
-			gSet.add(v);
+			vertexIndexMap.put(v, a);
+			a++;
 		}
 		
-		//Remove vertices which have been marked from the set
-		for(Vertex v: markedVertices){
-			if(gSet.contains(v)){
-				gSet.remove(v);
+		double[][] adj = graph.getAdjacencyMatrix();
+		
+		//put 1's on the diagonal
+		for(int i=0;i<adj.length;i++){
+			adj[i][i] = 1;
+		}
+		
+		//square the resulting adjacency matrix
+		Matrix A = new Matrix(adj);
+		Matrix aSquared = A.times(A);
+		
+		//aSquared.print(3, 0);
+		
+//		DetectDiamond.printGraph(graph);
+		
+		List<Vertex> simplicialVertices = new ArrayList<Vertex>();
+		
+		for(Vertex x: (Iterable<Vertex>)graph.vertices()){
+			//get v's neighbours
+			//System.out.println("Contains: "+markedVertices.contains(x));
+			if(!markedVertices.contains(x)) //do check only on unmarked vertices from phase 2
+			{
+				Iterable<Vertex> vNeigh = (Iterable<Vertex>)graph.neighbours(x);
+				
+				boolean isSimplicial = true;
+				
+				//perform simplicial vertices check of theorem 1
+				for(Vertex y: vNeigh){
+					double i = aSquared.get(vertexIndexMap.get(x),vertexIndexMap.get(y));
+					double j = aSquared.get(vertexIndexMap.get(x),vertexIndexMap.get(x));
+					if(Math.abs(i-j)>1e-6){
+						isSimplicial = false;
+						break;
+					}
+				}
+				
+				if(isSimplicial){
+					simplicialVertices.add(x);
+				}
 			}
 		}
 		
 		//get simplicial vertices
-		Map phase1Results = phaseOne(graph, gSet);	
-		return phase1Results;
+		phaseFourResults.put("simplicialFound", !simplicialVertices.isEmpty());
+		phaseFourResults.put("simplicialVertices", simplicialVertices);
+		
+		return phaseFourResults;
 		
 		
 	}
