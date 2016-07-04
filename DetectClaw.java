@@ -34,6 +34,8 @@ public class DetectClaw {
 		graph.addEdge(v4, v6);
 		graph.addEdge(v4, v7);
 		graph.addEdge(v6, v7);
+		graph.addEdge(v6, v5);
+		graph.addEdge(v5, v7);
 		
 		graph.mapVertexToId();
 		
@@ -116,6 +118,7 @@ public class DetectClaw {
 			a++;
 		}
 		double[][] A = graph.getAdjacencyMatrix();
+		
 		here:
 		for(Vertex v: vertices){
 			//get neighbourhood graph
@@ -158,10 +161,10 @@ public class DetectClaw {
 						int jp = vertexIndexMap1.indexOf(graph.getVertexWithId(jVertexId));
 						
 						//look for the index of the third vertex to complete the claw in the adjacency matrix
-						for(int k=0; k<A.length;k++){
-							if(k!=ip && k!= jp && (A[k][ip] == 0) && (A[k][jp]==0)){
+						for(int k=0; k<cm.getRowDimension();k++){
+							if(k!=i && k!= j && (cm.get(k, i) == 1) && (cm.get(k, j) == 1)){
 								//then k is the index of the last vertex of the claw 
-								kVertex = vertexIndexMap1.get(k);
+								kVertex = vertexIndexMap2.get(k);
 								clawVertices.add(iVertex);
 								clawVertices.add(jVertex);
 								clawVertices.add(v);
