@@ -1,23 +1,54 @@
 import java.util.*;
 
+import Jama.Matrix;
+
 public class DetectClaw {
 	public static void main(String [] args){
+//		UndirectedGraph graph = new UndirectedGraph();
+//		Vertex v1 = graph.addVertex(1);
+//		Vertex v2 = graph.addVertex(2);
+//		Vertex v3 = graph.addVertex(3);
+//		Vertex v4 = graph.addVertex(4);
+//		
+//		graph.addEdge(v1, v2);
+//		graph.addEdge(v3, v2);
+//		graph.addEdge(v4, v2);
+//		
+//		graph.mapVertexToId();
+		
+		
 		UndirectedGraph graph = new UndirectedGraph();
 		Vertex v1 = graph.addVertex(1);
 		Vertex v2 = graph.addVertex(2);
 		Vertex v3 = graph.addVertex(3);
 		Vertex v4 = graph.addVertex(4);
+		Vertex v5 = graph.addVertex(5);
+		Vertex v6 = graph.addVertex(6);
+		Vertex v7 = graph.addVertex(7);
 		
-		graph.addEdge(v1, v2);
-		graph.addEdge(v3, v2);
-		graph.addEdge(v4, v2);
+		graph.addEdge(v1, v5);
+		graph.addEdge(v1, v3);
+		graph.addEdge(v2, v3);
+		graph.addEdge(v3, v4);
+		graph.addEdge(v4, v5);
+		graph.addEdge(v4, v6);
+		graph.addEdge(v4, v7);
+		graph.addEdge(v6, v7);
+		
+		graph.mapVertexToId();
 		
 		Map phase1Result = phaseOne(graph);
 		if((boolean)phase1Result.get("clawFound")){
 			UndirectedGraph claw = (UndirectedGraph)phase1Result.get("claw");
 			DetectDiamond.printGraph(claw);
 		}else{
-			//Map phase2Result = phaseTwo(graph);
+			Map phase2Result = phaseTwo(graph);
+			if((boolean)phase2Result.get("clawFound")){
+				UndirectedGraph claw = (UndirectedGraph)phase2Result.get("claw");
+				DetectDiamond.printGraph(claw);
+			}else{
+				System.out.println("Claw not found");
+			}
 		}
 	}
 	
@@ -70,7 +101,84 @@ public class DetectClaw {
 		return phase1Results;
 	}
 	
-	public static void phaseTwo(){
+	public static Map phaseTwo(UndirectedGraph graph){
+		Map phase2Results = new HashMap();
+		List<Vertex> clawVertices = new ArrayList<Vertex>();
 		
+		Iterable<Vertex> vertices = (Iterable<Vertex>)graph.vertices();
+		
+		//create a mapping between vertices and matrix indices
+		List<Vertex> vertexIndexMap1 = new ArrayList<Vertex>();
+		int a = 0;
+		
+		for(Vertex v: (Iterable<Vertex>)graph.vertices()){
+			vertexIndexMap1.add(a, v);
+			a++;
+		}
+		double[][] A = graph.getAdjacencyMatrix();
+		here:
+		for(Vertex v: vertices){
+			//get neighbourhood graph
+			UndirectedGraph vNeigh = DetectDiamond.getNeighbourGraph(graph, v);
+			
+			if(vNeigh.order()<3)
+				continue;
+			
+			double[][] complementMatrix = vNeigh.getComplementMatrix();
+			Matrix cm = new Matrix(complementMatrix);
+			Matrix cmSquared = cm.times(cm);
+			
+			//create a map between vertices and matrix indices
+			Map<Integer, Vertex> vertexIndexMap2 = new HashMap<Integer, Vertex>();
+			int b = 0;
+			
+			for(Vertex vv: (Iterable<Vertex>)vNeigh.vertices()){
+				vertexIndexMap2.put(b,vv);
+				b++;
+			}
+			
+			//check for presence of triangle in compliment
+			for(int i=0; i<cm.getRowDimension();i++){
+				for(int j=0; j<cm.getRowDimension();j++){
+					//if there is an edge between i and j and there is a path of length 2 between
+					//i and j, then there is a triangle in that neighbourhood
+					if(i!=j && cm.get(i,j)>0 && cmSquared.get(i,j)>0){
+						//find the third vertex asides i and j to complete the triangle
+
+						//get i's and j's neighbour vertices
+						Vertex iVertex = vertexIndexMap2.get(i);
+						Vertex jVertex = vertexIndexMap2.get(j);
+						Vertex kVertex;
+						
+						int iVertexId = ((UndirectedGraph.UnVertex)iVertex).getId();
+						int jVertexId = ((UndirectedGraph.UnVertex)jVertex).getId();
+						
+						//get indices of these matrices in the parent graph
+						int ip = vertexIndexMap1.indexOf(graph.getVertexWithId(iVertexId));
+						int jp = vertexIndexMap1.indexOf(graph.getVertexWithId(jVertexId));
+						
+						//look for the index of the third vertex to complete the claw in the adjacency matrix
+						for(int k=0; k<A.length;k++){
+							if(k!=ip && k!= jp && (A[k][ip] == 0) && (A[k][jp]==0)){
+								//then k is the index of the last vertex of the claw 
+								kVertex = vertexIndexMap1.get(k);
+								clawVertices.add(iVertex);
+								clawVertices.add(jVertex);
+								clawVertices.add(v);
+								clawVertices.add(kVertex);
+//								System.out.println("Vertices are "+iVertex.getElement()+" and "+
+//											jVertex.getElement() + " and "+kVertex.getElement());
+								phase2Results.put("claw", DetectDiamond.makeGraphFromVertexSet(graph, clawVertices));
+								break here;
+							}
+						}
+							
+					}
+					
+				}
+			}
+		}
+		phase2Results.put("clawFound", !clawVertices.isEmpty());
+		return phase2Results;
 	}
 }

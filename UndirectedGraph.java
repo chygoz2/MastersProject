@@ -260,6 +260,33 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		return A;
 	}
 	
+	public double[][] getComplementMatrix(){
+		double[][] A = new double[order][order];
+		UnVertex<E> curr = firstVertex;
+		int i=0, j=0;
+		UnVertex<E> next = firstVertex;
+		while(curr!=null){
+			while(next != null){
+				if(containsEdge(curr,next) || curr.equals(next)){
+					//System.out.println("i= "+i+", j= "+j+", next is "+next.getElement());
+					A[i][j] = 0;
+				}
+				else{
+					//System.out.println("i= "+i+", j= "+j+", next is "+next.getElement());
+					A[i][j] = 1;
+				}
+				next = next.succ;
+				j++;
+			}
+			curr = curr.succ;
+			i++; j=0;
+			next = firstVertex;
+		}
+		
+		
+		return A;
+	}
+	
 	public void printAdjacencyMatrix(){
 		double[][] A = this.getAdjacencyMatrix();
 		for(int i=0; i<A.length; i++){
