@@ -125,7 +125,38 @@ public final class Utility {
 		
 		printGraph(graph);
 		graph.printAdjacencyMatrix();
+		saveGraphToFile(graph);
 		return graph;
+	}
+	
+	public static void saveGraphToFile(UndirectedGraph graph){
+		String out = "";
+		out += String.format("%d%n", graph.size());
+		Iterator<Vertex> vertices = graph.vertices();
+		
+		while(vertices.hasNext()){
+			Vertex v1 = vertices.next();
+			Iterator<Vertex> vertices2 = graph.vertices();
+			while(vertices2.hasNext()){
+				Vertex v2 = vertices2.next();
+				if(graph.containsEdge(v1, v2)){
+					out += "1 ";
+				}else{
+					out += "0 ";
+				}
+			}
+			out+=String.format("%n");
+		}
+		
+		try {
+			FileWriter writer = new FileWriter("genmatrix");
+			writer.write(out);
+			writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	//method to create subgraph in the neighbourhood of vertex v
@@ -145,15 +176,15 @@ public final class Utility {
 		
 		//add the vertices
 		for(Vertex ve: vertices){
-			UndirectedGraph.UnVertex v = (UndirectedGraph.UnVertex)ve;
-			int id = v.getId();
+//			UndirectedGraph.UnVertex v = (UndirectedGraph.UnVertex)ve;
+			int id = ve.getId();
 			UndirectedGraph.UnVertex v1 = (UndirectedGraph.UnVertex)g1.addVertex(ve.getElement());
 			g1.setVertexId(v1,id);
 		}		
 		
-		Iterator vIt = g1.vertices();
+		Iterator<Vertex> vIt = g1.vertices();
 		while(vIt.hasNext()){
-			Iterator vIt2 = g1.vertices();
+			Iterator<Vertex> vIt2 = g1.vertices();
 			UndirectedGraph.UnVertex one = (UndirectedGraph.UnVertex)vIt.next();
 			while(vIt2.hasNext()){
 				UndirectedGraph.UnVertex two = (UndirectedGraph.UnVertex)vIt2.next();
@@ -161,7 +192,8 @@ public final class Utility {
 				UndirectedGraph.UnVertex nTwo = (UndirectedGraph.UnVertex)graph.getVertexWithId(two.getId());
 				if(nOne!=null && nTwo!=null && graph.containsEdge(nOne, nTwo)){
 					if(!g1.containsEdge(one,two)){
-						UndirectedGraph.UnEdge e = (UndirectedGraph.UnEdge) g1.addEdge(one, two);
+//						UndirectedGraph.UnEdge e = (UndirectedGraph.UnEdge) g1.addEdge(one, two);
+						g1.addEdge(one, two);
 					}
 				}
 			}
