@@ -4,14 +4,14 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 
 	private UnVertex<E> firstVertex;
 	private UnEdge<A> firstEdge;
-	private int size,order;
+	private int size;
+	//private int size,order;
 	private Map<Integer,Vertex<E>> vertexIdMap;
 	
 	public UndirectedGraph(){
 		firstVertex = null;
 		firstEdge = null;
 		size = 0;
-		order = 0;
 		vertexIdMap = new HashMap<Integer,Vertex<E>>();
 	}
 	
@@ -21,16 +21,16 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		return this.size;
 	}
 	
-	@Override
-	public int order() {
-		// TODO Auto-generated method stub
-		return this.order;
-	}
+//	@Override
+//	public int order() {
+//		// TODO Auto-generated method stub
+//		return this.order;
+//	}
 
 	@Override
 	public int degree(Vertex<E> v) {
 		// TODO Auto-generated method stub
-		Iterator<Edge> iterator = connectingEdges(v);
+		Iterator<Edge<A>> iterator = connectingEdges(v);
 		int i = 0;
 		while(iterator.hasNext()){
 			i++;
@@ -42,22 +42,23 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 	@Override
 	public boolean containsEdge(Vertex<E> v0, Vertex<E> v1) {
 		// TODO Auto-generated method stub
-		Iterator<Edge> iterator = edges();
-		while(iterator.hasNext()){
-			UnEdge<A> edge = (UnEdge<A>)iterator.next();
-			if((edge.source.equals(v0) && edge.destination.equals(v1)) ||
-					(edge.source.equals(v1) && edge.destination.equals(v0))){
-				return true;
-			}
-		}
-		return false;
+//		Iterator<Edge<A>> iterator = edges();
+//		while(iterator.hasNext()){
+//			UnEdge<A> edge = (UnEdge<A>)iterator.next();
+//			if((edge.source.equals(v0) && edge.destination.equals(v1)) ||
+//					(edge.source.equals(v1) && edge.destination.equals(v0))){
+//				return true;
+//			}
+//		}
+		return ((UnVertex<E>)v0).neighbours.contains(v1);
+		//return false;
 	}
 
 	@Override
 	public void clear() {
 		// TODO Auto-generated method stub
 		size = 0;
-		order = 0;
+//		order = 0;
 		firstVertex = null;
 		firstEdge = null;
 	}
@@ -74,7 +75,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 			firstVertex.pred = vertex;
 			firstVertex = vertex;
 		}
-		order++;
+		size++;
 		return vertex;
 	}
 
@@ -96,7 +97,12 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 			firstEdge.pred = edge;
 			firstEdge = edge;
 		}
-		size++;
+		if(!v0.equals(v1)){
+			((UnVertex<E>)v0).neighbours.add(v1);
+			((UnVertex<E>)v1).neighbours.add(v0);
+		}
+		
+		//size++;
 		return edge;
 	}
 
@@ -105,7 +111,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		// TODO Auto-generated method stub
 		
 		//remove all edges that connect to vertex v	
-		Iterator<Edge> it = connectingEdges(v);
+		Iterator<Edge<A>> it = connectingEdges(v);
 		while(it.hasNext()){
 			UnEdge<A> e = (UnEdge<A>)it.next();
 			removeEdge(e);
@@ -125,7 +131,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 			if(next!=null)
 				next.pred = before;
 		}
-		order--; //decrement the size of the graph
+		size--; //decrement the size of the graph
 		mapVertexToId();
 
 	}
@@ -146,29 +152,34 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 			if(post != null)
 				post.pred = pre;
 		}
-		size--;
+		UnVertex<E> s = (UnVertex<E>)e.getSource();
+		UnVertex<E> d = (UnVertex<E>)e.getDestination();
+		s.neighbours.remove(d);
+		d.neighbours.remove(s);
+//		size--;
 	}
 
 	@Override
-	public Iterator<Vertex> vertices() {
+	public Iterator<Vertex<E>> vertices() {
 		// TODO Auto-generated method stub
 		return new VertexIterator();
 	}
 
 	@Override
-	public Iterator<Edge> edges() {
+	public Iterator<Edge<A>> edges() {
 		// TODO Auto-generated method stub
 		return new EdgeIterator();
 	}
 
 	@Override
-	public Iterator<Vertex> neighbours(Vertex<E> v) {
+	public Iterator<Vertex<E>> neighbours(Vertex<E> v) {
 		// TODO Auto-generated method stub
-		return new VertexNeighbourIterator(v);
+		//return new VertexNeighbourIterator(v);
+		return ((UnVertex<E>)v).neighbours.iterator();
 	}
 
 	@Override
-	public Iterator<Edge> connectingEdges(Vertex<E> v) {
+	public Iterator<Edge<A>> connectingEdges(Vertex<E> v) {
 		// TODO Auto-generated method stub
 		return new VertexEdgesIterator(v);
 	}
@@ -185,7 +196,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 			Vertex<E> v = vertexStack.pop();
 			list.add(v);
 			//get vertex v's neighbours
-			Iterator<Vertex> vNeighbours = this.neighbours(v);
+			Iterator<Vertex<E>> vNeighbours = this.neighbours(v);
 			while(vNeighbours.hasNext()){
 				UnVertex<E> w = (UnVertex<E>)vNeighbours.next();
 				if(!w.visited){
@@ -211,7 +222,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 			Vertex<E> v = vertexQueue.remove();
 			list.add(v);
 			//get vertex v's neighbours
-			Iterator<Vertex> vNeighbours = this.neighbours(v);
+			Iterator<Vertex<E>> vNeighbours = this.neighbours(v);
 			while(vNeighbours.hasNext()){
 				UnVertex<E> w = (UnVertex<E>)vNeighbours.next();
 				if(!w.visited){
@@ -234,7 +245,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 	}
 	
 	public double[][] getAdjacencyMatrix(){
-		double[][] A = new double[order][order];
+		double[][] A = new double[size][size];
 		UnVertex<E> curr = firstVertex;
 		int i=0, j=0;
 		UnVertex<E> next = firstVertex;
@@ -261,7 +272,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 	}
 	
 	public double[][] getComplementMatrix(){
-		double[][] A = new double[order][order];
+		double[][] A = new double[size][size];
 		UnVertex<E> curr = firstVertex;
 		int i=0, j=0;
 		UnVertex<E> next = firstVertex;
@@ -291,7 +302,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		double[][] A = this.getAdjacencyMatrix();
 		for(int i=0; i<A.length; i++){
 			for(int j=0; j<A[i].length; j++){
-				System.out.print(A[i][j]+" ");
+				System.out.print((int)A[i][j]+" ");
 			}
 			System.out.println();
 		}
@@ -372,7 +383,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		
 	}
 	
-	private class EdgeIterator implements Iterator<Edge>, Iterable<Edge>{
+	private class EdgeIterator implements Iterator<Edge<A>>, Iterable<Edge<A>>{
 
 		private UnEdge<A> pos;
 		
@@ -399,14 +410,14 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		}
 
 		@Override
-		public Iterator<Edge> iterator() {
+		public Iterator<Edge<A>> iterator() {
 			// TODO Auto-generated method stub
 			return this;
 		}
 		
 	}
 	
-	private class VertexIterator implements Iterator<Vertex>, Iterable<Vertex>{
+	private class VertexIterator implements Iterator<Vertex<E>>, Iterable<Vertex<E>>{
 
 		private UnVertex<E> post;
 		
@@ -433,14 +444,14 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		}
 
 		@Override
-		public Iterator<Vertex> iterator() {
+		public Iterator<Vertex<E>> iterator() {
 			// TODO Auto-generated method stub
 			return this;
 		}
 		
 	}
 	
-	private class VertexEdgesIterator implements Iterator<Edge>, Iterable<Edge>{
+	private class VertexEdgesIterator implements Iterator<Edge<A>>, Iterable<Edge<A>>{
 
 		private UnVertex<E> vertex;
 		private UnEdge<A> pos;
@@ -485,7 +496,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		}
 
 		@Override
-		public Iterator<Edge> iterator() {
+		public Iterator<Edge<A>> iterator() {
 			// TODO Auto-generated method stub
 			return this;
 		}
@@ -499,12 +510,14 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		private UnVertex<E> succ;
 		private boolean visited;
 		private int id;
+		private Set<Vertex<E>> neighbours;
 		
 		public UnVertex(E elem, UnVertex<E> pred, UnVertex<E> succ){
 			this.elem = elem;
 			this.pred = pred;
 			this.succ = succ;
 			visited = false;
+			neighbours = new HashSet<Vertex<E>>();
 		}
 		@Override
 		public E getElement() {
@@ -525,6 +538,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		public int getId(){
 			return this.id;
 		}
+		
 	}
 	
 	public class UnEdge<A> implements Edge<A>{

@@ -16,11 +16,11 @@ public class AdjacencyMatrixGraph<E,A> implements Graph<E,A> {
 		return 0;
 	}
 
-	@Override
-	public int order() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+//	@Override
+//	public int order() {
+//		// TODO Auto-generated method stub
+//		return 0;
+//	}
 
 	@Override
 	public int degree(Vertex<E> v) {
@@ -71,25 +71,25 @@ public class AdjacencyMatrixGraph<E,A> implements Graph<E,A> {
 	}
 
 	@Override
-	public Iterator<Vertex> vertices() {
+	public Iterator<Vertex<E>> vertices() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Iterator<Edge> edges() {
+	public Iterator<Edge<A>> edges() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Iterator<Vertex> neighbours(Vertex<E> v) {
+	public Iterator<Vertex<E>> neighbours(Vertex<E> v) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Iterator<Edge> connectingEdges(Vertex<E> v) {
+	public Iterator<Edge<A>> connectingEdges(Vertex<E> v) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -119,6 +119,18 @@ public class AdjacencyMatrixGraph<E,A> implements Graph<E,A> {
 			v[0] = vertexArray[source];
 			v[1] = vertexArray[destination];
 			return v;
+		}
+
+		@Override
+		public Vertex getSource() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Vertex getDestination() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 		
 	}

@@ -20,9 +20,9 @@ public class UndirectedGraphTest {
 		graph.addEdge(v3, v2);
 		graph.addEdge(v3, v4);
 		
-		assertEquals("Graph order",4,graph.order());
-		assertEquals("Graph size",3,graph.size());
-		assertFalse("Graph order 2", 3==graph.order());
+		assertEquals("Graph order",4,graph.size());
+//		assertEquals("Graph size",3,graph.size());
+		assertFalse("Graph order 2", 3==graph.size());
 	}
 
 	@Test
@@ -78,9 +78,9 @@ public class UndirectedGraphTest {
 		graph.addEdge(v3, v4);
 		graph.addEdge(v1, v3);
 		
-		assertFalse(0==graph.order());
+		assertFalse(0==graph.size());
 		graph.clear();
-		assertTrue(0==graph.order());
+		assertTrue(0==graph.size());
 	}
 
 	@Test
@@ -93,7 +93,7 @@ public class UndirectedGraphTest {
 		Vertex<Integer> v3 = graph.addVertex(4);
 		Vertex<Integer> v4 = graph.addVertex(2);
 		
-		Iterator<Vertex> it = graph.vertices();
+		Iterator<Vertex<Integer>> it = graph.vertices();
 		
 		String out = "";
 		while (it.hasNext()){
@@ -102,7 +102,7 @@ public class UndirectedGraphTest {
 		}
 		
 		assertEquals("2, 4, 3, 1, ", out);
-		assertEquals(4,graph.order());
+		assertEquals(4,graph.size());
 	
 	}
 
@@ -118,7 +118,7 @@ public class UndirectedGraphTest {
 		graph.addEdge(v1, v2);
 		graph.addEdge(v3, v2);
 		
-		Iterator<Edge> it = graph.edges();
+		Iterator<Edge<Integer>> it = graph.edges();
 		
 		String out = "";
 		while (it.hasNext()){
@@ -165,7 +165,7 @@ public class UndirectedGraphTest {
 		graph.removeVertex(v4);
 		
 		
-		Iterator<Edge> it = graph.edges();
+		Iterator<Edge<Integer>> it = graph.edges();
 		
 		String out = "";
 		while (it.hasNext()){
@@ -175,7 +175,7 @@ public class UndirectedGraphTest {
 		
 		assertEquals("1, 4, 4, 3, 1, 3, ", out);
 		assertEquals(3,graph.size());
-		Iterator<Vertex> it2 = graph.vertices();
+		Iterator<Vertex<Integer>> it2 = graph.vertices();
 		
 		String out2 = "";
 		while (it2.hasNext()){
@@ -184,7 +184,7 @@ public class UndirectedGraphTest {
 		}
 		
 		assertEquals("4, 3, 1, ", out2);
-		assertEquals(3,graph.order());
+		assertEquals(3,graph.size());
 		
 	}
 
@@ -205,7 +205,7 @@ public class UndirectedGraphTest {
 		graph.removeEdge(e3);
 		graph.removeEdge(e4);
 		
-		Iterator<Edge> it = graph.edges();
+		Iterator<Edge<Integer>> it = graph.edges();
 		
 		String out = "";
 		while (it.hasNext()){
@@ -226,7 +226,7 @@ public class UndirectedGraphTest {
 		Vertex<Integer> v3 = graph.addVertex(4);
 		Vertex<Integer> v4 = graph.addVertex(2);
 		
-		Iterator<Vertex> it = graph.vertices();
+		Iterator<Vertex<Integer>> it = graph.vertices();
 		
 		String out = "";
 		while (it.hasNext()){
@@ -235,7 +235,7 @@ public class UndirectedGraphTest {
 		}
 		
 		assertEquals("2, 4, 3, 1, ", out);
-		assertEquals(4,graph.order());
+		assertEquals(4,graph.size());
 	}
 
 	@Test
@@ -248,7 +248,7 @@ public class UndirectedGraphTest {
 		Vertex<Integer> v3 = graph.addVertex(4);
 		Vertex<Integer> v4 = graph.addVertex(2);
 		
-		Iterator<Edge> it = graph.edges();
+		Iterator<Edge<Integer>> it = graph.edges();
 		assertFalse(it.hasNext());
 		
 		graph.addEdge(v1, v2);
@@ -281,7 +281,7 @@ public class UndirectedGraphTest {
 		Edge<Integer> e3 = graph.addEdge(v3, v4);
 		graph.addEdge(v1, v3);
 		
-		Iterator<Vertex> it = graph.neighbours(v3);
+		Iterator<Vertex<Integer>> it = graph.neighbours(v3);
 		
 		String out = "";
 		while (it.hasNext()){
@@ -289,7 +289,7 @@ public class UndirectedGraphTest {
 			out += v.getElement()+", ";
 		}
 		
-		assertEquals("1, 2, 3, ", out);
+		assertEquals("2, 3, 1, ", out);
 		
 		it = graph.neighbours(v2);
 		
@@ -300,6 +300,28 @@ public class UndirectedGraphTest {
 		}
 		
 		assertEquals("4, 1, ", out);
+		
+		
+		graph.removeVertex(v3);
+		it = graph.vertices();
+		out = "";
+		while (it.hasNext()){
+			Vertex<Integer> v = it.next();
+			out += v.getElement()+", ";
+		}
+		
+		assertEquals("2, 3, 1, ", out);
+		
+		it = graph.neighbours(v1);
+		
+		out = "";
+		while (it.hasNext()){
+			Vertex<Integer> v = it.next();
+			out += v.getElement()+", ";
+		}
+		
+		assertEquals("3, ", out);
+		
 	}
 
 	@Test
@@ -316,7 +338,7 @@ public class UndirectedGraphTest {
 		Edge<Integer> e3 = graph.addEdge(v3, v4);
 		graph.addEdge(v1, v3);
 		
-		Iterator<Edge> it = graph.connectingEdges(v2);
+		Iterator<Edge<Integer>> it = graph.connectingEdges(v2);
 		
 		String out = "";
 		while (it.hasNext()){
@@ -345,7 +367,7 @@ public class UndirectedGraphTest {
 		List<Vertex<Integer>> list = new ArrayList<Vertex<Integer>>();
 		list.add(v2); list.add(v1); list.add(v5); list.add(v3); list.add(v4); 
 		
-		Iterator<Vertex> it = graph.vertices();
+		Iterator<Vertex<Integer>> it = graph.vertices();
 		
 		String out = "";
 		while (it.hasNext()){
@@ -375,7 +397,7 @@ public class UndirectedGraphTest {
 		List<Vertex<Integer>> list = new ArrayList<Vertex<Integer>>();
 		list.add(v2); list.add(v3); list.add(v1); list.add(v4); list.add(v5); 
 		
-		Iterator<Vertex> it = graph.vertices();
+		Iterator<Vertex<Integer>> it = graph.vertices();
 		
 		String out = "";
 		while (it.hasNext()){

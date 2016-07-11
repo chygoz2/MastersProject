@@ -42,12 +42,12 @@ public class DetectClaw {
 		Map phase1Result = phaseOne(graph);
 		if((boolean)phase1Result.get("clawFound")){
 			UndirectedGraph claw = (UndirectedGraph)phase1Result.get("claw");
-			DetectDiamond.printGraph(claw);
+			Utility.printGraph(claw);
 		}else{
 			Map phase2Result = phaseTwo(graph);
 			if((boolean)phase2Result.get("clawFound")){
 				UndirectedGraph claw = (UndirectedGraph)phase2Result.get("claw");
-				DetectDiamond.printGraph(claw);
+				Utility.printGraph(claw);
 			}else{
 				System.out.println("Claw not found");
 			}
@@ -65,10 +65,10 @@ public class DetectClaw {
 		for(Vertex v: vertices){
 			if(graph.degree(v) > maxEdgeCount){
 				//look for claw with v as central vertex	
-				UndirectedGraph vNeighGraph = DetectDiamond.getNeighbourGraph(graph, v);
+				UndirectedGraph vNeighGraph = Utility.getNeighbourGraph(graph, v);
 				
 				//get components of v's neighbourhood graph
-				List<UndirectedGraph> vNeighComps = DetectDiamond.getComponents(vNeighGraph);
+				List<UndirectedGraph> vNeighComps = Utility.getComponents(vNeighGraph);
 				if(vNeighComps.size() >= 3){
 					//if the number of components is less than 3, then no claw exists in the neighbourhood of v
 					Iterable<Vertex> c1Vertices = (Iterable<Vertex>)vNeighComps.get(0).vertices();
@@ -94,7 +94,7 @@ public class DetectClaw {
 					
 					clawFound = true;
 					
-					UndirectedGraph clawGraph = DetectDiamond.makeGraphFromVertexSet(graph, clawVertices);
+					UndirectedGraph clawGraph = Utility.makeGraphFromVertexSet(graph, clawVertices);
 					phase1Results.put("claw", clawGraph);
 				}
 			}
@@ -122,9 +122,9 @@ public class DetectClaw {
 		here:
 		for(Vertex v: vertices){
 			//get neighbourhood graph
-			UndirectedGraph vNeigh = DetectDiamond.getNeighbourGraph(graph, v);
+			UndirectedGraph vNeigh = Utility.getNeighbourGraph(graph, v);
 			
-			if(vNeigh.order()<3)
+			if(vNeigh.size()<3)
 				continue;
 			
 			double[][] complementMatrix = vNeigh.getComplementMatrix();
@@ -171,7 +171,7 @@ public class DetectClaw {
 								clawVertices.add(kVertex);
 //								System.out.println("Vertices are "+iVertex.getElement()+" and "+
 //											jVertex.getElement() + " and "+kVertex.getElement());
-								phase2Results.put("claw", DetectDiamond.makeGraphFromVertexSet(graph, clawVertices));
+								phase2Results.put("claw", Utility.makeGraphFromVertexSet(graph, clawVertices));
 								break here;
 							}
 						}

@@ -28,7 +28,7 @@ public class Test {
 		graph.addEdge(v1, v3);
 		graph.addEdge(v1, v5);
 		System.out.println("Graph size is "+graph.size());
-		Iterator<Vertex> it = graph.vertices();
+		Iterator<Vertex<Integer>> it = graph.vertices();
 		
 		System.out.println("Graph vertices");
 		while (it.hasNext()){
@@ -36,7 +36,7 @@ public class Test {
 			System.out.print(v.getElement()+", ");
 		}
 		System.out.println("\nGraph edges:");
-		Iterator<Edge> it2 = graph.edges();
+		Iterator<Edge<Integer>> it2 = graph.edges();
 		while (it2.hasNext()){
 			UndirectedGraph.UnEdge edge = (UndirectedGraph.UnEdge)it2.next();
 			System.out.print("\n"+edge.getSource().getElement()+", "+ edge.getDestination().getElement());
@@ -45,7 +45,7 @@ public class Test {
 		System.out.println("The degree of vertex v3 whose element is "+v3.getElement()+" is "+graph.degree(v3));
 		
 		System.out.println("v2 neighbours");
-		Iterator<Vertex> it3 = graph.neighbours(v2);
+		Iterator<Vertex<Integer>> it3 = graph.neighbours(v2);
 
 		while(it3.hasNext()){
 			//System.out.println("True");
@@ -94,7 +94,7 @@ public class Test {
 		double[][] A = graph.getAdjacencyMatrix();
 		for(int i=0; i<A.length; i++){
 			for(int j=0; j<A[i].length; j++){
-				System.out.print(A[i][j]+" ");
+				System.out.print((int)A[i][j]+" ");
 			}
 			System.out.println();
 		}

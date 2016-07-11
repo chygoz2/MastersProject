@@ -25,7 +25,7 @@ public class DetectK4 {
 		
 		graph.mapVertexToId();
 		
-		Set[] verticesPartition = DetectDiamond.partitionVertices(graph);
+		Set[] verticesPartition = Utility.partitionVertices(graph);
 		
 		Set<Vertex> lowDegreeVertices = verticesPartition[0];
 		Set<Vertex> highDegreeVertices = verticesPartition[1];
@@ -33,12 +33,12 @@ public class DetectK4 {
 		Map phase1Results = phaseOne(graph, highDegreeVertices);
 		if((boolean)phase1Results.get("k4Found")){
 			UndirectedGraph k4 = (UndirectedGraph)phase1Results.get("k4");
-			DetectDiamond.printGraph(k4);
+			Utility.printGraph(k4);
 		}else{
 			Map phase2Results = phaseTwo(graph, lowDegreeVertices);
 			if((boolean)phase2Results.get("k4Found")){
 				UndirectedGraph k4 = (UndirectedGraph)phase2Results.get("k4");
-				DetectDiamond.printGraph(k4);
+				Utility.printGraph(k4);
 			}
 		}
 		
@@ -52,16 +52,17 @@ public class DetectK4 {
 			
 		for(Vertex x: highDegreeVertices){
 			//get x's neighbourhood graph
-			Iterable<Vertex> nXIter = (Iterable<Vertex>)graph.neighbours(x);
+			Iterator<Vertex> nXIter = graph.neighbours(x);
 			List<Vertex> nXList = new ArrayList<Vertex>();
 
 			//get the intersection of the neighbourhood vertices of x with the high degree vertices
-			for(Vertex v: nXIter){
+			while(nXIter.hasNext()){
+				Vertex v = nXIter.next();
 				if(highDegreeVertices.contains(v))
 					nXList.add(v);
 			}
 			//make graph from new list of vertices
-			UndirectedGraph graph2 = DetectDiamond.makeGraphFromVertexSet(graph, nXList);
+			UndirectedGraph graph2 = Utility.makeGraphFromVertexSet(graph, nXList);
 			double [][] adj = graph2.getAdjacencyMatrix();
 			Matrix adjMatrix = new Matrix(adj);
 			
@@ -92,7 +93,7 @@ public class DetectK4 {
 								k4Vertices.add(indexVertexMap.get(k));
 								k4Vertices.add(indexVertexMap.get(m));
 								
-								UndirectedGraph k4Graph = DetectDiamond.makeGraphFromVertexSet(graph, k4Vertices);
+								UndirectedGraph k4Graph = Utility.makeGraphFromVertexSet(graph, k4Vertices);
 								phase1Results.put("k4", k4Graph);
 								break here;
 								
@@ -121,7 +122,7 @@ public class DetectK4 {
 				nXList.add(v);
 			}
 			
-			UndirectedGraph graph2 = DetectDiamond.makeGraphFromVertexSet(graph, nXList);
+			UndirectedGraph graph2 = Utility.makeGraphFromVertexSet(graph, nXList);
 			double [][] adj = graph2.getAdjacencyMatrix();
 			Matrix adjMatrix = new Matrix(adj);
 			
@@ -152,7 +153,7 @@ public class DetectK4 {
 								k4Vertices.add(indexVertexMap.get(k));
 								k4Vertices.add(indexVertexMap.get(m));
 								
-								UndirectedGraph k4Graph = DetectDiamond.makeGraphFromVertexSet(graph, k4Vertices);
+								UndirectedGraph k4Graph = Utility.makeGraphFromVertexSet(graph, k4Vertices);
 								phase2Results.put("k4", k4Graph);
 								break here;
 								

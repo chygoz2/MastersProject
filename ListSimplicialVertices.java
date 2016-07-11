@@ -8,9 +8,9 @@ public class ListSimplicialVertices {
 		UndirectedGraph<Integer, Integer> graph = new UndirectedGraph<Integer,Integer>();
 		
 		Vertex<Integer> v1 = graph.addVertex(1);
-		Vertex<Integer> v2 = graph.addVertex(3);
-		Vertex<Integer> v3 = graph.addVertex(4);
-		Vertex<Integer> v4 = graph.addVertex(2);
+		Vertex<Integer> v2 = graph.addVertex(2);
+		Vertex<Integer> v3 = graph.addVertex(3);
+		Vertex<Integer> v4 = graph.addVertex(4);
 		Vertex<Integer> v5 = graph.addVertex(5);
 		graph.addEdge(v1, v2);
 		graph.addEdge(v3, v2);
@@ -26,7 +26,7 @@ public class ListSimplicialVertices {
 		
 		graph.mapVertexToId();
 		
-		Set[] verticesPartition = DetectDiamond.partitionVertices(graph);
+		Set[] verticesPartition = Utility.partitionVertices(graph);
 		
 		Set<Vertex> lowDegreeVertices = verticesPartition[0];
 		Set<Vertex> highDegreeVertices = verticesPartition[1];
@@ -74,16 +74,18 @@ public class ListSimplicialVertices {
 		for(Vertex v: lowDegreeVertices){
 			if(graph.degree(v) > 0){
 				//get the neighbours of v
-				Iterable<Vertex> vNeigh1 = (Iterable<Vertex>) graph.neighbours(v);
-				Iterable<Vertex> vNeigh2 = (Iterable<Vertex>) graph.neighbours(v);
+				Iterator<Vertex> vNeigh1 = graph.neighbours(v);
+				Iterator<Vertex> vNeigh2 = graph.neighbours(v);
 				
 				boolean isSimplicial = true;
 				
 				here:
-					for(Vertex one: vNeigh1){
+					while(vNeigh1.hasNext()){
 //						if(!isSimplicial)
 //							break;
-						for(Vertex two: vNeigh2){
+						Vertex one = vNeigh1.next();
+						while(vNeigh2.hasNext()){
+							Vertex two = vNeigh2.next();
 							if(!one.equals(two)){ //prevent checking if a vertex has an edge with itself
 								if(!graph.containsEdge(one, two)){
 									isSimplicial = false;
@@ -108,9 +110,10 @@ public class ListSimplicialVertices {
 		List<Vertex> markedVertices = new ArrayList<Vertex>();
 		
 		for(Vertex v: highDegreeVertices){
-			Iterable<Vertex> vNeigh = (Iterable<Vertex>)graph.neighbours(v);
+			Iterator<Vertex> vNeigh = graph.neighbours(v);
 			boolean allContained = true;
-			for(Vertex vv: vNeigh){
+			while(vNeigh.hasNext()){
+				Vertex vv = vNeigh.next();
 				if(!highDegreeVertices.contains(vv)){
 					markedVertices.add(v);
 					break;
@@ -153,7 +156,7 @@ public class ListSimplicialVertices {
 		
 		//aSquared.print(3, 0);
 		
-//		DetectDiamond.printGraph(graph);
+//		Utility.printGraph(graph);
 		
 		List<Vertex> simplicialVertices = new ArrayList<Vertex>();
 		
@@ -162,12 +165,13 @@ public class ListSimplicialVertices {
 			//System.out.println("Contains: "+markedVertices.contains(x));
 			if(!markedVertices.contains(x)) //do check only on unmarked vertices from phase 2
 			{
-				Iterable<Vertex> vNeigh = (Iterable<Vertex>)graph.neighbours(x);
+				Iterator<Vertex> vNeigh = graph.neighbours(x);
 				
 				boolean isSimplicial = true;
 				
 				//perform simplicial vertices check of theorem 1
-				for(Vertex y: vNeigh){
+				while(vNeigh.hasNext()){
+					Vertex y = vNeigh.next();
 					double i = aSquared.get(vertexIndexMap.get(x),vertexIndexMap.get(y));
 					double j = aSquared.get(vertexIndexMap.get(x),vertexIndexMap.get(x));
 					if(Math.abs(i-j)>1e-6){
