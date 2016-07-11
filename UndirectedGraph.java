@@ -50,8 +50,9 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 //				return true;
 //			}
 //		}
+		
 		return ((UnVertex<E>)v0).neighbours.contains(v1);
-		//return false;
+//		return false;
 	}
 
 	@Override

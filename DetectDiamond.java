@@ -4,21 +4,24 @@ import Jama.Matrix;
 
 public class DetectDiamond {
 	public static void main(String [] args){
-		UndirectedGraph<Integer, Integer> graph = new UndirectedGraph<Integer,Integer>();
+//		UndirectedGraph<Integer, Integer> graph = new UndirectedGraph<Integer,Integer>();
 		
-		Vertex<Integer> v1 = graph.addVertex(1);
-		Vertex<Integer> v2 = graph.addVertex(3);
-		Vertex<Integer> v3 = graph.addVertex(4);
-		Vertex<Integer> v4 = graph.addVertex(2);
-		Vertex<Integer> v5 = graph.addVertex(5);
-		graph.addEdge(v1, v2);
-		graph.addEdge(v3, v2);
-		graph.addEdge(v3, v4);
-		graph.addEdge(v1, v3);
-		graph.addEdge(v1, v5);
-		graph.addEdge(v3, v5);
+//		Vertex<Integer> v1 = graph.addVertex(0);
+//		Vertex<Integer> v2 = graph.addVertex(1);
+//		Vertex<Integer> v3 = graph.addVertex(2);
+//		Vertex<Integer> v4 = graph.addVertex(3);
+//		Vertex<Integer> v5 = graph.addVertex(4);
+//		graph.addEdge(v1, v2);
+//		graph.addEdge(v3, v2);
+//		graph.addEdge(v3, v4);
+//		graph.addEdge(v1, v3);
+//		graph.addEdge(v1, v5);
+//		graph.addEdge(v3, v5);
+//		
+//		graph.mapVertexToId();
 		
-		graph.mapVertexToId();
+//		UndirectedGraph graph = Utility.makeGraphFromFile("matrix2.txt");
+		UndirectedGraph graph = Utility.makeRandomGraph(5, 0.8);
 		
 		Set[] verticesPartition = Utility.partitionVertices(graph);
 		

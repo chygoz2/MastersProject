@@ -93,7 +93,7 @@ public final class Utility {
 		graph.mapVertexToId();
 		
 		//prints out the graph created
-		printGraph(graph);
+		//printGraph(graph);
 		
 		scanner.close();
 		return graph;
@@ -117,7 +117,7 @@ public final class Utility {
 			for(int j=i+1; j<v; j++){
 				Random random = new Random();
 				double rand = random.nextDouble();
-				if(rand>1-p){
+				if(rand<p){
 					graph.addEdge(vertices[i], vertices[j]);
 				}
 			}
@@ -159,7 +159,7 @@ public final class Utility {
 				UndirectedGraph.UnVertex two = (UndirectedGraph.UnVertex)vIt2.next();
 				UndirectedGraph.UnVertex nOne = (UndirectedGraph.UnVertex)graph.getVertexWithId(one.getId());
 				UndirectedGraph.UnVertex nTwo = (UndirectedGraph.UnVertex)graph.getVertexWithId(two.getId());
-				if(graph.containsEdge(nOne, nTwo)){
+				if(nOne!=null && nTwo!=null && graph.containsEdge(nOne, nTwo)){
 					if(!g1.containsEdge(one,two)){
 						UndirectedGraph.UnEdge e = (UndirectedGraph.UnEdge) g1.addEdge(one, two);
 					}
