@@ -123,7 +123,7 @@ public final class Utility {
 			}
 		}
 		
-		printGraph(graph);
+		//printGraph(graph);
 		//graph.printAdjacencyMatrix();
 		saveGraphToFile(graph);
 		return graph;

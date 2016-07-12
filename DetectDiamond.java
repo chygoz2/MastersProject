@@ -5,7 +5,7 @@ import Jama.Matrix;
 public class DetectDiamond {
 	public static void main(String [] args){
 //		UndirectedGraph<Integer, Integer> graph = new UndirectedGraph<Integer,Integer>();
-		
+//		
 //		Vertex<Integer> v1 = graph.addVertex(0);
 //		Vertex<Integer> v2 = graph.addVertex(1);
 //		Vertex<Integer> v3 = graph.addVertex(2);
@@ -29,17 +29,17 @@ public class DetectDiamond {
 		Set<Vertex> lowDegreeVertices = verticesPartition[0];
 		Set<Vertex> highDegreeVertices = verticesPartition[1];
 		
-		System.out.println("Printing low degree vertices degrees");
-		for(Vertex v: lowDegreeVertices){
-			System.out.println("Vertex: "+ v.getElement() + ", degree: " + graph.degree(v));
-		}
-		
-		System.out.println("Printing high degree vertices degrees");
-		for(Vertex v: highDegreeVertices){
-			System.out.println("Vertex: "+ v.getElement() + ", degree: " + graph.degree(v));
-		}
-		
-		System.out.println();
+//		System.out.println("Printing low degree vertices degrees");
+//		for(Vertex v: lowDegreeVertices){
+//			System.out.println("Vertex: "+ v.getElement() + ", degree: " + graph.degree(v));
+//		}
+//		
+//		System.out.println("Printing high degree vertices degrees");
+//		for(Vertex v: highDegreeVertices){
+//			System.out.println("Vertex: "+ v.getElement() + ", degree: " + graph.degree(v));
+//		}
+//		
+//		System.out.println();
 		//////////////////////////////////////////////////////////////////
 		//Get find components of graphs in the neighbourhood of each of the low degree vertices.
 		//also find the cliques in the process
@@ -47,14 +47,14 @@ public class DetectDiamond {
 		Map phase1Results = phaseOne(lowDegreeVertices, graph);
 //		System.out.println(phase1Results.get("diamondFound"));
 		Map cli = (HashMap)phase1Results.get("cliques");
-		for(Object g: cli.keySet()){
-			Collection c = (Collection)cli.get(g);
-			for(Object z: c){
-				System.out.println("Printing out cliques");
-				Utility.printGraph((UndirectedGraph)z);
-				System.out.println();
-			}	
-		}
+//		for(Object g: cli.keySet()){
+//			Collection c = (Collection)cli.get(g);
+//			for(Object z: c){
+//				System.out.println("Printing out cliques");
+//				Utility.printGraph((UndirectedGraph)z);
+//				System.out.println();
+//			}	
+//		}
 		
 		if((boolean)phase1Results.get("diamondFound")){
 			System.out.println("Print out one such diamond");
@@ -92,8 +92,9 @@ public class DetectDiamond {
 		//create a map for storing cliques and which vertex's neighbourhood they are in
 		Map vertexCliques = new HashMap();
 		
+		here:
 		for(Vertex v: lowDegreeVertices){
-			System.out.println("Low degree vertex is "+v.getElement());
+//			System.out.println("Low degree vertex is "+v.getElement());
 			UndirectedGraph graph2 = Utility.getNeighbourGraph(graph, v);
 			
 			//Create list for storing cliques in the neighbourhood of vertex v
@@ -122,9 +123,12 @@ public class DetectDiamond {
 							Iterator<Vertex> dIt = dTemp.vertices();
 							Vertex nVertex = dTemp.addVertex(v.getElement());
 							while(dIt.hasNext()){
-								dTemp.addEdge(nVertex, dIt.next());
+								Vertex<Integer> ne = dIt.next();
+								if(!ne.equals(nVertex))
+									dTemp.addEdge(nVertex, ne);
 							}
 							phaseOneResults.put("diamond", dTemp);
+							break here;
 						}
 					}
 				}
@@ -260,6 +264,38 @@ public class DetectDiamond {
 	}
 	
 	//checks if a P3 exists in component and returns one
+//	public static Map checkP3InComponent(UndirectedGraph graph){
+//		//if the no of vertices in graph is less than 3, then graph cannot have a p3
+//		Map result = new HashMap();
+//		if(graph.size()<3){
+//			result.put("hasP3", false);
+//			return result;
+//		}
+//		
+//		Iterator<Vertex> vIt = graph.vertices(); //gets the vertex iterator
+//		
+//		while(vIt.hasNext()){
+//			Vertex v = vIt.next();
+//			//do a breadth first search on each vertex of graph in search for a P3
+//			//stop once a p3 has been found
+//			List<Vertex> bfVertices = graph.breadthFirstTraversal(v);
+//			Vertex v1 = bfVertices.get(0);
+//			Vertex v2 = bfVertices.get(1);
+//			Vertex v3 = bfVertices.get(2);
+//			
+//			if(!(graph.containsEdge(v1, v2) && graph.containsEdge(v2, v3) &&
+//					graph.containsEdge(v1, v3))){
+//				result.put("hasP3", true);
+//				List<Vertex> vert = new ArrayList<Vertex>();
+//				vert.add(v1); vert.add(v2); vert.add(v3);
+//				result.put("p3Graph", Utility.makeGraphFromVertexSet(graph, vert));
+//				break;
+//			}
+//		}
+//	
+//		return result;
+//	}
+	
 	public static Map checkP3InComponent(UndirectedGraph graph){
 		//if the no of vertices in graph is less than 3, then graph cannot have a p3
 		Map result = new HashMap();
@@ -268,27 +304,37 @@ public class DetectDiamond {
 			return result;
 		}
 		
+		//create mapping between matrix indices and vertex
+		List<Vertex> vertexIndexMap = new ArrayList<Vertex>();
 		Iterator<Vertex> vIt = graph.vertices(); //gets the vertex iterator
-		
 		while(vIt.hasNext()){
-			Vertex v = vIt.next();
-			//do a breadth first search on each vertex of graph in search for a P3
-			//stop once a p3 has been found
-			List<Vertex> bfVertices = graph.breadthFirstTraversal(v);
-			Vertex v1 = bfVertices.get(0);
-			Vertex v2 = bfVertices.get(1);
-			Vertex v3 = bfVertices.get(2);
-			
-			if(!(graph.containsEdge(v1, v2) && graph.containsEdge(v2, v3) &&
-					graph.containsEdge(v1, v3))){
-				result.put("hasP3", true);
-				List<Vertex> vert = new ArrayList<Vertex>();
-				vert.add(v1); vert.add(v2); vert.add(v3);
-				result.put("p3Graph", Utility.makeGraphFromVertexSet(graph, vert));
-				break;
-			}
+			vertexIndexMap.add(vIt.next());
 		}
+		
+		double[][] mA = graph.getAdjacencyMatrix();
+		Matrix A = new Matrix(mA);
+		Matrix A2 = A.times(A);
+		
+		//look for a path of size 2 in A2
+		here:
+			for(int i=0; i<A2.getColumnDimension();i++){
+				for(int j=i+1; j<A2.getColumnDimension();j++){
+					if(A2.get(i,j)>0 && A.get(i,j)==0){ //then a P3 is found
+						//look for third vertex
+						for(int k=0; k<A.getColumnDimension();k++){
+							if(k!=i && k!= j && (A.get(k, i) == 1) && (A.get(k, j) == 1)){
+								List<Vertex> vert = new ArrayList<Vertex>();
+								vert.add(vertexIndexMap.get(i)); vert.add(vertexIndexMap.get(j)); vert.add(vertexIndexMap.get(k));
+								UndirectedGraph g = Utility.makeGraphFromVertexSet(graph, vert);
+								result.put("p3Graph", g);
+								break here;
+							}
+						}
+					}
+				}
+			}
 	
+		result.put("hasP3", result.get("p3Graph")!=null);	
 		return result;
 	}
 	

@@ -17,27 +17,29 @@ public class DetectClaw {
 //		graph.mapVertexToId();
 		
 		
-		UndirectedGraph graph = new UndirectedGraph();
-		Vertex v1 = graph.addVertex(0);
-		Vertex v2 = graph.addVertex(1);
-		Vertex v3 = graph.addVertex(2);
-		Vertex v4 = graph.addVertex(3);
-		Vertex v5 = graph.addVertex(4);
-		Vertex v6 = graph.addVertex(5);
-		Vertex v7 = graph.addVertex(6);
-		
-		graph.addEdge(v1, v5);
-		graph.addEdge(v1, v3);
-		graph.addEdge(v2, v3);
-		graph.addEdge(v3, v4);
-		graph.addEdge(v4, v5);
-		graph.addEdge(v4, v6);
-		graph.addEdge(v4, v7);
-		graph.addEdge(v6, v7);
-		graph.addEdge(v6, v5);
-		graph.addEdge(v5, v7);
+//		UndirectedGraph graph = new UndirectedGraph();
+//		Vertex v1 = graph.addVertex(0);
+//		Vertex v2 = graph.addVertex(1);
+//		Vertex v3 = graph.addVertex(2);
+//		Vertex v4 = graph.addVertex(3);
+//		Vertex v5 = graph.addVertex(4);
+//		Vertex v6 = graph.addVertex(5);
+//		Vertex v7 = graph.addVertex(6);
+//		
+//		graph.addEdge(v1, v5);
+//		graph.addEdge(v1, v3);
+//		graph.addEdge(v2, v3);
+//		graph.addEdge(v3, v4);
+//		graph.addEdge(v4, v5);
+//		graph.addEdge(v4, v6);
+//		graph.addEdge(v4, v7);
+//		graph.addEdge(v6, v7);
+//		graph.addEdge(v6, v5);
+//		graph.addEdge(v5, v7);
 		
 		//graph.mapVertexToId();
+		
+		UndirectedGraph graph = Utility.makeRandomGraph(10, 0.4);
 		
 		Map phase1Result = phaseOne(graph);
 		if((boolean)phase1Result.get("clawFound")){
@@ -142,10 +144,10 @@ public class DetectClaw {
 			
 			//check for presence of triangle in compliment
 			for(int i=0; i<cm.getRowDimension();i++){
-				for(int j=0; j<cm.getRowDimension();j++){
+				for(int j=i+1; j<cm.getRowDimension();j++){
 					//if there is an edge between i and j and there is a path of length 2 between
 					//i and j, then there is a triangle in that neighbourhood
-					if(i!=j && cm.get(i,j)>0 && cmSquared.get(i,j)>0){
+					if(cm.get(i,j)>0 && cmSquared.get(i,j)>0){
 						//find the third vertex asides i and j to complete the triangle
 
 						//get i's and j's neighbour vertices
@@ -153,13 +155,13 @@ public class DetectClaw {
 						Vertex jVertex = vertexIndexMap2.get(j);
 						Vertex kVertex;
 						
-						int iVertexId = (int) ((UndirectedGraph.UnVertex)iVertex).getElement();
-						int jVertexId = (int) ((UndirectedGraph.UnVertex)jVertex).getElement();
-						
-						//get indices of these matrices in the parent graph
-						int ip = vertexIndexMap1.indexOf(graph.getVertexWithElement(iVertexId));
-						int jp = vertexIndexMap1.indexOf(graph.getVertexWithElement(jVertexId));
-						
+//						int iVertexId = (int) ((UndirectedGraph.UnVertex)iVertex).getElement();
+//						int jVertexId = (int) ((UndirectedGraph.UnVertex)jVertex).getElement();
+//						
+//						//get indices of these matrices in the parent graph
+//						int ip = vertexIndexMap1.indexOf(graph.getVertexWithElement(iVertexId));
+//						int jp = vertexIndexMap1.indexOf(graph.getVertexWithElement(jVertexId));
+//						
 						//look for the index of the third vertex to complete the claw in the adjacency matrix
 						for(int k=0; k<cm.getRowDimension();k++){
 							if(k!=i && k!= j && (cm.get(k, i) == 1) && (cm.get(k, j) == 1)){
