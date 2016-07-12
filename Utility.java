@@ -90,7 +90,7 @@ public final class Utility {
 		}
 		
 		//do the id mapping
-		graph.mapVertexToId();
+		//graph.mapVertexToId();
 		
 		//prints out the graph created
 		//printGraph(graph);
@@ -124,7 +124,7 @@ public final class Utility {
 		}
 		
 		printGraph(graph);
-		graph.printAdjacencyMatrix();
+		//graph.printAdjacencyMatrix();
 		saveGraphToFile(graph);
 		return graph;
 	}
@@ -149,7 +149,7 @@ public final class Utility {
 		}
 		
 		try {
-			FileWriter writer = new FileWriter("genmatrix");
+			FileWriter writer = new FileWriter("genmatrix.txt");
 			writer.write(out);
 			writer.close();
 		} catch (IOException e) {
@@ -167,32 +167,28 @@ public final class Utility {
 		while(it.hasNext()){
 			neighbours.add(it.next());
 		}
-		
 		return makeGraphFromVertexSet(graph, neighbours);
 	}
 	
 	public static UndirectedGraph<Integer,Integer> makeGraphFromVertexSet(UndirectedGraph graph, Collection<Vertex> vertices){
-		UndirectedGraph g1 = new UndirectedGraph();
+		UndirectedGraph<Integer,Integer> g1 = new UndirectedGraph<Integer,Integer>();
 		
 		//add the vertices
-		for(Vertex ve: vertices){
-//			UndirectedGraph.UnVertex v = (UndirectedGraph.UnVertex)ve;
-			int id = ve.getId();
-			UndirectedGraph.UnVertex v1 = (UndirectedGraph.UnVertex)g1.addVertex(ve.getElement());
-			g1.setVertexId(v1,id);
+		for(Vertex<Integer> ve: vertices){
+			g1.addVertex(ve.getElement());
 		}		
 		
-		Iterator<Vertex> vIt = g1.vertices();
+		Iterator<Vertex<Integer>> vIt = g1.vertices();
 		while(vIt.hasNext()){
-			Iterator<Vertex> vIt2 = g1.vertices();
-			UndirectedGraph.UnVertex one = (UndirectedGraph.UnVertex)vIt.next();
+			Iterator<Vertex<Integer>> vIt2 = g1.vertices();
+			Vertex<Integer> one = vIt.next();
 			while(vIt2.hasNext()){
-				UndirectedGraph.UnVertex two = (UndirectedGraph.UnVertex)vIt2.next();
-				UndirectedGraph.UnVertex nOne = (UndirectedGraph.UnVertex)graph.getVertexWithId(one.getId());
-				UndirectedGraph.UnVertex nTwo = (UndirectedGraph.UnVertex)graph.getVertexWithId(two.getId());
-				if(nOne!=null && nTwo!=null && graph.containsEdge(nOne, nTwo)){
+				Vertex<Integer> two = vIt2.next();
+				Vertex<Integer> nOne = graph.getVertexWithElement((int) one.getElement());
+				Vertex<Integer> nTwo = graph.getVertexWithElement((int)two.getElement());
+				
+				if(graph.containsEdge(nOne, nTwo)){
 					if(!g1.containsEdge(one,two)){
-//						UndirectedGraph.UnEdge e = (UndirectedGraph.UnEdge) g1.addEdge(one, two);
 						g1.addEdge(one, two);
 					}
 				}
@@ -214,6 +210,10 @@ public final class Utility {
 		//find components
 		while(!vertices.isEmpty()){
 			List<Vertex> compList = graph.depthFirstTraversal(vertices.get(0));
+//			System.out.println("Vertices in component found are ");
+//			for(Vertex v: compList){
+//				System.out.print(v.getElement()+", ");
+//			}
 			components.add(makeGraphFromVertexSet(graph, compList));
 			vertices.removeAll(compList);
 		}

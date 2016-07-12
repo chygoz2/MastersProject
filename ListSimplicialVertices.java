@@ -24,7 +24,7 @@ public class ListSimplicialVertices {
 //		graph.addEdge(v4, v5);
 		
 		
-		graph.mapVertexToId();
+		//graph.mapVertexToId();
 		
 		Set[] verticesPartition = Utility.partitionVertices(graph);
 		

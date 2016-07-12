@@ -101,7 +101,7 @@ public class UndirectedGraphTest {
 			out += v.getElement()+", ";
 		}
 		
-		assertEquals("2, 4, 3, 1, ", out);
+		assertEquals("1, 3, 4, 2, ", out);
 		assertEquals(4,graph.size());
 	
 	}
@@ -183,7 +183,7 @@ public class UndirectedGraphTest {
 			out2 += v.getElement()+", ";
 		}
 		
-		assertEquals("4, 3, 1, ", out2);
+		assertEquals("1, 3, 4, ", out2);
 		assertEquals(3,graph.size());
 		
 	}
@@ -234,7 +234,7 @@ public class UndirectedGraphTest {
 			out += v.getElement()+", ";
 		}
 		
-		assertEquals("2, 4, 3, 1, ", out);
+		assertEquals("1, 3, 4, 2, ", out);
 		assertEquals(4,graph.size());
 	}
 
@@ -310,7 +310,7 @@ public class UndirectedGraphTest {
 			out += v.getElement()+", ";
 		}
 		
-		assertEquals("2, 3, 1, ", out);
+		assertEquals("1, 3, 2, ", out);
 		
 		it = graph.neighbours(v1);
 		
@@ -376,7 +376,7 @@ public class UndirectedGraphTest {
 		}
 		
 		assertTrue(list.equals(graph.depthFirstTraversal(v2)));
-		assertEquals("5, 2, 4, 3, 1, ", out);
+		assertEquals("1, 3, 4, 2, 5, ", out);
 	}
 	
 	@Test
@@ -406,7 +406,7 @@ public class UndirectedGraphTest {
 		}
 		
 		assertTrue(list.equals(graph.breadthFirstTraversal(v2)));
-		assertEquals("5, 2, 4, 3, 1, ", out);
+		assertEquals("1, 3, 4, 2, 5, ", out);
 	}
 
 }

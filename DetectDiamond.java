@@ -20,8 +20,9 @@ public class DetectDiamond {
 //		
 //		graph.mapVertexToId();
 		
-//		UndirectedGraph graph = Utility.makeGraphFromFile("matrix2.txt");
-		UndirectedGraph graph = Utility.makeRandomGraph(5, 0.8);
+		UndirectedGraph graph = Utility.makeGraphFromFile("genmatrix.txt");
+//		Utility.printGraph(graph);
+//		UndirectedGraph graph = Utility.makeRandomGraph(10, 0.4);
 		
 		Set[] verticesPartition = Utility.partitionVertices(graph);
 		
@@ -44,7 +45,7 @@ public class DetectDiamond {
 		//also find the cliques in the process
 		
 		Map phase1Results = phaseOne(lowDegreeVertices, graph);
-		System.out.println(phase1Results.get("diamondFound"));
+//		System.out.println(phase1Results.get("diamondFound"));
 		Map cli = (HashMap)phase1Results.get("cliques");
 		for(Object g: cli.keySet()){
 			Collection c = (Collection)cli.get(g);
@@ -92,16 +93,19 @@ public class DetectDiamond {
 		Map vertexCliques = new HashMap();
 		
 		for(Vertex v: lowDegreeVertices){
+			System.out.println("Low degree vertex is "+v.getElement());
 			UndirectedGraph graph2 = Utility.getNeighbourGraph(graph, v);
+			
 			//Create list for storing cliques in the neighbourhood of vertex v
 			List<UndirectedGraph> cliques = new ArrayList<UndirectedGraph>();
 			
 			//System.out.println("Getting components graph formed by the neighbourhood of v");
 			List<UndirectedGraph> graph2Comps = Utility.getComponents(graph2); //get components of the induced neighbour graph
-
+			
 			//check if each component is a clique
 			for(UndirectedGraph graphC: graph2Comps){
 				boolean isClique = checkIfClique(graphC);
+				//System.out.println("Is clique? "+isClique);
 				if(isClique){
 					cliques.add(graphC); //add component to cliques list to be used in phase 2
 				}else{
@@ -151,39 +155,35 @@ public class DetectDiamond {
 //		System.out.println("Printing A squared");
 //		squareA.print(3, 0);
 		Set<Vertex> vertexKeys = cliques.keySet();
+		
+		here:
 		for(Vertex lowVertex: vertexKeys){
-			if(diamondFound)
-				break;
 			//for each low degree vertex, get its cliques
 			List<UndirectedGraph> cliqs = (List<UndirectedGraph>)cliques.get(lowVertex);
 			for(UndirectedGraph cliq: cliqs){
-				if(diamondFound)
-					break;
 				//for each clique, perform the check
 				Iterator<Edge> edgeIt = cliq.edges();
 				while(edgeIt.hasNext()){
-					if(diamondFound)
-						break;
 					//get pair in clique(as vertices at edges)
 					UndirectedGraph.UnEdge ee = (UndirectedGraph.UnEdge)edgeIt.next();
 					UndirectedGraph.UnVertex y = (UndirectedGraph.UnVertex) ee.getSource();
 					UndirectedGraph.UnVertex z = (UndirectedGraph.UnVertex) ee.getDestination();
 					
 					//get ids of y and z
-					int yId = y.getId();
-					int zId = z.getId();
+					int yId = (int) y.getElement();
+					int zId = (int) z.getElement();
 					
 					//perform check 
 					if(squareA.get(yId, zId) > cliq.size()-1){ //then y and z have a common neighbor
 						//outside the closed neighbourhood of x and hence a diamond can found
 						//get y's and z's neighbours from the main graph and put them in a set
-						Iterator yIt = graph.neighbours(graph.getVertexWithId(y.getId()));
+						Iterator yIt = graph.neighbours(graph.getVertexWithElement(yId));
 						List yNeigh = new ArrayList<Vertex>();
 						while(yIt.hasNext()){
 							yNeigh.add(yIt.next());
 						}
 						
-						Iterator zIt = graph.neighbours(graph.getVertexWithId(z.getId()));
+						Iterator zIt = graph.neighbours(graph.getVertexWithElement(zId));
 						List zNeigh = new ArrayList<Vertex>();
 						while(zIt.hasNext()){
 							zNeigh.add(zIt.next());
@@ -197,7 +197,7 @@ public class DetectDiamond {
 						//and then find the union of both sets to find vertices common in y and z's neighbourhood
 						yNeigh.retainAll(zNeigh); //yNeigh now contains vertices common to both y and z 
 						//remove x from the neighbourhood 
-						yNeigh.remove(graph.getVertexWithId(((UndirectedGraph.UnVertex)lowVertex).getId()));
+						yNeigh.remove(graph.getVertexWithElement((int)lowVertex.getElement()));
 				
 						
 						//create a diamond and return it
@@ -206,6 +206,7 @@ public class DetectDiamond {
 						UndirectedGraph diamond = Utility.makeGraphFromVertexSet(graph, dList);
 						phaseTwoResults.put("diamond", diamond);
 						diamondFound = true;
+						break here;
 					}
 				}
 			}
@@ -250,8 +251,8 @@ public class DetectDiamond {
 		double[][] A = graph.getAdjacencyMatrix();
 		
 		for(int i=0; i<A.length; i++){
-			for(int j=0; j<A.length; j++){
-				if(i!=j && A[i][j] != 1)
+			for(int j=i+1; j<A.length; j++){
+				if(A[i][j] != 1)
 					return false;
 			}
 		}

@@ -23,7 +23,7 @@ public class DetectK4 {
 		graph.addEdge(v1, v4);
 		
 		
-		graph.mapVertexToId();
+		//graph.mapVertexToId();
 		
 		Set[] verticesPartition = Utility.partitionVertices(graph);
 		

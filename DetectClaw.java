@@ -18,13 +18,13 @@ public class DetectClaw {
 		
 		
 		UndirectedGraph graph = new UndirectedGraph();
-		Vertex v1 = graph.addVertex(1);
-		Vertex v2 = graph.addVertex(2);
-		Vertex v3 = graph.addVertex(3);
-		Vertex v4 = graph.addVertex(4);
-		Vertex v5 = graph.addVertex(5);
-		Vertex v6 = graph.addVertex(6);
-		Vertex v7 = graph.addVertex(7);
+		Vertex v1 = graph.addVertex(0);
+		Vertex v2 = graph.addVertex(1);
+		Vertex v3 = graph.addVertex(2);
+		Vertex v4 = graph.addVertex(3);
+		Vertex v5 = graph.addVertex(4);
+		Vertex v6 = graph.addVertex(5);
+		Vertex v7 = graph.addVertex(6);
 		
 		graph.addEdge(v1, v5);
 		graph.addEdge(v1, v3);
@@ -37,7 +37,7 @@ public class DetectClaw {
 		graph.addEdge(v6, v5);
 		graph.addEdge(v5, v7);
 		
-		graph.mapVertexToId();
+		//graph.mapVertexToId();
 		
 		Map phase1Result = phaseOne(graph);
 		if((boolean)phase1Result.get("clawFound")){
@@ -76,7 +76,7 @@ public class DetectClaw {
 					Iterable<Vertex> c3Vertices = (Iterable<Vertex>)vNeighComps.get(2).vertices();
 					
 					List<Vertex> clawVertices = new ArrayList<Vertex>();
-					Vertex v1 = graph.getVertexWithId(((UndirectedGraph.UnVertex)v).getId());
+					Vertex v1 = graph.getVertexWithElement((int) v.getElement());
 					clawVertices.add(v1);
 					
 					for(Vertex vv: c1Vertices){
@@ -153,12 +153,12 @@ public class DetectClaw {
 						Vertex jVertex = vertexIndexMap2.get(j);
 						Vertex kVertex;
 						
-						int iVertexId = ((UndirectedGraph.UnVertex)iVertex).getId();
-						int jVertexId = ((UndirectedGraph.UnVertex)jVertex).getId();
+						int iVertexId = (int) ((UndirectedGraph.UnVertex)iVertex).getElement();
+						int jVertexId = (int) ((UndirectedGraph.UnVertex)jVertex).getElement();
 						
 						//get indices of these matrices in the parent graph
-						int ip = vertexIndexMap1.indexOf(graph.getVertexWithId(iVertexId));
-						int jp = vertexIndexMap1.indexOf(graph.getVertexWithId(jVertexId));
+						int ip = vertexIndexMap1.indexOf(graph.getVertexWithElement(iVertexId));
+						int jp = vertexIndexMap1.indexOf(graph.getVertexWithElement(jVertexId));
 						
 						//look for the index of the third vertex to complete the claw in the adjacency matrix
 						for(int k=0; k<cm.getRowDimension();k++){
