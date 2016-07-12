@@ -148,8 +148,27 @@ public final class Utility {
 			out+=String.format("%n");
 		}
 		
+		//get graph size
+		int size = graph.size();
+		
+		//create folder for saving generated graphs if none exists
+		File f = new File("");
+		String path = f.getAbsolutePath();
+		String ggFolder = "generated_graphs";
+		File dir = new File(path+File.separator+ggFolder);
+		dir.mkdir();
+		
+		
+		//create folder for that size if not existing
+		File dir2 = new File(path+File.separator+ggFolder+File.separator+"size_"+size);
+		dir2.mkdir();
+		
+		//select suitable file name for the generated graph
+		String graphFileName = dir2.getAbsolutePath()+File.separator+"graph_"+size+"_"+System.currentTimeMillis()+".txt";
+//		System.out.println(graphFileName);
+		
 		try {
-			FileWriter writer = new FileWriter("genmatrix.txt");
+			FileWriter writer = new FileWriter(graphFileName);
 			writer.write(out);
 			writer.close();
 		} catch (IOException e) {
@@ -279,6 +298,6 @@ public final class Utility {
 	public static void main(String [] args){
 		String fileName = "matrix.txt";
 		//Utility.makeGraphFromFile(fileName);
-		makeRandomGraph(4,0.8);
+		makeRandomGraph(8,0.8);
 	}
 }

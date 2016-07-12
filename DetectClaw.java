@@ -39,7 +39,7 @@ public class DetectClaw {
 		
 		//graph.mapVertexToId();
 		
-		UndirectedGraph graph = Utility.makeRandomGraph(10, 0.4);
+		UndirectedGraph graph = Utility.makeRandomGraph(7, 0.4);
 		
 		Map phase1Result = phaseOne(graph);
 		if((boolean)phase1Result.get("clawFound")){
