@@ -3,14 +3,16 @@ import java.util.*;
 import Jama.Matrix;
 
 public class DetectDiamond {
-	public static void main(String [] args){
+	private static String time = "";
+	
+	public static UndirectedGraph<Integer,Integer> detect(UndirectedGraph<Integer,Integer> graph){
 //		UndirectedGraph<Integer, Integer> graph = new UndirectedGraph<Integer,Integer>();
 //		
-//		Vertex<Integer> v1 = graph.addVertex(0);
-//		Vertex<Integer> v2 = graph.addVertex(1);
-//		Vertex<Integer> v3 = graph.addVertex(2);
-//		Vertex<Integer> v4 = graph.addVertex(3);
-//		Vertex<Integer> v5 = graph.addVertex(4);
+//		Graph.Vertex<Integer> v1 = graph.addVertex(0);
+//		Graph.Vertex<Integer> v2 = graph.addVertex(1);
+//		Graph.Vertex<Integer> v3 = graph.addVertex(2);
+//		Graph.Vertex<Integer> v4 = graph.addVertex(3);
+//		Graph.Vertex<Integer> v5 = graph.addVertex(4);
 //		graph.addEdge(v1, v2);
 //		graph.addEdge(v3, v2);
 //		graph.addEdge(v3, v4);
@@ -20,70 +22,51 @@ public class DetectDiamond {
 //		
 //		graph.mapVertexToId();
 		
-		UndirectedGraph graph = Utility.makeGraphFromFile("genmatrix.txt");
+//		UndirectedGraph graph = Utility.makeGraphFromFile("genmatrix.txt");
+//		String fileName = "generated_graphs\\size_5\\graph_5_0.7_4.txt";
+		time+="size_"+graph.size()+"_";
 //		Utility.printGraph(graph);
 //		UndirectedGraph graph = Utility.makeRandomGraph(10, 0.4);
 		
 		Set[] verticesPartition = Utility.partitionVertices(graph);
 		
-		Set<Vertex> lowDegreeVertices = verticesPartition[0];
-		Set<Vertex> highDegreeVertices = verticesPartition[1];
+		Set<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
+		Set<Graph.Vertex<Integer>> highDegreeVertices = verticesPartition[1];
 		
-//		System.out.println("Printing low degree vertices degrees");
-//		for(Vertex v: lowDegreeVertices){
-//			System.out.println("Vertex: "+ v.getElement() + ", degree: " + graph.degree(v));
-//		}
-//		
-//		System.out.println("Printing high degree vertices degrees");
-//		for(Vertex v: highDegreeVertices){
-//			System.out.println("Vertex: "+ v.getElement() + ", degree: " + graph.degree(v));
-//		}
-//		
-//		System.out.println();
-		//////////////////////////////////////////////////////////////////
-		//Get find components of graphs in the neighbourhood of each of the low degree vertices.
-		//also find the cliques in the process
-		
-		Map phase1Results = phaseOne(lowDegreeVertices, graph);
-//		System.out.println(phase1Results.get("diamondFound"));
+		Map phase1Results = DetectDiamond.phaseOne(lowDegreeVertices, graph);
 		Map cli = (HashMap)phase1Results.get("cliques");
-//		for(Object g: cli.keySet()){
-//			Collection c = (Collection)cli.get(g);
-//			for(Object z: c){
-//				System.out.println("Printing out cliques");
-//				Utility.printGraph((UndirectedGraph)z);
-//				System.out.println();
-//			}	
-//		}
 		
+		UndirectedGraph<Integer,Integer> diamond = null;
 		if((boolean)phase1Results.get("diamondFound")){
-			System.out.println("Print out one such diamond");
-			Utility.printGraph((UndirectedGraph)phase1Results.get("diamond"));
-		} else{
-			//////////////////////////////////////////////////////////////////
-						
-			Map phase2Results = phaseTwo(cli, graph);
+			//System.out.println("Print out one such diamond");
+			diamond = (UndirectedGraph<Integer,Integer>)phase1Results.get("diamond");
+		} else{			
+			diamond = DetectDiamond.phaseTwo(cli, graph);
 			
-			if((boolean)phase2Results.get("diamondFound")){
-				System.out.println("Print out one such diamond");
-				Utility.printGraph((UndirectedGraph)phase2Results.get("diamond"));
-			}else{
-				//phase three
-				phaseThree(graph, lowDegreeVertices);
-				
-				Map phase4Results = phaseFour(graph);
-				
-				if((boolean)phase4Results.get("diamondFound")){
-					System.out.println("Print out one such diamond");
-					Utility.printGraph((UndirectedGraph)phase4Results.get("diamond"));
-				}
+			if(diamond==null){
+				DetectDiamond.phaseThree(graph, lowDegreeVertices);
+				diamond = DetectDiamond.phaseFour(graph);
 			}
 		}
-		
-		phaseThree(graph, lowDegreeVertices);
+		if(diamond!=null)
+			time+="1";
+		else
+			time+="0";
+		System.out.println(time);
+		DetectDiamond.resetTime();
+		return diamond;
 	}
 	
-	public static Map phaseOne(Set<Vertex> lowDegreeVertices, UndirectedGraph graph){
+	public static void main(String [] args){
+		String fileName = "generated_graphs\\size_150\\graph_150_0.7_4.txt";
+		
+		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(fileName);
+		UndirectedGraph<Integer,Integer> diamond = detect(graph);
+		Utility.printGraph(diamond);
+	}
+	
+	public static Map phaseOne(Set<Graph.Vertex<Integer>> lowDegreeVertices, UndirectedGraph<Integer,Integer> graph){
+		long starttime = System.currentTimeMillis();
 		System.out.println("In Phase One");
 		
 		Map phaseOneResults = new HashMap();
@@ -93,7 +76,7 @@ public class DetectDiamond {
 		Map vertexCliques = new HashMap();
 		
 		here:
-		for(Vertex v: lowDegreeVertices){
+		for(Graph.Vertex v: lowDegreeVertices){
 //			System.out.println("Low degree vertex is "+v.getElement());
 			UndirectedGraph graph2 = Utility.getNeighbourGraph(graph, v);
 			
@@ -120,10 +103,10 @@ public class DetectDiamond {
 						//produce one such diamond 
 						if(phaseOneResults.get("diamond") == null){ //check if a diamond was previously stored
 							UndirectedGraph dTemp = (UndirectedGraph)result.get("p3Graph");
-							Iterator<Vertex> dIt = dTemp.vertices();
-							Vertex nVertex = dTemp.addVertex(v.getElement());
+							Iterator<Graph.Vertex> dIt = dTemp.vertices();
+							Graph.Vertex nVertex = dTemp.addVertex(v.getElement());
 							while(dIt.hasNext()){
-								Vertex<Integer> ne = dIt.next();
+								Graph.Vertex<Integer> ne = dIt.next();
 								if(!ne.equals(nVertex))
 									dTemp.addEdge(nVertex, ne);
 							}
@@ -139,12 +122,15 @@ public class DetectDiamond {
 		
 		phaseOneResults.put("diamondFound", diamondFound);
 		phaseOneResults.put("cliques", vertexCliques);
-		
+		long stoptime = System.currentTimeMillis();
+		time += "phase1("+(stoptime-starttime)+")_";
 		return phaseOneResults;
 		
 	}
 	
-	public static Map phaseTwo(Map cliques, UndirectedGraph graph){
+	public static UndirectedGraph<Integer,Integer> phaseTwo(Map cliques, UndirectedGraph<Integer,Integer> graph){
+		long starttime = System.currentTimeMillis();
+		UndirectedGraph<Integer,Integer> diamond = null;
 		System.out.println("In Phase Two");
 		
 		Map phaseTwoResults = new HashMap();
@@ -158,15 +144,15 @@ public class DetectDiamond {
 //		A.print(3, 0);
 //		System.out.println("Printing A squared");
 //		squareA.print(3, 0);
-		Set<Vertex> vertexKeys = cliques.keySet();
+		Set<Graph.Vertex> vertexKeys = cliques.keySet();
 		
 		here:
-		for(Vertex lowVertex: vertexKeys){
+		for(Graph.Vertex lowVertex: vertexKeys){
 			//for each low degree vertex, get its cliques
 			List<UndirectedGraph> cliqs = (List<UndirectedGraph>)cliques.get(lowVertex);
 			for(UndirectedGraph cliq: cliqs){
 				//for each clique, perform the check
-				Iterator<Edge> edgeIt = cliq.edges();
+				Iterator<Graph.Edge> edgeIt = cliq.edges();
 				while(edgeIt.hasNext()){
 					//get pair in clique(as vertices at edges)
 					UndirectedGraph.UnEdge ee = (UndirectedGraph.UnEdge)edgeIt.next();
@@ -182,13 +168,13 @@ public class DetectDiamond {
 						//outside the closed neighbourhood of x and hence a diamond can found
 						//get y's and z's neighbours from the main graph and put them in a set
 						Iterator yIt = graph.neighbours(graph.getVertexWithElement(yId));
-						List yNeigh = new ArrayList<Vertex>();
+						List yNeigh = new ArrayList<Graph.Vertex>();
 						while(yIt.hasNext()){
 							yNeigh.add(yIt.next());
 						}
 						
 						Iterator zIt = graph.neighbours(graph.getVertexWithElement(zId));
-						List zNeigh = new ArrayList<Vertex>();
+						List zNeigh = new ArrayList<Graph.Vertex>();
 						while(zIt.hasNext()){
 							zNeigh.add(zIt.next());
 						}
@@ -205,38 +191,42 @@ public class DetectDiamond {
 				
 						
 						//create a diamond and return it
-						List<Vertex> dList = new ArrayList<Vertex>();
-						dList.add(lowVertex);dList.add(y);dList.add(z);dList.add((Vertex) yNeigh.get(0));
-						UndirectedGraph diamond = Utility.makeGraphFromVertexSet(graph, dList);
-						phaseTwoResults.put("diamond", diamond);
-						diamondFound = true;
+						List<Graph.Vertex> dList = new ArrayList<Graph.Vertex>();
+						dList.add(lowVertex);dList.add(y);dList.add(z);dList.add((Graph.Vertex) yNeigh.get(0));
+						diamond = Utility.makeGraphFromVertexSet(graph, dList);
 						break here;
 					}
 				}
 			}
 		}
-		phaseTwoResults.put("diamondFound", diamondFound);
-		return phaseTwoResults;
+		long stoptime = System.currentTimeMillis();
+		time += "phase2("+(stoptime-starttime)+")_";
+		return diamond;
 	}
 	
 	
-	public static void phaseThree(UndirectedGraph graph, Set<Vertex> lowDegreeVertices){
+	public static void phaseThree(UndirectedGraph<Integer,Integer> graph, Set<Graph.Vertex<Integer>> lowDegreeVertices){
 		//remove low degree vertices from graph G
-		for(Vertex v: lowDegreeVertices){
-			graph.removeVertex(v);
+		long starttime = System.currentTimeMillis();
+		for(Graph.Vertex<Integer> v: lowDegreeVertices){
+			graph.removeVertex(graph.getVertexWithElement(v.getElement()));
 		}
+		long stoptime = System.currentTimeMillis();
+		time += "phase3("+(stoptime-starttime)+")_";
 	}
 	
-	public static Map phaseFour(UndirectedGraph graph){
+	public static UndirectedGraph<Integer,Integer> phaseFour(UndirectedGraph<Integer,Integer> graph){
+		long starttime = System.currentTimeMillis();
+		UndirectedGraph<Integer,Integer> diamond = null;
 		System.out.println("In Phase Four");
 		//look for a diamond in graph using the method listed in phase 1 applied on all vertices 
 		//of the graph
 		
 		//get the vertices into a set
-		Iterator vIt = graph.vertices();
-		Set<Vertex> vSet = new HashSet<Vertex>();
+		Iterator<Graph.Vertex<Integer>> vIt = graph.vertices();
+		Set<Graph.Vertex<Integer>> vSet = new HashSet<Graph.Vertex<Integer>>();
 		while(vIt.hasNext())
-			vSet.add((Vertex)vIt.next());
+			vSet.add((Graph.Vertex)vIt.next());
 		
 		//create a map to store results of phase four
 		Map results = new HashMap();
@@ -245,10 +235,19 @@ public class DetectDiamond {
 		boolean diamondFound = (boolean)phase1Results.get("diamondFound");
 		results.put("diamondFound", diamondFound);
 		if(diamondFound){
-			results.put("diamond", (UndirectedGraph)phase1Results.get("diamond"));
+			diamond =  (UndirectedGraph)phase1Results.get("diamond");
 		}
-		
-		return results;
+		long stoptime = System.currentTimeMillis();
+		time += "phase4("+(stoptime-starttime)+")_";
+		return diamond;
+	}
+	
+	public static String getTime(){
+		return time;
+	}
+	
+	public static void resetTime(){
+		time = "";
 	}
 	
 	public static boolean checkIfClique(UndirectedGraph graph){
@@ -272,21 +271,21 @@ public class DetectDiamond {
 //			return result;
 //		}
 //		
-//		Iterator<Vertex> vIt = graph.vertices(); //gets the vertex iterator
+//		Iterator<Graph.Vertex> vIt = graph.vertices(); //gets the vertex iterator
 //		
 //		while(vIt.hasNext()){
-//			Vertex v = vIt.next();
+//			Graph.Vertex v = vIt.next();
 //			//do a breadth first search on each vertex of graph in search for a P3
 //			//stop once a p3 has been found
-//			List<Vertex> bfVertices = graph.breadthFirstTraversal(v);
-//			Vertex v1 = bfVertices.get(0);
-//			Vertex v2 = bfVertices.get(1);
-//			Vertex v3 = bfVertices.get(2);
+//			List<Graph.Vertex> bfVertices = graph.breadthFirstTraversal(v);
+//			Graph.Vertex v1 = bfVertices.get(0);
+//			Graph.Vertex v2 = bfVertices.get(1);
+//			Graph.Vertex v3 = bfVertices.get(2);
 //			
 //			if(!(graph.containsEdge(v1, v2) && graph.containsEdge(v2, v3) &&
 //					graph.containsEdge(v1, v3))){
 //				result.put("hasP3", true);
-//				List<Vertex> vert = new ArrayList<Vertex>();
+//				List<Graph.Vertex> vert = new ArrayList<Graph.Vertex>();
 //				vert.add(v1); vert.add(v2); vert.add(v3);
 //				result.put("p3Graph", Utility.makeGraphFromVertexSet(graph, vert));
 //				break;
@@ -305,8 +304,8 @@ public class DetectDiamond {
 		}
 		
 		//create mapping between matrix indices and vertex
-		List<Vertex> vertexIndexMap = new ArrayList<Vertex>();
-		Iterator<Vertex> vIt = graph.vertices(); //gets the vertex iterator
+		List<Graph.Vertex> vertexIndexMap = new ArrayList<Graph.Vertex>();
+		Iterator<Graph.Vertex> vIt = graph.vertices(); //gets the vertex iterator
 		while(vIt.hasNext()){
 			vertexIndexMap.add(vIt.next());
 		}
@@ -323,7 +322,7 @@ public class DetectDiamond {
 						//look for third vertex
 						for(int k=0; k<A.getColumnDimension();k++){
 							if(k!=i && k!= j && (A.get(k, i) == 1) && (A.get(k, j) == 1)){
-								List<Vertex> vert = new ArrayList<Vertex>();
+								List<Graph.Vertex> vert = new ArrayList<Graph.Vertex>();
 								vert.add(vertexIndexMap.get(i)); vert.add(vertexIndexMap.get(j)); vert.add(vertexIndexMap.get(k));
 								UndirectedGraph g = Utility.makeGraphFromVertexSet(graph, vert);
 								result.put("p3Graph", g);

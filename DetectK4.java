@@ -6,11 +6,11 @@ public class DetectK4 {
 	public static void main(String [] args){
 		UndirectedGraph<Integer, Integer> graph = new UndirectedGraph<Integer,Integer>();
 		
-		Vertex<Integer> v1 = graph.addVertex(1);
-		Vertex<Integer> v2 = graph.addVertex(2);
-		Vertex<Integer> v3 = graph.addVertex(3);
-		Vertex<Integer> v4 = graph.addVertex(4);
-		Vertex<Integer> v5 = graph.addVertex(5);
+		Graph.Vertex<Integer> v1 = graph.addVertex(1);
+		Graph.Vertex<Integer> v2 = graph.addVertex(2);
+		Graph.Vertex<Integer> v3 = graph.addVertex(3);
+		Graph.Vertex<Integer> v4 = graph.addVertex(4);
+		Graph.Vertex<Integer> v5 = graph.addVertex(5);
 		graph.addEdge(v1, v2);
 		graph.addEdge(v3, v2);
 		graph.addEdge(v3, v4);
@@ -27,8 +27,8 @@ public class DetectK4 {
 		
 		Set[] verticesPartition = Utility.partitionVertices(graph);
 		
-		Set<Vertex> lowDegreeVertices = verticesPartition[0];
-		Set<Vertex> highDegreeVertices = verticesPartition[1];
+		Set<Graph.Vertex> lowDegreeVertices = verticesPartition[0];
+		Set<Graph.Vertex> highDegreeVertices = verticesPartition[1];
 		
 		Map phase1Results = phaseOne(graph, highDegreeVertices);
 		if((boolean)phase1Results.get("k4Found")){
@@ -44,20 +44,20 @@ public class DetectK4 {
 		
 	}
 	
-	public static Map phaseOne(UndirectedGraph graph, Set<Vertex> highDegreeVertices){
+	public static Map phaseOne(UndirectedGraph graph, Set<Graph.Vertex> highDegreeVertices){
 		Map phase1Results = new HashMap();
-		List<Vertex> k4Vertices = new ArrayList<Vertex>();
+		List<Graph.Vertex> k4Vertices = new ArrayList<Graph.Vertex>();
 		
 		here:
 			
-		for(Vertex x: highDegreeVertices){
+		for(Graph.Vertex x: highDegreeVertices){
 			//get x's neighbourhood graph
-			Iterator<Vertex> nXIter = graph.neighbours(x);
-			List<Vertex> nXList = new ArrayList<Vertex>();
+			Iterator<Graph.Vertex> nXIter = graph.neighbours(x);
+			List<Graph.Vertex> nXList = new ArrayList<Graph.Vertex>();
 
 			//get the intersection of the neighbourhood vertices of x with the high degree vertices
 			while(nXIter.hasNext()){
-				Vertex v = nXIter.next();
+				Graph.Vertex v = nXIter.next();
 				if(highDegreeVertices.contains(v))
 					nXList.add(v);
 			}
@@ -70,9 +70,9 @@ public class DetectK4 {
 			Matrix adjMatrixSquare = adjMatrix.times(adjMatrix);
 			
 			//create map of indices to vertex
-			List<Vertex> indexVertexMap = new ArrayList<Vertex>();
-			Iterable<Vertex> vIt = (Iterable<Vertex>)graph2.vertices();
-			for(Vertex v: vIt){
+			List<Graph.Vertex> indexVertexMap = new ArrayList<Graph.Vertex>();
+			Iterable<Graph.Vertex> vIt = (Iterable<Graph.Vertex>)graph2.vertices();
+			for(Graph.Vertex v: vIt){
 				indexVertexMap.add(v);
 			}
 			
@@ -107,18 +107,18 @@ public class DetectK4 {
 		return phase1Results;
 	}
 	
-	public static Map phaseTwo(UndirectedGraph graph, Set<Vertex> lowDegreeVertices){
+	public static Map phaseTwo(UndirectedGraph graph, Set<Graph.Vertex> lowDegreeVertices){
 		Map phase2Results = new HashMap();
-		List<Vertex> k4Vertices = new ArrayList<Vertex>();
+		List<Graph.Vertex> k4Vertices = new ArrayList<Graph.Vertex>();
 		
 		here:
-		for(Vertex x: lowDegreeVertices){
+		for(Graph.Vertex x: lowDegreeVertices){
 			//get x's neighbourhood graph
-			Iterable<Vertex> nXIter = (Iterable<Vertex>)graph.neighbours(x);
-			List<Vertex> nXList = new ArrayList<Vertex>();
+			Iterable<Graph.Vertex> nXIter = (Iterable<Graph.Vertex>)graph.neighbours(x);
+			List<Graph.Vertex> nXList = new ArrayList<Graph.Vertex>();
 
 			//make neighbourhood graph of x from list of vertices
-			for(Vertex v: nXIter){
+			for(Graph.Vertex v: nXIter){
 				nXList.add(v);
 			}
 			
@@ -130,9 +130,9 @@ public class DetectK4 {
 			Matrix adjMatrixSquare = adjMatrix.times(adjMatrix);
 			
 			//create map of indices to vertex
-			List<Vertex> indexVertexMap = new ArrayList<Vertex>();
-			Iterable<Vertex> vIt = (Iterable<Vertex>)graph2.vertices();
-			for(Vertex v: vIt){
+			List<Graph.Vertex> indexVertexMap = new ArrayList<Graph.Vertex>();
+			Iterable<Graph.Vertex> vIt = (Iterable<Graph.Vertex>)graph2.vertices();
+			for(Graph.Vertex v: vIt){
 				indexVertexMap.add(v);
 			}
 			

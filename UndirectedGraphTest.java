@@ -12,10 +12,10 @@ public class UndirectedGraphTest {
 		//fail("Not yet implemented");
 		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
 		
-		Vertex<Integer> v1 = graph.addVertex(1);
-		Vertex<Integer> v2 = graph.addVertex(3);
-		Vertex<Integer> v3 = graph.addVertex(4);
-		Vertex<Integer> v4 = graph.addVertex(2);
+		Graph.Vertex<Integer> v1 = graph.addVertex(1);
+		Graph.Vertex<Integer> v2 = graph.addVertex(3);
+		Graph.Vertex<Integer> v3 = graph.addVertex(4);
+		Graph.Vertex<Integer> v4 = graph.addVertex(2);
 		graph.addEdge(v1, v2);
 		graph.addEdge(v3, v2);
 		graph.addEdge(v3, v4);
@@ -30,10 +30,10 @@ public class UndirectedGraphTest {
 		//fail("Not yet implemented");
 		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
 		
-		Vertex<Integer> v1 = graph.addVertex(1);
-		Vertex<Integer> v2 = graph.addVertex(3);
-		Vertex<Integer> v3 = graph.addVertex(4);
-		Vertex<Integer> v4 = graph.addVertex(2);
+		Graph.Vertex<Integer> v1 = graph.addVertex(1);
+		Graph.Vertex<Integer> v2 = graph.addVertex(3);
+		Graph.Vertex<Integer> v3 = graph.addVertex(4);
+		Graph.Vertex<Integer> v4 = graph.addVertex(2);
 		graph.addEdge(v1, v2);
 		graph.addEdge(v3, v2);
 		graph.addEdge(v3, v4);
@@ -49,10 +49,10 @@ public class UndirectedGraphTest {
 	
 		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
 		
-		Vertex<Integer> v1 = graph.addVertex(1);
-		Vertex<Integer> v2 = graph.addVertex(3);
-		Vertex<Integer> v3 = graph.addVertex(4);
-		Vertex<Integer> v4 = graph.addVertex(2);
+		Graph.Vertex<Integer> v1 = graph.addVertex(1);
+		Graph.Vertex<Integer> v2 = graph.addVertex(3);
+		Graph.Vertex<Integer> v3 = graph.addVertex(4);
+		Graph.Vertex<Integer> v4 = graph.addVertex(2);
 		graph.addEdge(v1, v2);
 		graph.addEdge(v3, v2);
 		graph.addEdge(v3, v4);
@@ -69,10 +69,10 @@ public class UndirectedGraphTest {
 		
 		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
 		
-		Vertex<Integer> v1 = graph.addVertex(1);
-		Vertex<Integer> v2 = graph.addVertex(3);
-		Vertex<Integer> v3 = graph.addVertex(4);
-		Vertex<Integer> v4 = graph.addVertex(2);
+		Graph.Vertex<Integer> v1 = graph.addVertex(1);
+		Graph.Vertex<Integer> v2 = graph.addVertex(3);
+		Graph.Vertex<Integer> v3 = graph.addVertex(4);
+		Graph.Vertex<Integer> v4 = graph.addVertex(2);
 		graph.addEdge(v1, v2);
 		graph.addEdge(v3, v2);
 		graph.addEdge(v3, v4);
@@ -88,16 +88,16 @@ public class UndirectedGraphTest {
 		//fail("Not yet implemented");
 		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
 		
-		Vertex<Integer> v1 = graph.addVertex(1);
-		Vertex<Integer> v2 = graph.addVertex(3);
-		Vertex<Integer> v3 = graph.addVertex(4);
-		Vertex<Integer> v4 = graph.addVertex(2);
+		Graph.Vertex<Integer> v1 = graph.addVertex(1);
+		Graph.Vertex<Integer> v2 = graph.addVertex(3);
+		Graph.Vertex<Integer> v3 = graph.addVertex(4);
+		Graph.Vertex<Integer> v4 = graph.addVertex(2);
 		
-		Iterator<Vertex<Integer>> it = graph.vertices();
+		Iterator<Graph.Vertex<Integer>> it = graph.vertices();
 		
 		String out = "";
 		while (it.hasNext()){
-			Vertex<Integer> v = it.next();
+			Graph.Vertex<Integer> v = it.next();
 			out += v.getElement()+", ";
 		}
 		
@@ -111,14 +111,14 @@ public class UndirectedGraphTest {
 		//fail("Not yet implemented");
 		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
 		
-		Vertex<Integer> v1 = graph.addVertex(1);
-		Vertex<Integer> v2 = graph.addVertex(3);
-		Vertex<Integer> v3 = graph.addVertex(4);
-		Vertex<Integer> v4 = graph.addVertex(2);
+		Graph.Vertex<Integer> v1 = graph.addVertex(1);
+		Graph.Vertex<Integer> v2 = graph.addVertex(3);
+		Graph.Vertex<Integer> v3 = graph.addVertex(4);
+		Graph.Vertex<Integer> v4 = graph.addVertex(2);
 		graph.addEdge(v1, v2);
 		graph.addEdge(v3, v2);
 		
-		Iterator<Edge<Integer>> it = graph.edges();
+		Iterator<Graph.Edge<Integer>> it = graph.edges();
 		
 		String out = "";
 		while (it.hasNext()){
@@ -153,19 +153,19 @@ public class UndirectedGraphTest {
 		//fail("Not yet implemented");
 		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
 		
-		Vertex<Integer> v1 = graph.addVertex(1);
-		Vertex<Integer> v2 = graph.addVertex(3);
-		Vertex<Integer> v3 = graph.addVertex(4);
-		Vertex<Integer> v4 = graph.addVertex(2);
+		Graph.Vertex<Integer> v1 = graph.addVertex(1);
+		Graph.Vertex<Integer> v2 = graph.addVertex(3);
+		Graph.Vertex<Integer> v3 = graph.addVertex(4);
+		Graph.Vertex<Integer> v4 = graph.addVertex(2);
 		graph.addEdge(v1, v2);
 		graph.addEdge(v3, v2);
-		Edge<Integer> e3 = graph.addEdge(v3, v4);
+		Graph.Edge<Integer> e3 = graph.addEdge(v3, v4);
 		graph.addEdge(v1, v3);
 		
 		graph.removeVertex(v4);
 		
 		
-		Iterator<Edge<Integer>> it = graph.edges();
+		Iterator<Graph.Edge<Integer>> it = graph.edges();
 		
 		String out = "";
 		while (it.hasNext()){
@@ -175,11 +175,11 @@ public class UndirectedGraphTest {
 		
 		assertEquals("1, 4, 4, 3, 1, 3, ", out);
 		assertEquals(3,graph.size());
-		Iterator<Vertex<Integer>> it2 = graph.vertices();
+		Iterator<Graph.Vertex<Integer>> it2 = graph.vertices();
 		
 		String out2 = "";
 		while (it2.hasNext()){
-			Vertex<Integer> v = it2.next();
+			Graph.Vertex<Integer> v = it2.next();
 			out2 += v.getElement()+", ";
 		}
 		
@@ -193,19 +193,19 @@ public class UndirectedGraphTest {
 		//fail("Not yet implemented");
 		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
 		
-		Vertex<Integer> v1 = graph.addVertex(1);
-		Vertex<Integer> v2 = graph.addVertex(3);
-		Vertex<Integer> v3 = graph.addVertex(4);
-		Vertex<Integer> v4 = graph.addVertex(2);
+		Graph.Vertex<Integer> v1 = graph.addVertex(1);
+		Graph.Vertex<Integer> v2 = graph.addVertex(3);
+		Graph.Vertex<Integer> v3 = graph.addVertex(4);
+		Graph.Vertex<Integer> v4 = graph.addVertex(2);
 		graph.addEdge(v1, v2);
 		graph.addEdge(v3, v2);
-		Edge<Integer> e3 = graph.addEdge(v3, v4);
-		Edge<Integer> e4 = graph.addEdge(v1, v3);
+		Graph.Edge<Integer> e3 = graph.addEdge(v3, v4);
+		Graph.Edge<Integer> e4 = graph.addEdge(v1, v3);
 		
 		graph.removeEdge(e3);
 		graph.removeEdge(e4);
 		
-		Iterator<Edge<Integer>> it = graph.edges();
+		Iterator<Graph.Edge<Integer>> it = graph.edges();
 		
 		String out = "";
 		while (it.hasNext()){
@@ -221,16 +221,16 @@ public class UndirectedGraphTest {
 		//fail("Not yet implemented");
 		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
 		
-		Vertex<Integer> v1 = graph.addVertex(1);
-		Vertex<Integer> v2 = graph.addVertex(3);
-		Vertex<Integer> v3 = graph.addVertex(4);
-		Vertex<Integer> v4 = graph.addVertex(2);
+		Graph.Vertex<Integer> v1 = graph.addVertex(1);
+		Graph.Vertex<Integer> v2 = graph.addVertex(3);
+		Graph.Vertex<Integer> v3 = graph.addVertex(4);
+		Graph.Vertex<Integer> v4 = graph.addVertex(2);
 		
-		Iterator<Vertex<Integer>> it = graph.vertices();
+		Iterator<Graph.Vertex<Integer>> it = graph.vertices();
 		
 		String out = "";
 		while (it.hasNext()){
-			Vertex<Integer> v = it.next();
+			Graph.Vertex<Integer> v = it.next();
 			out += v.getElement()+", ";
 		}
 		
@@ -243,17 +243,17 @@ public class UndirectedGraphTest {
 		//fail("Not yet implemented");
 		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
 		
-		Vertex<Integer> v1 = graph.addVertex(1);
-		Vertex<Integer> v2 = graph.addVertex(3);
-		Vertex<Integer> v3 = graph.addVertex(4);
-		Vertex<Integer> v4 = graph.addVertex(2);
+		Graph.Vertex<Integer> v1 = graph.addVertex(1);
+		Graph.Vertex<Integer> v2 = graph.addVertex(3);
+		Graph.Vertex<Integer> v3 = graph.addVertex(4);
+		Graph.Vertex<Integer> v4 = graph.addVertex(2);
 		
-		Iterator<Edge<Integer>> it = graph.edges();
+		Iterator<Graph.Edge<Integer>> it = graph.edges();
 		assertFalse(it.hasNext());
 		
 		graph.addEdge(v1, v2);
 		graph.addEdge(v3, v2);
-		Edge<Integer> e3 = graph.addEdge(v3, v4);
+		Graph.Edge<Integer> e3 = graph.addEdge(v3, v4);
 		
 		it = graph.edges();
 		
@@ -272,20 +272,20 @@ public class UndirectedGraphTest {
 		//fail("Not yet implemented");
 		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
 		
-		Vertex<Integer> v1 = graph.addVertex(1);
-		Vertex<Integer> v2 = graph.addVertex(3);
-		Vertex<Integer> v3 = graph.addVertex(4);
-		Vertex<Integer> v4 = graph.addVertex(2);
+		Graph.Vertex<Integer> v1 = graph.addVertex(1);
+		Graph.Vertex<Integer> v2 = graph.addVertex(3);
+		Graph.Vertex<Integer> v3 = graph.addVertex(4);
+		Graph.Vertex<Integer> v4 = graph.addVertex(2);
 		graph.addEdge(v1, v2);
 		graph.addEdge(v3, v2);
-		Edge<Integer> e3 = graph.addEdge(v3, v4);
+		Graph.Edge<Integer> e3 = graph.addEdge(v3, v4);
 		graph.addEdge(v1, v3);
 		
-		Iterator<Vertex<Integer>> it = graph.neighbours(v3);
+		Iterator<Graph.Vertex<Integer>> it = graph.neighbours(v3);
 		
 		String out = "";
 		while (it.hasNext()){
-			Vertex<Integer> v = it.next();
+			Graph.Vertex<Integer> v = it.next();
 			out += v.getElement()+", ";
 		}
 		
@@ -295,7 +295,7 @@ public class UndirectedGraphTest {
 		
 		out = "";
 		while (it.hasNext()){
-			Vertex<Integer> v = it.next();
+			Graph.Vertex<Integer> v = it.next();
 			out += v.getElement()+", ";
 		}
 		
@@ -306,7 +306,7 @@ public class UndirectedGraphTest {
 		it = graph.vertices();
 		out = "";
 		while (it.hasNext()){
-			Vertex<Integer> v = it.next();
+			Graph.Vertex<Integer> v = it.next();
 			out += v.getElement()+", ";
 		}
 		
@@ -316,7 +316,7 @@ public class UndirectedGraphTest {
 		
 		out = "";
 		while (it.hasNext()){
-			Vertex<Integer> v = it.next();
+			Graph.Vertex<Integer> v = it.next();
 			out += v.getElement()+", ";
 		}
 		
@@ -329,16 +329,16 @@ public class UndirectedGraphTest {
 		//fail("Not yet implemented");
 		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
 		
-		Vertex<Integer> v1 = graph.addVertex(1);
-		Vertex<Integer> v2 = graph.addVertex(3);
-		Vertex<Integer> v3 = graph.addVertex(4);
-		Vertex<Integer> v4 = graph.addVertex(2);
+		Graph.Vertex<Integer> v1 = graph.addVertex(1);
+		Graph.Vertex<Integer> v2 = graph.addVertex(3);
+		Graph.Vertex<Integer> v3 = graph.addVertex(4);
+		Graph.Vertex<Integer> v4 = graph.addVertex(2);
 		graph.addEdge(v1, v2);
 		graph.addEdge(v3, v2);
-		Edge<Integer> e3 = graph.addEdge(v3, v4);
+		Graph.Edge<Integer> e3 = graph.addEdge(v3, v4);
 		graph.addEdge(v1, v3);
 		
-		Iterator<Edge<Integer>> it = graph.connectingEdges(v2);
+		Iterator<Graph.Edge<Integer>> it = graph.connectingEdges(v2);
 		
 		String out = "";
 		while (it.hasNext()){
@@ -353,25 +353,25 @@ public class UndirectedGraphTest {
 	public void testDepthFirstTraversal(){
 		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
 		
-		Vertex<Integer> v1 = graph.addVertex(1);
-		Vertex<Integer> v2 = graph.addVertex(3);
-		Vertex<Integer> v3 = graph.addVertex(4);
-		Vertex<Integer> v4 = graph.addVertex(2);
-		Vertex<Integer> v5 = graph.addVertex(5);
+		Graph.Vertex<Integer> v1 = graph.addVertex(1);
+		Graph.Vertex<Integer> v2 = graph.addVertex(3);
+		Graph.Vertex<Integer> v3 = graph.addVertex(4);
+		Graph.Vertex<Integer> v4 = graph.addVertex(2);
+		Graph.Vertex<Integer> v5 = graph.addVertex(5);
 		graph.addEdge(v1, v2);
 		graph.addEdge(v3, v2);
-		Edge<Integer> e3 = graph.addEdge(v3, v4);
+		Graph.Edge<Integer> e3 = graph.addEdge(v3, v4);
 		graph.addEdge(v1, v3);
 		graph.addEdge(v1, v5);
 		
-		List<Vertex<Integer>> list = new ArrayList<Vertex<Integer>>();
+		List<Graph.Vertex<Integer>> list = new ArrayList<Graph.Vertex<Integer>>();
 		list.add(v2); list.add(v1); list.add(v5); list.add(v3); list.add(v4); 
 		
-		Iterator<Vertex<Integer>> it = graph.vertices();
+		Iterator<Graph.Vertex<Integer>> it = graph.vertices();
 		
 		String out = "";
 		while (it.hasNext()){
-			Vertex<Integer> v = it.next();
+			Graph.Vertex<Integer> v = it.next();
 			out += v.getElement()+", ";
 		}
 		
@@ -383,25 +383,25 @@ public class UndirectedGraphTest {
 	public void testBreadthFirstTraversal(){
 		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
 		
-		Vertex<Integer> v1 = graph.addVertex(1);
-		Vertex<Integer> v2 = graph.addVertex(3);
-		Vertex<Integer> v3 = graph.addVertex(4);
-		Vertex<Integer> v4 = graph.addVertex(2);
-		Vertex<Integer> v5 = graph.addVertex(5);
+		Graph.Vertex<Integer> v1 = graph.addVertex(1);
+		Graph.Vertex<Integer> v2 = graph.addVertex(3);
+		Graph.Vertex<Integer> v3 = graph.addVertex(4);
+		Graph.Vertex<Integer> v4 = graph.addVertex(2);
+		Graph.Vertex<Integer> v5 = graph.addVertex(5);
 		graph.addEdge(v1, v2);
 		graph.addEdge(v3, v2);
-		Edge<Integer> e3 = graph.addEdge(v3, v4);
+		Graph.Edge<Integer> e3 = graph.addEdge(v3, v4);
 		graph.addEdge(v1, v3);
 		graph.addEdge(v1, v5);
 		
-		List<Vertex<Integer>> list = new ArrayList<Vertex<Integer>>();
+		List<Graph.Vertex<Integer>> list = new ArrayList<Graph.Vertex<Integer>>();
 		list.add(v2); list.add(v3); list.add(v1); list.add(v4); list.add(v5); 
 		
-		Iterator<Vertex<Integer>> it = graph.vertices();
+		Iterator<Graph.Vertex<Integer>> it = graph.vertices();
 		
 		String out = "";
 		while (it.hasNext()){
-			Vertex<Integer> v = it.next();
+			Graph.Vertex<Integer> v = it.next();
 			out += v.getElement()+", ";
 		}
 		

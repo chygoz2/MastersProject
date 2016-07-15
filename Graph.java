@@ -15,4 +15,18 @@ public interface Graph<E,A> {
 	public Iterator<Edge<A>> edges();
 	public Iterator<Vertex<E>> neighbours(Vertex<E> v);
 	public Iterator<Edge<A>> connectingEdges(Vertex<E> v);
+	
+	public interface Vertex<E>{
+		public E getElement();
+		public void setElement(E elem);
+		//public int getId();
+	}
+	
+	public interface Edge<A>{
+		public A getAttribute();
+		public void setAttribute(A attr);
+		public Vertex[] getVertices();
+		public Vertex getSource();
+		public Vertex getDestination();
+	}
 }

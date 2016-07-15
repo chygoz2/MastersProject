@@ -5,10 +5,10 @@ import Jama.Matrix;
 public class DetectClaw {
 	public static void main(String [] args){
 //		UndirectedGraph graph = new UndirectedGraph();
-//		Vertex v1 = graph.addVertex(1);
-//		Vertex v2 = graph.addVertex(2);
-//		Vertex v3 = graph.addVertex(3);
-//		Vertex v4 = graph.addVertex(4);
+//		Graph.Vertex v1 = graph.addVertex(1);
+//		Graph.Vertex v2 = graph.addVertex(2);
+//		Graph.Vertex v3 = graph.addVertex(3);
+//		Graph.Vertex v4 = graph.addVertex(4);
 //		
 //		graph.addEdge(v1, v2);
 //		graph.addEdge(v3, v2);
@@ -18,13 +18,13 @@ public class DetectClaw {
 		
 		
 //		UndirectedGraph graph = new UndirectedGraph();
-//		Vertex v1 = graph.addVertex(0);
-//		Vertex v2 = graph.addVertex(1);
-//		Vertex v3 = graph.addVertex(2);
-//		Vertex v4 = graph.addVertex(3);
-//		Vertex v5 = graph.addVertex(4);
-//		Vertex v6 = graph.addVertex(5);
-//		Vertex v7 = graph.addVertex(6);
+//		Graph.Vertex v1 = graph.addVertex(0);
+//		Graph.Vertex v2 = graph.addVertex(1);
+//		Graph.Vertex v3 = graph.addVertex(2);
+//		Graph.Vertex v4 = graph.addVertex(3);
+//		Graph.Vertex v5 = graph.addVertex(4);
+//		Graph.Vertex v6 = graph.addVertex(5);
+//		Graph.Vertex v7 = graph.addVertex(6);
 //		
 //		graph.addEdge(v1, v5);
 //		graph.addEdge(v1, v3);
@@ -62,9 +62,9 @@ public class DetectClaw {
 		
 		int edgeCount = graph.size();
 		double maxEdgeCount = 2*Math.sqrt(edgeCount);
-		Iterable<Vertex> vertices = (Iterable<Vertex>)graph.vertices();
+		Iterable<Graph.Vertex> vertices = (Iterable<Graph.Vertex>)graph.vertices();
 		
-		for(Vertex v: vertices){
+		for(Graph.Vertex v: vertices){
 			if(graph.degree(v) > maxEdgeCount){
 				//look for claw with v as central vertex	
 				UndirectedGraph vNeighGraph = Utility.getNeighbourGraph(graph, v);
@@ -73,23 +73,23 @@ public class DetectClaw {
 				List<UndirectedGraph> vNeighComps = Utility.getComponents(vNeighGraph);
 				if(vNeighComps.size() >= 3){
 					//if the number of components is less than 3, then no claw exists in the neighbourhood of v
-					Iterable<Vertex> c1Vertices = (Iterable<Vertex>)vNeighComps.get(0).vertices();
-					Iterable<Vertex> c2Vertices = (Iterable<Vertex>)vNeighComps.get(1).vertices();
-					Iterable<Vertex> c3Vertices = (Iterable<Vertex>)vNeighComps.get(2).vertices();
+					Iterable<Graph.Vertex> c1Vertices = (Iterable<Graph.Vertex>)vNeighComps.get(0).vertices();
+					Iterable<Graph.Vertex> c2Vertices = (Iterable<Graph.Vertex>)vNeighComps.get(1).vertices();
+					Iterable<Graph.Vertex> c3Vertices = (Iterable<Graph.Vertex>)vNeighComps.get(2).vertices();
 					
-					List<Vertex> clawVertices = new ArrayList<Vertex>();
-					Vertex v1 = graph.getVertexWithElement((int) v.getElement());
+					List<Graph.Vertex> clawVertices = new ArrayList<Graph.Vertex>();
+					Graph.Vertex v1 = graph.getVertexWithElement((int) v.getElement());
 					clawVertices.add(v1);
 					
-					for(Vertex vv: c1Vertices){
+					for(Graph.Vertex vv: c1Vertices){
 						clawVertices.add(vv);
 						break;
 					}
-					for(Vertex vv: c2Vertices){
+					for(Graph.Vertex vv: c2Vertices){
 						clawVertices.add(vv);
 						break;
 					}
-					for(Vertex vv: c3Vertices){
+					for(Graph.Vertex vv: c3Vertices){
 						clawVertices.add(vv);
 						break;
 					}
@@ -107,22 +107,22 @@ public class DetectClaw {
 	
 	public static Map phaseTwo(UndirectedGraph graph){
 		Map phase2Results = new HashMap();
-		List<Vertex> clawVertices = new ArrayList<Vertex>();
+		List<Graph.Vertex> clawVertices = new ArrayList<Graph.Vertex>();
 		
-		Iterable<Vertex> vertices = (Iterable<Vertex>)graph.vertices();
+		Iterable<Graph.Vertex> vertices = (Iterable<Graph.Vertex>)graph.vertices();
 		
 		//create a mapping between vertices and matrix indices
-		List<Vertex> vertexIndexMap1 = new ArrayList<Vertex>();
+		List<Graph.Vertex> vertexIndexMap1 = new ArrayList<Graph.Vertex>();
 		int a = 0;
 		
-		for(Vertex v: (Iterable<Vertex>)graph.vertices()){
+		for(Graph.Vertex v: (Iterable<Graph.Vertex>)graph.vertices()){
 			vertexIndexMap1.add(a, v);
 			a++;
 		}
 		double[][] A = graph.getAdjacencyMatrix();
 		
 		here:
-		for(Vertex v: vertices){
+		for(Graph.Vertex v: vertices){
 			//get neighbourhood graph
 			UndirectedGraph vNeigh = Utility.getNeighbourGraph(graph, v);
 			
@@ -134,10 +134,10 @@ public class DetectClaw {
 			Matrix cmSquared = cm.times(cm);
 			
 			//create a map between vertices and matrix indices
-			Map<Integer, Vertex> vertexIndexMap2 = new HashMap<Integer, Vertex>();
+			Map<Integer, Graph.Vertex> vertexIndexMap2 = new HashMap<Integer, Graph.Vertex>();
 			int b = 0;
 			
-			for(Vertex vv: (Iterable<Vertex>)vNeigh.vertices()){
+			for(Graph.Vertex vv: (Iterable<Graph.Vertex>)vNeigh.vertices()){
 				vertexIndexMap2.put(b,vv);
 				b++;
 			}
@@ -151,9 +151,9 @@ public class DetectClaw {
 						//find the third vertex asides i and j to complete the triangle
 
 						//get i's and j's neighbour vertices
-						Vertex iVertex = vertexIndexMap2.get(i);
-						Vertex jVertex = vertexIndexMap2.get(j);
-						Vertex kVertex;
+						Graph.Vertex iVertex = vertexIndexMap2.get(i);
+						Graph.Vertex jVertex = vertexIndexMap2.get(j);
+						Graph.Vertex kVertex;
 						
 //						int iVertexId = (int) ((UndirectedGraph.UnVertex)iVertex).getElement();
 //						int jVertexId = (int) ((UndirectedGraph.UnVertex)jVertex).getElement();

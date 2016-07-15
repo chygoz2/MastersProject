@@ -5,11 +5,11 @@ public class DetectKL {
 	public static void main(String [] args){
 		UndirectedGraph<Integer, Integer> graph = new UndirectedGraph<Integer,Integer>();
 		
-		Vertex<Integer> v1 = graph.addVertex(1);
-		Vertex<Integer> v2 = graph.addVertex(2);
-		Vertex<Integer> v3 = graph.addVertex(3);
-		Vertex<Integer> v4 = graph.addVertex(4);
-		Vertex<Integer> v5 = graph.addVertex(5);
+		Graph.Vertex<Integer> v1 = graph.addVertex(1);
+		Graph.Vertex<Integer> v2 = graph.addVertex(2);
+		Graph.Vertex<Integer> v3 = graph.addVertex(3);
+		Graph.Vertex<Integer> v4 = graph.addVertex(4);
+		Graph.Vertex<Integer> v5 = graph.addVertex(5);
 		graph.addEdge(v1, v2);
 		graph.addEdge(v3, v2);
 		graph.addEdge(v3, v4);
@@ -22,31 +22,31 @@ public class DetectKL {
 		graph.addEdge(v1, v4);
 		
 		
-		graph.mapVertexToId();
+		//graph.mapVertexToId();
 		
 		complete(3, graph);
 	}
 	
 	public static void complete(int l, UndirectedGraph g){
 		Map vertexLabel = new HashMap();
-		Iterable<Vertex> vIt = (Iterable<Vertex>)g.vertices();
-		for(Vertex v: vIt){
+		Iterable<Graph.Vertex> vIt = (Iterable<Graph.Vertex>)g.vertices();
+		for(Graph.Vertex v: vIt){
 			vertexLabel.put(v,l);
 		}
-		Stack<Vertex> C = new Stack<Vertex>();
+		Stack<Graph.Vertex> C = new Stack<Graph.Vertex>();
 		K(l,g,C,vertexLabel);
 	}
 	
-	public static void K(int k, UndirectedGraph gk, Stack<Vertex> C, Map vertexLabel){
-		Iterable<Vertex> U = (Iterable<Vertex>)gk.vertices();
+	public static void K(int k, UndirectedGraph gk, Stack<Graph.Vertex> C, Map vertexLabel){
+		Iterable<Graph.Vertex> U = (Iterable<Graph.Vertex>)gk.vertices();
 		if(k==2){
-			Iterable<Edge> gkEdges = (Iterable<Edge>)gk.edges();
+			Iterable<Graph.Edge> gkEdges = (Iterable<Graph.Edge>)gk.edges();
 			UndirectedGraph kGraph = new UndirectedGraph();
 			Set<Integer> vertexSet = new HashSet<Integer>();
-			for(Edge ee: gkEdges){
+			for(Graph.Edge ee: gkEdges){
 				//line 1
-				Vertex source = ee.getSource();
-				Vertex destination = ee.getDestination();
+				Graph.Vertex source = ee.getSource();
+				Graph.Vertex destination = ee.getDestination();
 				vertexSet.add((Integer) source.getElement());
 				vertexSet.add((Integer) destination.getElement());
 			}
@@ -54,10 +54,10 @@ public class DetectKL {
 				vertexSet.add((Integer)C.pop().getElement());
 			}
 			for(Integer v: vertexSet){
-				Vertex vv = kGraph.addVertex(v);
+				Graph.Vertex vv = kGraph.addVertex(v);
 				for(Integer z: vertexSet){
 					if(v!=z){
-						Vertex zz = kGraph.addVertex(z);
+						Graph.Vertex zz = kGraph.addVertex(z);
 						if(!kGraph.containsEdge(vv, zz)){
 							kGraph.addEdge(vv, zz);
 						}
@@ -67,28 +67,28 @@ public class DetectKL {
 			Utility.printGraph(kGraph);
 		}else{
 			//sort vertices in U (line 2)
-			List<Vertex> sortedU = new ArrayList<Vertex>();
-			for(Vertex v: U){
+			List<Graph.Vertex> sortedU = new ArrayList<Graph.Vertex>();
+			for(Graph.Vertex v: U){
 				sortedU.add(v);
 			}
 			Collections.sort(sortedU, new VertexComparator(gk));
 			
 			for(int i=0; i<sortedU.size();i++){
-				Vertex vi = sortedU.get(i);
+				Graph.Vertex vi = sortedU.get(i);
 				
 				//get neighbour labeled k
-				Iterator<Vertex> vit = gk.neighbours(gk.getVertexWithId(vi.getId()));
-				List<Vertex> list = getVerticesWithLabel(k, vertexLabel);
-				List<Vertex> adjVerticesLabeledK = new ArrayList<Vertex>();
+				Iterator<Graph.Vertex> vit = gk.neighbours(gk.getVertexWithElement((int)vi.getElement()));
+				List<Graph.Vertex> list = getVerticesWithLabel(k, vertexLabel);
+				List<Graph.Vertex> adjVerticesLabeledK = new ArrayList<Graph.Vertex>();
 				while(vit.hasNext()){
-					Vertex v = vit.next();
-					if(getVertexWithId(v.getId(), list) != null){
+					Graph.Vertex v = vit.next();
+					if(getVertexWithElement((int)v.getElement(), list) != null){
 						adjVerticesLabeledK.add(v);
 						
 						//relabel all vertices in adjVertricesLabeledK to k-1 (line 3)
-						Collection<Vertex> mapKeys = vertexLabel.keySet();
-						for(Vertex vv: mapKeys){
-							if(vv.getId() == v.getId()){
+						Collection<Graph.Vertex> mapKeys = vertexLabel.keySet();
+						for(Graph.Vertex vv: mapKeys){
+							if(vv.getElement() == v.getElement()){
 								vertexLabel.put(vv, k-1);
 								break;
 							}
@@ -97,11 +97,11 @@ public class DetectKL {
 				}
 				
 				//line 4
-				for(Vertex u: adjVerticesLabeledK){
+				for(Graph.Vertex u: adjVerticesLabeledK){
 					int j = 0;
-					Iterator<Vertex> uNeigh = gk.neighbours(gk.getVertexWithId(u.getId()));
+					Iterator<Graph.Vertex> uNeigh = gk.neighbours(gk.getVertexWithElement((int)u.getElement()));
 					while(uNeigh.hasNext()){
-						Vertex v = uNeigh.next();
+						Graph.Vertex v = uNeigh.next();
 						if(adjVerticesLabeledK.contains(v)){
 							adjVerticesLabeledK.remove(v);
 							adjVerticesLabeledK.add(j,v);
@@ -120,8 +120,8 @@ public class DetectKL {
 				C.pop(); //line 8
 				
 				//line 9
-				Collection<Vertex> mapKeys = vertexLabel.keySet();
-				for(Vertex vv: mapKeys){
+				Collection<Graph.Vertex> mapKeys = vertexLabel.keySet();
+				for(Graph.Vertex vv: mapKeys){
 					if(checkIfContained(vv, adjVerticesLabeledK)){
 						vertexLabel.put(vv, k);
 						break;
@@ -132,18 +132,18 @@ public class DetectKL {
 				vertexLabel.put(vi, k+1);
 				
 				//line 11
-				for(Vertex u: adjVerticesLabeledK){
+				for(Graph.Vertex u: adjVerticesLabeledK){
 					int j = 0;
-					Iterable<Vertex> uNeigh = (Iterable<Vertex>)gk.neighbours(gk.getVertexWithId(u.getId()));
-					List<Vertex> uAdjList = new ArrayList<Vertex>();
-					for(Vertex a: uNeigh){
+					Iterable<Graph.Vertex> uNeigh = (Iterable<Graph.Vertex>)gk.neighbours(gk.getVertexWithElement((int)u.getElement()));
+					List<Graph.Vertex> uAdjList = new ArrayList<Graph.Vertex>();
+					for(Graph.Vertex a: uNeigh){
 						uAdjList.add(a);
 					}
 					//move vi
-					uAdjList.remove(gk.getVertexWithId(vi.getId()));
+					uAdjList.remove(gk.getVertexWithElement((int)vi.getElement()));
 					for(int m=0;m<uAdjList.size();m++){
-						if((int)vertexLabel.get(gk.getVertexWithId(uAdjList.get(m).getId()))!= k){
-							uAdjList.add(m, gk.getVertexWithId(vi.getId()));
+						if((int)vertexLabel.get(gk.getVertexWithElement((int)uAdjList.get(m).getElement()))!= k){
+							uAdjList.add(m, gk.getVertexWithElement((int)vi.getElement()));
 						}
 					}
 				}
@@ -152,16 +152,16 @@ public class DetectKL {
 		}
 	}
 	
-	public static boolean checkIfContained(Vertex v, List<Vertex> list){
-		int vid = v.getId();
-		for(Vertex vv: list){
-			if(vv.getId()==vid)
+	public static boolean checkIfContained(Graph.Vertex<Integer> v, List<Graph.Vertex> list){
+		int vid = v.getElement();
+		for(Graph.Vertex<Integer> vv: list){
+			if(vv.getElement()==vid)
 				return true;
 		}
 		return false;
 	}
 	
-	public static class VertexComparator implements Comparator<Vertex>{
+	public static class VertexComparator implements Comparator<Graph.Vertex>{
 		
 		private UndirectedGraph graph;
 		
@@ -170,7 +170,7 @@ public class DetectKL {
 		}
 
 		@Override
-		public int compare(Vertex v1, Vertex v2) {
+		public int compare(Graph.Vertex v1, Graph.Vertex v2) {
 			Integer d1 = graph.degree(v1);
 			Integer d2 = graph.degree(v2);
 			
@@ -178,10 +178,10 @@ public class DetectKL {
 		}
 	}
 	
-	public static List<Vertex> getVerticesWithLabel(int k, Map map){
-		List<Vertex> list = new ArrayList<Vertex>();
-		Collection<Vertex> mapKeys = map.keySet();
-		for(Vertex v: mapKeys){
+	public static List<Graph.Vertex> getVerticesWithLabel(int k, Map map){
+		List<Graph.Vertex> list = new ArrayList<Graph.Vertex>();
+		Collection<Graph.Vertex> mapKeys = map.keySet();
+		for(Graph.Vertex v: mapKeys){
 			if((int)map.get(v) == k){
 				list.add(v);
 			}
@@ -189,9 +189,9 @@ public class DetectKL {
 		return list;
 	}
 	
-	public static Vertex getVertexWithId(int id, List<Vertex> list){
-		for(Vertex v: list){
-			if(v.getId()==id)
+	public static Graph.Vertex<Integer> getVertexWithElement(int id, List<Graph.Vertex> list){
+		for(Graph.Vertex<Integer> v: list){
+			if(v.getElement()==id)
 				return v;
 		}
 		return null;
