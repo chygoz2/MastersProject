@@ -26,10 +26,10 @@ public class ListSimplicialVertices {
 		
 		//graph.mapVertexToId();
 		
-		Set[] verticesPartition = Utility.partitionVertices(graph);
+		List[] verticesPartition = Utility.partitionVertices(graph);
 		
-		Set<Graph.Vertex> lowDegreeVertices = verticesPartition[0];
-		Set<Graph.Vertex> highDegreeVertices = verticesPartition[1];
+		List<Graph.Vertex> lowDegreeVertices = verticesPartition[0];
+		List<Graph.Vertex> highDegreeVertices = verticesPartition[1];
 		
 //		System.out.print("Low degree vertices: ");
 //		for(Graph.Vertex v: lowDegreeVertices)
@@ -65,7 +65,7 @@ public class ListSimplicialVertices {
 		}
 	}
 	
-	public static Map phaseOne(UndirectedGraph graph, Set<Graph.Vertex> lowDegreeVertices){
+	public static Map phaseOne(UndirectedGraph graph, Collection<Graph.Vertex> lowDegreeVertices){
 		Map results = new HashMap();
 		
 		boolean simplicialFound = false;
@@ -106,7 +106,7 @@ public class ListSimplicialVertices {
 		return results;
 	}
 	
-	public static List<Graph.Vertex> phaseTwo(UndirectedGraph graph, Set<Graph.Vertex> highDegreeVertices){
+	public static List<Graph.Vertex> phaseTwo(UndirectedGraph graph, Collection<Graph.Vertex> highDegreeVertices){
 		List<Graph.Vertex> markedVertices = new ArrayList<Graph.Vertex>();
 		
 		for(Graph.Vertex v: highDegreeVertices){
@@ -124,7 +124,7 @@ public class ListSimplicialVertices {
 		return markedVertices;
 	}
 	
-	public static void phaseThree(UndirectedGraph graph, Set<Graph.Vertex> lowDegreeVertices){
+	public static void phaseThree(UndirectedGraph graph, Collection<Graph.Vertex> lowDegreeVertices){
 		//remove all low degree vertices from graph
 		for(Graph.Vertex v: lowDegreeVertices){
 			graph.removeVertex(v);

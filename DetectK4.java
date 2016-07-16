@@ -25,10 +25,10 @@ public class DetectK4 {
 		
 		//graph.mapVertexToId();
 		
-		Set[] verticesPartition = Utility.partitionVertices(graph);
+		List<Graph.Vertex<Integer>>[] verticesPartition = Utility.partitionVertices(graph);
 		
-		Set<Graph.Vertex> lowDegreeVertices = verticesPartition[0];
-		Set<Graph.Vertex> highDegreeVertices = verticesPartition[1];
+		List<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
+		List<Graph.Vertex<Integer>> highDegreeVertices = verticesPartition[1];
 		
 		Map phase1Results = phaseOne(graph, highDegreeVertices);
 		if((boolean)phase1Results.get("k4Found")){
@@ -37,23 +37,23 @@ public class DetectK4 {
 		}else{
 			Map phase2Results = phaseTwo(graph, lowDegreeVertices);
 			if((boolean)phase2Results.get("k4Found")){
-				UndirectedGraph k4 = (UndirectedGraph)phase2Results.get("k4");
+				UndirectedGraph<Integer,Integer> k4 = (UndirectedGraph<Integer,Integer>)phase2Results.get("k4");
 				Utility.printGraph(k4);
 			}
 		}
 		
 	}
 	
-	public static Map phaseOne(UndirectedGraph graph, Set<Graph.Vertex> highDegreeVertices){
+	public static Map phaseOne(UndirectedGraph graph, Collection<Graph.Vertex<Integer>> highDegreeVertices){
 		Map phase1Results = new HashMap();
-		List<Graph.Vertex> k4Vertices = new ArrayList<Graph.Vertex>();
+		List<Graph.Vertex<Integer>> k4Vertices = new ArrayList<Graph.Vertex<Integer>>();
 		
 		here:
 			
 		for(Graph.Vertex x: highDegreeVertices){
 			//get x's neighbourhood graph
 			Iterator<Graph.Vertex> nXIter = graph.neighbours(x);
-			List<Graph.Vertex> nXList = new ArrayList<Graph.Vertex>();
+			List<Graph.Vertex<Integer>> nXList = new ArrayList<Graph.Vertex<Integer>>();
 
 			//get the intersection of the neighbourhood vertices of x with the high degree vertices
 			while(nXIter.hasNext()){
@@ -70,7 +70,7 @@ public class DetectK4 {
 			Matrix adjMatrixSquare = adjMatrix.times(adjMatrix);
 			
 			//create map of indices to vertex
-			List<Graph.Vertex> indexVertexMap = new ArrayList<Graph.Vertex>();
+			List<Graph.Vertex<Integer>> indexVertexMap = new ArrayList<Graph.Vertex<Integer>>();
 			Iterable<Graph.Vertex> vIt = (Iterable<Graph.Vertex>)graph2.vertices();
 			for(Graph.Vertex v: vIt){
 				indexVertexMap.add(v);
@@ -107,15 +107,15 @@ public class DetectK4 {
 		return phase1Results;
 	}
 	
-	public static Map phaseTwo(UndirectedGraph graph, Set<Graph.Vertex> lowDegreeVertices){
+	public static Map phaseTwo(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> lowDegreeVertices){
 		Map phase2Results = new HashMap();
-		List<Graph.Vertex> k4Vertices = new ArrayList<Graph.Vertex>();
+		List<Graph.Vertex<Integer>> k4Vertices = new ArrayList<Graph.Vertex<Integer>>();
 		
 		here:
 		for(Graph.Vertex x: lowDegreeVertices){
 			//get x's neighbourhood graph
-			Iterable<Graph.Vertex> nXIter = (Iterable<Graph.Vertex>)graph.neighbours(x);
-			List<Graph.Vertex> nXList = new ArrayList<Graph.Vertex>();
+			Iterable<Graph.Vertex<Integer>> nXIter = (Iterable<Graph.Vertex<Integer>>)graph.neighbours(x);
+			List<Graph.Vertex<Integer>> nXList = new ArrayList<Graph.Vertex<Integer>>();
 
 			//make neighbourhood graph of x from list of vertices
 			for(Graph.Vertex v: nXIter){

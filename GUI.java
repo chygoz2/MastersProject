@@ -120,22 +120,34 @@ public class GUI extends JFrame {
 		
 		btnDetect = new JButton("Detect");
 		btnDetect.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent e) {
 				String selectedButton = getSelectedButtonText(buttonGroup);
-				if(selectedButton.equals("Diamond")){
-					String fileName = fileNameTextField.getText();;
-					UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(fileName);
-					UndirectedGraph<Integer,Integer> diamond = DetectDiamond.detect(graph);
-					if(diamond!=null){
-						Utility.printGraph(diamond);
-					}else{
-						System.out.println("Diamond not found");
+				
+				Runnable r = new Runnable(){
+					@Override
+					public void run() {
+						if(selectedButton.equals("Diamond")){
+							String fileName = fileNameTextField.getText();;
+							UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(fileName);
+							UndirectedGraph<Integer,Integer> diamond = DetectDiamond.detect(graph);
+							if(diamond!=null){
+								Utility.printGraph(diamond);
+							}else{
+								System.out.println("Diamond not found");
+							}
+						}else if(selectedButton.equals("Claw")){
+							String fileName = fileNameTextField.getText();;
+							UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(fileName);
+							UndirectedGraph<Integer,Integer> claw = DetectClaw.detect(graph);
+							if(claw!=null){
+								Utility.printGraph(claw);
+							}else
+								System.out.println("Claw not found");
+						}
 					}
-				}else if(selectedButton.equals("Claw")){
-					String fileName = fileNameTextField.getText();;
-					UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(fileName);
-					Detector.detectClaw(graph);
-				}
+					
+				};
+				new Thread(r).start();
 			}
 		});
 		

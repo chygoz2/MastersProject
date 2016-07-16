@@ -39,27 +39,26 @@ public class DetectClaw {
 		
 		//graph.mapVertexToId();
 		
-		UndirectedGraph graph = Utility.makeRandomGraph(7, 0.4);
+		UndirectedGraph<Integer,Integer> graph = Utility.makeRandomGraph(7, 0.4);
 		
-		Map phase1Result = phaseOne(graph);
-		if((boolean)phase1Result.get("clawFound")){
-			UndirectedGraph claw = (UndirectedGraph)phase1Result.get("claw");
+		UndirectedGraph<Integer,Integer> claw = detect(graph);
+		if(claw!=null){
 			Utility.printGraph(claw);
-		}else{
-			Map phase2Result = phaseTwo(graph);
-			if((boolean)phase2Result.get("clawFound")){
-				UndirectedGraph claw = (UndirectedGraph)phase2Result.get("claw");
-				Utility.printGraph(claw);
-			}else{
-				System.out.println("Claw not found");
-			}
-		}
+		}else
+			System.out.println("Claw not found");
 	}
 	
-	public static Map phaseOne(UndirectedGraph graph){
-		Map phase1Results = new HashMap();
-		boolean clawFound = false;
-		
+	public static UndirectedGraph<Integer,Integer> detect(UndirectedGraph<Integer,Integer> graph){
+		UndirectedGraph<Integer,Integer> claw = null;
+		claw = phaseOne(graph);
+		if(claw==null){
+			claw = phaseTwo(graph);
+		}
+		return claw;
+	}
+	
+	public static UndirectedGraph<Integer,Integer> phaseOne(UndirectedGraph<Integer,Integer> graph){
+		UndirectedGraph<Integer,Integer> clawGraph = null;
 		int edgeCount = graph.size();
 		double maxEdgeCount = 2*Math.sqrt(edgeCount);
 		Iterable<Graph.Vertex> vertices = (Iterable<Graph.Vertex>)graph.vertices();
@@ -70,14 +69,14 @@ public class DetectClaw {
 				UndirectedGraph vNeighGraph = Utility.getNeighbourGraph(graph, v);
 				
 				//get components of v's neighbourhood graph
-				List<UndirectedGraph> vNeighComps = Utility.getComponents(vNeighGraph);
+				List<UndirectedGraph<Integer,Integer>> vNeighComps = Utility.getComponents(vNeighGraph);
 				if(vNeighComps.size() >= 3){
 					//if the number of components is less than 3, then no claw exists in the neighbourhood of v
 					Iterable<Graph.Vertex> c1Vertices = (Iterable<Graph.Vertex>)vNeighComps.get(0).vertices();
 					Iterable<Graph.Vertex> c2Vertices = (Iterable<Graph.Vertex>)vNeighComps.get(1).vertices();
 					Iterable<Graph.Vertex> c3Vertices = (Iterable<Graph.Vertex>)vNeighComps.get(2).vertices();
 					
-					List<Graph.Vertex> clawVertices = new ArrayList<Graph.Vertex>();
+					List<Graph.Vertex<Integer>> clawVertices = new ArrayList<Graph.Vertex<Integer>>();
 					Graph.Vertex v1 = graph.getVertexWithElement((int) v.getElement());
 					clawVertices.add(v1);
 					
@@ -94,20 +93,16 @@ public class DetectClaw {
 						break;
 					}
 					
-					clawFound = true;
-					
-					UndirectedGraph clawGraph = Utility.makeGraphFromVertexSet(graph, clawVertices);
-					phase1Results.put("claw", clawGraph);
+					clawGraph = Utility.makeGraphFromVertexSet(graph, clawVertices);
 				}
 			}
 		}
-		phase1Results.put("clawFound", clawFound);
-		return phase1Results;
+		return clawGraph;
 	}
 	
-	public static Map phaseTwo(UndirectedGraph graph){
-		Map phase2Results = new HashMap();
-		List<Graph.Vertex> clawVertices = new ArrayList<Graph.Vertex>();
+	public static UndirectedGraph<Integer,Integer> phaseTwo(UndirectedGraph<Integer,Integer> graph){
+		UndirectedGraph<Integer,Integer> claw = null;
+		List<Graph.Vertex<Integer>> clawVertices = new ArrayList<Graph.Vertex<Integer>>();
 		
 		Iterable<Graph.Vertex> vertices = (Iterable<Graph.Vertex>)graph.vertices();
 		
@@ -173,7 +168,7 @@ public class DetectClaw {
 								clawVertices.add(kVertex);
 //								System.out.println("Vertices are "+iVertex.getElement()+" and "+
 //											jVertex.getElement() + " and "+kVertex.getElement());
-								phase2Results.put("claw", Utility.makeGraphFromVertexSet(graph, clawVertices));
+								claw = Utility.makeGraphFromVertexSet(graph, clawVertices);
 								break here;
 							}
 						}
@@ -183,7 +178,6 @@ public class DetectClaw {
 				}
 			}
 		}
-		phase2Results.put("clawFound", !clawVertices.isEmpty());
-		return phase2Results;
+		return claw;
 	}
 }

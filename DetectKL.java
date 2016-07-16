@@ -79,7 +79,7 @@ public class DetectKL {
 				//get neighbour labeled k
 				Iterator<Graph.Vertex> vit = gk.neighbours(gk.getVertexWithElement((int)vi.getElement()));
 				List<Graph.Vertex> list = getVerticesWithLabel(k, vertexLabel);
-				List<Graph.Vertex> adjVerticesLabeledK = new ArrayList<Graph.Vertex>();
+				List<Graph.Vertex<Integer>> adjVerticesLabeledK = new ArrayList<Graph.Vertex<Integer>>();
 				while(vit.hasNext()){
 					Graph.Vertex v = vit.next();
 					if(getVertexWithElement((int)v.getElement(), list) != null){
@@ -114,14 +114,14 @@ public class DetectKL {
 				C.push(vi);
 				
 				//line 7
-				UndirectedGraph ugraph = Utility.makeGraphFromVertexSet(gk, adjVerticesLabeledK);
+				UndirectedGraph<Integer,Integer> ugraph = Utility.makeGraphFromVertexSet(gk, adjVerticesLabeledK);
 				K(k-1, ugraph, C, vertexLabel);
 				
 				C.pop(); //line 8
 				
 				//line 9
-				Collection<Graph.Vertex> mapKeys = vertexLabel.keySet();
-				for(Graph.Vertex vv: mapKeys){
+				Collection<Graph.Vertex<Integer>> mapKeys = vertexLabel.keySet();
+				for(Graph.Vertex<Integer> vv: mapKeys){
 					if(checkIfContained(vv, adjVerticesLabeledK)){
 						vertexLabel.put(vv, k);
 						break;
@@ -152,7 +152,7 @@ public class DetectKL {
 		}
 	}
 	
-	public static boolean checkIfContained(Graph.Vertex<Integer> v, List<Graph.Vertex> list){
+	public static boolean checkIfContained(Graph.Vertex<Integer> v, List<Graph.Vertex<Integer>> list){
 		int vid = v.getElement();
 		for(Graph.Vertex<Integer> vv: list){
 			if(vv.getElement()==vid)

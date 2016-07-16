@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.swing.JOptionPane;
@@ -58,14 +59,7 @@ public final class Utility {
 			lines[c++] = scanner.nextLine();
 		}
 		
-		//create graph and add vertices
-		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
-		Graph.Vertex<Integer>[] vertices = new Graph.Vertex[vertexCount];
-		for(int i=0; i<vertexCount; i++){
-			vertices[i] = graph.addVertex(i);
-		}
-		
-		//read adjacency matrix for edges
+		//read adjacency matrix 
 		for(int i=0; i<vertexCount; i++){
 			String[] stringI = lines[i].split("[ ]+");
 			if(stringI.length != vertexCount){
@@ -78,14 +72,8 @@ public final class Utility {
 			}
 		}
 		
-		//add the edges
-		for(int i=0; i<vertexCount; i++){
-			for(int j=i+1; j<vertexCount; j++){
-				if(adjMatrix[i][j] == 1){
-					graph.addEdge(vertices[i], vertices[j]);
-				}
-			}
-		}
+		//create graph and add vertices
+		UndirectedGraph<Integer,Integer> graph = makeGraphFromAdjacencyMatrix(adjMatrix);
 		
 		try {
 			scanner.close();
@@ -103,12 +91,7 @@ public final class Utility {
 			System.exit(0);
 		}
 		
-		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
-		Graph.Vertex<Integer>[] vertices = new Graph.Vertex[v];
-		//add the vertices
-		for(int i=0; i<v; i++){
-			vertices[i] = graph.addVertex(i);
-		}
+		int[][] adjMatrix = new int[v][v];
 		
 		//add the edges with given edge probability
 		ThreadLocalRandom random = ThreadLocalRandom.current();
@@ -116,16 +99,71 @@ public final class Utility {
 			for(int j=i+1; j<v; j++){
 				double rand = random.nextDouble();
 				if(rand<p){
-					graph.addEdge(vertices[i], vertices[j]);
+//					graph.addEdge(vertices[i], vertices[j]);
+					adjMatrix[i][j] = 1;
+					adjMatrix[j][i] = 1;
 				}
 			}
 		}
 		
+		UndirectedGraph<Integer,Integer> graph = makeGraphFromAdjacencyMatrix(adjMatrix);
 		//printGraph(graph);
 		//graph.printAdjacencyMatrix();
 		return graph;
 	}
 	
+	public static UndirectedGraph<Integer,Integer> makeGraphFromAdjacencyMatrix(int[][] adjMatrix){
+		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
+		Graph.Vertex<Integer>[] vertices = new Graph.Vertex[adjMatrix.length];
+		
+		//add vertices
+		for(int i=0; i<adjMatrix.length; i++){
+			vertices[i] = graph.addVertex(i);
+		}
+		
+		
+		//add the edges
+		for(int i=0; i<adjMatrix.length; i++){
+			for(int j=i+1; j<adjMatrix.length; j++){
+				if(adjMatrix[i][j] == 1){
+					graph.addEdge(vertices[i], vertices[j]);
+				}
+			}
+		}
+		
+		return graph;
+	}
+	
+	public static UndirectedGraph<Integer,Integer> makeGraphFromVertexSet(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> vertices){
+		UndirectedGraph<Integer,Integer> g1 = new UndirectedGraph<Integer,Integer>();
+		
+		//add the vertices
+		for(Graph.Vertex<Integer> ve: vertices){
+			g1.addVertex(ve.getElement());
+		}		
+		
+		Iterator<Graph.Vertex<Integer>> vIt = g1.vertices();
+		while(vIt.hasNext()){
+			Iterator<Graph.Vertex<Integer>> vIt2 = g1.vertices();
+			Graph.Vertex<Integer> one = vIt.next();
+			while(vIt2.hasNext()){
+				Graph.Vertex<Integer> two = vIt2.next();
+				if(!two.equals(one)){
+					Graph.Vertex<Integer> nOne = graph.getVertexWithElement((int) one.getElement());
+					Graph.Vertex<Integer> nTwo = graph.getVertexWithElement((int)two.getElement());
+					
+					if(graph.containsEdge(nOne, nTwo)){
+						if(!g1.containsEdge(one,two)){
+							g1.addEdge(one, two);
+						}
+					}
+				}
+			}
+		}
+		
+		return g1;
+	}
+
 	public static void generateRandomGraphFile(int v, double p, int no){
 		for(int i=1; i<=no; i++){
 			UndirectedGraph<Integer,Integer> g = makeRandomGraph(v,p);
@@ -184,54 +222,26 @@ public final class Utility {
 	//method to create subgraph in the neighbourhood of Graph.Vertex v
 	public static UndirectedGraph<Integer,Integer> getNeighbourGraph(UndirectedGraph graph, Graph.Vertex v){
 		//get v's neighbours;
-		List<Graph.Vertex> neighbours = new ArrayList<Graph.Vertex>();
-		Iterator<Graph.Vertex> it = graph.neighbours(v);
+		List<Graph.Vertex<Integer>> neighbours = new ArrayList<Graph.Vertex<Integer>>();
+		Iterator<Graph.Vertex<Integer>> it = graph.neighbours(v);
 		while(it.hasNext()){
 			neighbours.add(it.next());
 		}
 		return makeGraphFromVertexSet(graph, neighbours);
 	}
 	
-	public static UndirectedGraph<Integer,Integer> makeGraphFromVertexSet(UndirectedGraph graph, Collection<Graph.Vertex> vertices){
-		UndirectedGraph<Integer,Integer> g1 = new UndirectedGraph<Integer,Integer>();
-		
-		//add the vertices
-		for(Graph.Vertex<Integer> ve: vertices){
-			g1.addVertex(ve.getElement());
-		}		
-		
-		Iterator<Graph.Vertex<Integer>> vIt = g1.vertices();
-		while(vIt.hasNext()){
-			Iterator<Graph.Vertex<Integer>> vIt2 = g1.vertices();
-			Graph.Vertex<Integer> one = vIt.next();
-			while(vIt2.hasNext()){
-				Graph.Vertex<Integer> two = vIt2.next();
-				Graph.Vertex<Integer> nOne = graph.getVertexWithElement((int) one.getElement());
-				Graph.Vertex<Integer> nTwo = graph.getVertexWithElement((int)two.getElement());
-				
-				if(graph.containsEdge(nOne, nTwo)){
-					if(!g1.containsEdge(one,two)){
-						g1.addEdge(one, two);
-					}
-				}
-			}
-		}
-		
-		return g1;
-	}
-	
-	public static List<UndirectedGraph> getComponents(UndirectedGraph graph){
-		List<UndirectedGraph> components = new ArrayList<UndirectedGraph>();
+	public static List<UndirectedGraph<Integer,Integer>> getComponents(UndirectedGraph<Integer,Integer> graph){
+		List<UndirectedGraph<Integer,Integer>> components = new ArrayList<UndirectedGraph<Integer,Integer>>();
 		//get vertices list
-		List<Graph.Vertex> vertices = new ArrayList<Graph.Vertex>();
-		Iterator<Graph.Vertex> it = graph.vertices();
+		List<Graph.Vertex<Integer>> vertices = new ArrayList<Graph.Vertex<Integer>>();
+		Iterator<Graph.Vertex<Integer>> it = graph.vertices();
 		while(it.hasNext()){
 			vertices.add(it.next());
 		}
 		
 		//find components
 		while(!vertices.isEmpty()){
-			List<Graph.Vertex> compList = graph.depthFirstTraversal(vertices.get(0));
+			List<Graph.Vertex<Integer>> compList = graph.depthFirstTraversal(vertices.get(0));
 //			System.out.println("Vertices in component found are ");
 //			for(Graph.Vertex v: compList){
 //				System.out.print(v.getElement()+", ");
@@ -262,16 +272,16 @@ public final class Utility {
 	}
 	
 	//method to partition the vertices into low degree vertices and high degree vertices
-		public static Set<Graph.Vertex<Integer>>[] partitionVertices(UndirectedGraph graph){
-			Set[] vertices = new Set[2];
-			vertices[0] = new HashSet<Graph.Vertex>();
-			vertices[1] = new HashSet<Graph.Vertex>();
+		public static List<Graph.Vertex<Integer>>[] partitionVertices(UndirectedGraph<Integer,Integer> graph){
+			List<Graph.Vertex<Integer>>[] vertices = new List[2];
+			vertices[0] = new ArrayList<Graph.Vertex<Integer>>();
+			vertices[1] = new ArrayList<Graph.Vertex<Integer>>();
 			
 			//get vertices
-			Iterator<Graph.Vertex> vertexIterator = graph.vertices();
+			Iterator<Graph.Vertex<Integer>> vertexIterator = graph.vertices();
 			
 			//get edges
-			Iterator<Graph.Edge> edgeIterator = graph.edges();
+			Iterator<Graph.Edge<Integer>> edgeIterator = graph.edges();
 			
 			//get number of edges
 			int noOfEdges = 0;
@@ -301,6 +311,6 @@ public final class Utility {
 	public static void main(String [] args){
 		String fileName = "matrix.txt";
 		//Utility.makeGraphFromFile(fileName);
-		generateRandomGraphFile(150,0.7,5);
+		generateRandomGraphFile(15,0.7,5);
 	}
 }
