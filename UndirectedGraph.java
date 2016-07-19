@@ -98,7 +98,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 			firstEdge.pred = edge;
 			firstEdge = edge;
 		}
-		if(v0.getElement()!=v1.getElement()){
+		if(!v0.getElement().equals(v1.getElement())){
 			((UnVertex)v0).neighbours.add(v1);
 			((UnVertex)v1).neighbours.add(v0);
 		}
@@ -173,7 +173,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 
 	@Override
 	public Iterator<Vertex<E>> neighbours(Vertex<E> v) {
-		//return new VertexNeighbourIterator(v);
+//		return new VertexNeighbourIterator(v);
 		return ((UnVertex)v).neighbours.iterator();
 	}
 
@@ -497,14 +497,14 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		private UnVertex succ;
 		private boolean visited;
 		//private int id;
-		private Set<Vertex<E>> neighbours;
+		private List<Vertex<E>> neighbours;
 		
 		public UnVertex(E elem, UnVertex pred, UnVertex succ){
 			this.elem = elem;
 			this.pred = pred;
 			this.succ = succ;
 			visited = false;
-			neighbours = new HashSet<Vertex<E>>();
+			neighbours = new ArrayList<Vertex<E>>();
 		}
 		@Override
 		public E getElement() {

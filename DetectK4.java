@@ -3,6 +3,9 @@ import java.util.*;
 import Jama.Matrix;
 
 public class DetectK4 {
+	
+	private static String time = "";
+	
 	public static void main(String [] args){
 		UndirectedGraph<Integer, Integer> graph = new UndirectedGraph<Integer,Integer>();
 		
@@ -22,30 +25,47 @@ public class DetectK4 {
 		graph.addEdge(v2, v4);
 		graph.addEdge(v1, v4);
 		
-		
+		Utility.saveGraphToFile(graph, 1.0, 1);
+		UndirectedGraph<Integer,Integer> k4 = detect(graph);
+		if(k4!=null)
+			Utility.printGraph(k4);
 		//graph.mapVertexToId();
+		
+		
+		
+	}
+	
+	public static UndirectedGraph<Integer,Integer> detect(UndirectedGraph<Integer,Integer> graph){
+		time+="size_"+graph.size()+"_";
 		
 		List<Graph.Vertex<Integer>>[] verticesPartition = Utility.partitionVertices(graph);
 		
 		List<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
 		List<Graph.Vertex<Integer>> highDegreeVertices = verticesPartition[1];
 		
-		Map phase1Results = phaseOne(graph, highDegreeVertices);
-		if((boolean)phase1Results.get("k4Found")){
-			UndirectedGraph k4 = (UndirectedGraph)phase1Results.get("k4");
-			Utility.printGraph(k4);
-		}else{
-			Map phase2Results = phaseTwo(graph, lowDegreeVertices);
-			if((boolean)phase2Results.get("k4Found")){
-				UndirectedGraph<Integer,Integer> k4 = (UndirectedGraph<Integer,Integer>)phase2Results.get("k4");
-				Utility.printGraph(k4);
-			}
+		UndirectedGraph<Integer,Integer> k4 = null;
+		long starttime = System.currentTimeMillis();
+		k4 = phaseOne(graph, highDegreeVertices);
+		long stoptime = System.currentTimeMillis();
+		time += "phase1("+(stoptime-starttime)+")_";
+		if(k4==null){
+			starttime = System.currentTimeMillis();
+			k4 = phaseTwo(graph, lowDegreeVertices);
+			stoptime = System.currentTimeMillis();
+			time += "phase2("+(stoptime-starttime)+")_";
 		}
 		
+		if(k4!=null)
+			time+="1";
+		else
+			time+="0";
+		System.out.println(time);
+		DetectK4.resetTime();
+		return k4;
 	}
 	
-	public static Map phaseOne(UndirectedGraph graph, Collection<Graph.Vertex<Integer>> highDegreeVertices){
-		Map phase1Results = new HashMap();
+	public static UndirectedGraph<Integer,Integer> phaseOne(UndirectedGraph graph, Collection<Graph.Vertex<Integer>> highDegreeVertices){
+		UndirectedGraph<Integer,Integer> k4 = null;
 		List<Graph.Vertex<Integer>> k4Vertices = new ArrayList<Graph.Vertex<Integer>>();
 		
 		here:
@@ -93,8 +113,7 @@ public class DetectK4 {
 								k4Vertices.add(indexVertexMap.get(k));
 								k4Vertices.add(indexVertexMap.get(m));
 								
-								UndirectedGraph k4Graph = Utility.makeGraphFromVertexSet(graph, k4Vertices);
-								phase1Results.put("k4", k4Graph);
+								k4 = Utility.makeGraphFromVertexSet(graph, k4Vertices);
 								break here;
 								
 							}
@@ -103,12 +122,12 @@ public class DetectK4 {
 				}
 			}
 		}
-		phase1Results.put("k4Found", !k4Vertices.isEmpty());
-		return phase1Results;
+		
+		return k4;
 	}
 	
-	public static Map phaseTwo(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> lowDegreeVertices){
-		Map phase2Results = new HashMap();
+	public static UndirectedGraph<Integer,Integer> phaseTwo(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> lowDegreeVertices){
+		UndirectedGraph<Integer,Integer> k4 = null;
 		List<Graph.Vertex<Integer>> k4Vertices = new ArrayList<Graph.Vertex<Integer>>();
 		
 		here:
@@ -153,8 +172,7 @@ public class DetectK4 {
 								k4Vertices.add(indexVertexMap.get(k));
 								k4Vertices.add(indexVertexMap.get(m));
 								
-								UndirectedGraph k4Graph = Utility.makeGraphFromVertexSet(graph, k4Vertices);
-								phase2Results.put("k4", k4Graph);
+								k4 = Utility.makeGraphFromVertexSet(graph, k4Vertices);
 								break here;
 								
 							}
@@ -164,7 +182,14 @@ public class DetectK4 {
 			}
 		}
 		
-		phase2Results.put("k4Found", !k4Vertices.isEmpty());
-		return phase2Results;
+		return k4;
+	}
+	
+	public static String getTime(){
+		return time;
+	}
+	
+	public static void resetTime(){
+		time = "";
 	}
 }

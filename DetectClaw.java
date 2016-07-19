@@ -3,6 +3,9 @@ import java.util.*;
 import Jama.Matrix;
 
 public class DetectClaw {
+	
+	private static String time = "";
+	
 	public static void main(String [] args){
 //		UndirectedGraph graph = new UndirectedGraph();
 //		Graph.Vertex v1 = graph.addVertex(1);
@@ -50,10 +53,24 @@ public class DetectClaw {
 	
 	public static UndirectedGraph<Integer,Integer> detect(UndirectedGraph<Integer,Integer> graph){
 		UndirectedGraph<Integer,Integer> claw = null;
+		long starttime = System.currentTimeMillis();
 		claw = phaseOne(graph);
+		long stoptime = System.currentTimeMillis();
+		time += "phase1("+(stoptime-starttime)+")_";
+		
 		if(claw==null){
+			starttime = System.currentTimeMillis();
 			claw = phaseTwo(graph);
+			stoptime = System.currentTimeMillis();
+			time += "phase2("+(stoptime-starttime)+")_";
 		}
+		
+		if(claw!=null)
+			time+="1";
+		else
+			time+="0";
+		System.out.println(time);
+		DetectClaw.resetTime();
 		return claw;
 	}
 	
@@ -179,5 +196,13 @@ public class DetectClaw {
 			}
 		}
 		return claw;
+	}
+	
+	public static String getTime(){
+		return time;
+	}
+	
+	public static void resetTime(){
+		time = "";
 	}
 }

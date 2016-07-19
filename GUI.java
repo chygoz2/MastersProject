@@ -1,13 +1,10 @@
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
 import javax.swing.AbstractButton;
-import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 
 import java.awt.GridLayout;
@@ -18,11 +15,11 @@ import javax.swing.JFileChooser;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.awt.event.ActionEvent;
 import javax.swing.JRadioButton;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 
 public class GUI extends JFrame {
 
@@ -37,6 +34,8 @@ public class GUI extends JFrame {
 	private JMenu mnFile;
 	private JMenu mnDetect;
 	private JMenu mnGenerate;
+	private JRadioButton k4RadioButton;
+	private JRadioButton simplVertexRadioButton;
 
 	/**
 	 * Launch the application.
@@ -113,37 +112,80 @@ public class GUI extends JFrame {
 		clawRadioButton = new JRadioButton("Claw");
 		panel_1.add(clawRadioButton);
 		
+		k4RadioButton = new JRadioButton("K4");
+		panel_1.add(k4RadioButton);
+		
+		simplVertexRadioButton = new JRadioButton("Simpl. Vertex");
+		panel_1.add(simplVertexRadioButton);
+		
 		ButtonGroup buttonGroup = new ButtonGroup();
 		
 		buttonGroup.add(clawRadioButton);
 		buttonGroup.add(diamondRadioButton);
+		buttonGroup.add(k4RadioButton);
+		buttonGroup.add(simplVertexRadioButton);
 		
 		btnDetect = new JButton("Detect");
 		btnDetect.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String selectedButton = getSelectedButtonText(buttonGroup);
 				
+				String fileName = fileNameTextField.getText();;
+				UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(fileName);
+				
 				Runnable r = new Runnable(){
 					@Override
 					public void run() {
 						if(selectedButton.equals("Diamond")){
-							String fileName = fileNameTextField.getText();;
-							UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(fileName);
 							UndirectedGraph<Integer,Integer> diamond = DetectDiamond.detect(graph);
 							if(diamond!=null){
-								Utility.printGraph(diamond);
+//								Utility.printGraph(diamond);
+								Iterator<Graph.Vertex<Integer>> vertices = diamond.vertices();
+								String out = "";
+								
+								while(vertices.hasNext()){
+									out+=vertices.next().getElement()+","; //remove the trailing comma
+								}
+								out = out.substring(0,out.length()-1);
+								System.out.println(out);
 							}else{
 								System.out.println("Diamond not found");
 							}
 						}else if(selectedButton.equals("Claw")){
-							String fileName = fileNameTextField.getText();;
-							UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(fileName);
+							
 							UndirectedGraph<Integer,Integer> claw = DetectClaw.detect(graph);
 							if(claw!=null){
-								Utility.printGraph(claw);
+//								Utility.printGraph(claw);
+								Iterator<Graph.Vertex<Integer>> vertices = claw.vertices();
+								String out = "";
+								while(vertices.hasNext()){
+									out+=vertices.next().getElement()+","; //remove the trailing comma
+								}
+								out = out.substring(0,out.length()-1);
+								System.out.println(out);
 							}else
 								System.out.println("Claw not found");
+						}else if(selectedButton.equals("K4")){
+							UndirectedGraph<Integer,Integer> k4 = DetectK4.detect(graph);
+							if(k4!=null){
+								Iterator<Graph.Vertex<Integer>> vertices = k4.vertices();
+								String out = "";
+								while(vertices.hasNext()){
+									out+=vertices.next().getElement()+",";
+								}
+								out = out.substring(0,out.length()-1); //remove the trailing comma
+								System.out.println(out);
+							}else
+								System.out.println("K4 not found");
+						}else if(selectedButton.equals("Simpl. Vertex")){
+							Graph.Vertex<Integer> simpVertex = DetectSimplicialVertex.detect(graph);
+							if(simpVertex!=null){
+								String out = simpVertex.getElement()+"";
+								System.out.println(out);
+							}else
+								System.out.println("Simplicial vertex not found");
 						}
+					
 					}
 					
 				};
