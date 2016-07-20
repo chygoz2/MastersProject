@@ -133,12 +133,12 @@ public class DetectK4 {
 		here:
 		for(Graph.Vertex x: lowDegreeVertices){
 			//get x's neighbourhood graph
-			Iterable<Graph.Vertex<Integer>> nXIter = (Iterable<Graph.Vertex<Integer>>)graph.neighbours(x);
+			Iterator<Graph.Vertex<Integer>> nXIter = graph.neighbours(x);
 			List<Graph.Vertex<Integer>> nXList = new ArrayList<Graph.Vertex<Integer>>();
 
 			//make neighbourhood graph of x from list of vertices
-			for(Graph.Vertex v: nXIter){
-				nXList.add(v);
+			while(nXIter.hasNext()){
+				nXList.add(nXIter.next());
 			}
 			
 			UndirectedGraph graph2 = Utility.makeGraphFromVertexSet(graph, nXList);
