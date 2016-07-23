@@ -20,29 +20,29 @@ public class DetectClaw {
 //		graph.mapVertexToId();
 		
 		
-//		UndirectedGraph graph = new UndirectedGraph();
-//		Graph.Vertex v1 = graph.addVertex(0);
-//		Graph.Vertex v2 = graph.addVertex(1);
-//		Graph.Vertex v3 = graph.addVertex(2);
-//		Graph.Vertex v4 = graph.addVertex(3);
-//		Graph.Vertex v5 = graph.addVertex(4);
-//		Graph.Vertex v6 = graph.addVertex(5);
-//		Graph.Vertex v7 = graph.addVertex(6);
-//		
-//		graph.addEdge(v1, v5);
-//		graph.addEdge(v1, v3);
-//		graph.addEdge(v2, v3);
-//		graph.addEdge(v3, v4);
-//		graph.addEdge(v4, v5);
-//		graph.addEdge(v4, v6);
-//		graph.addEdge(v4, v7);
-//		graph.addEdge(v6, v7);
-//		graph.addEdge(v6, v5);
-//		graph.addEdge(v5, v7);
+		UndirectedGraph graph = new UndirectedGraph();
+		Graph.Vertex v1 = graph.addVertex(0);
+		Graph.Vertex v2 = graph.addVertex(1);
+		Graph.Vertex v3 = graph.addVertex(2);
+		Graph.Vertex v4 = graph.addVertex(3);
+		Graph.Vertex v5 = graph.addVertex(4);
+		Graph.Vertex v6 = graph.addVertex(5);
+		Graph.Vertex v7 = graph.addVertex(6);
+		
+		graph.addEdge(v1, v5);
+		graph.addEdge(v1, v3);
+		graph.addEdge(v2, v3);
+		graph.addEdge(v3, v4);
+		graph.addEdge(v4, v5);
+		graph.addEdge(v4, v6);
+		graph.addEdge(v4, v7);
+		graph.addEdge(v6, v7);
+		graph.addEdge(v6, v5);
+		graph.addEdge(v5, v7);
 		
 		//graph.mapVertexToId();
 		
-		UndirectedGraph<Integer,Integer> graph = Utility.makeRandomGraph(7, 0.4);
+		//UndirectedGraph<Integer,Integer> graph = Utility.makeRandomGraph(7, 0.4);
 		
 		UndirectedGraph<Integer,Integer> claw = detect(graph);
 		if(claw!=null){
@@ -76,36 +76,43 @@ public class DetectClaw {
 	
 	public static UndirectedGraph<Integer,Integer> phaseOne(UndirectedGraph<Integer,Integer> graph){
 		UndirectedGraph<Integer,Integer> clawGraph = null;
-		int edgeCount = graph.size();
-		double maxEdgeCount = 2*Math.sqrt(edgeCount);
-		Iterable<Graph.Vertex> vertices = (Iterable<Graph.Vertex>)graph.vertices();
+		int edgeCount = 0;
+		Iterator<Graph.Edge<Integer>> edgeIt = graph.edges();
+		while(edgeIt.hasNext()){
+			edgeIt.next();
+			edgeCount++;
+		}
 		
-		for(Graph.Vertex v: vertices){
+		double maxEdgeCount = 2*Math.sqrt(edgeCount);
+		Iterator<Graph.Vertex<Integer>> vertices = (Iterator<Graph.Vertex<Integer>>)graph.vertices();
+		
+		while(vertices.hasNext()){
+			Graph.Vertex<Integer> v = vertices.next();
 			if(graph.degree(v) > maxEdgeCount){
 				//look for claw with v as central vertex	
-				UndirectedGraph vNeighGraph = Utility.getNeighbourGraph(graph, v);
+				UndirectedGraph<Integer,Integer> vNeighGraph = Utility.getNeighbourGraph(graph, v);
 				
 				//get components of v's neighbourhood graph
 				List<UndirectedGraph<Integer,Integer>> vNeighComps = Utility.getComponents(vNeighGraph);
 				if(vNeighComps.size() >= 3){
 					//if the number of components is less than 3, then no claw exists in the neighbourhood of v
-					Iterable<Graph.Vertex> c1Vertices = (Iterable<Graph.Vertex>)vNeighComps.get(0).vertices();
-					Iterable<Graph.Vertex> c2Vertices = (Iterable<Graph.Vertex>)vNeighComps.get(1).vertices();
-					Iterable<Graph.Vertex> c3Vertices = (Iterable<Graph.Vertex>)vNeighComps.get(2).vertices();
+					Iterable<Graph.Vertex<Integer>> c1Vertices = (Iterable<Graph.Vertex<Integer>>)vNeighComps.get(0).vertices();
+					Iterable<Graph.Vertex<Integer>> c2Vertices = (Iterable<Graph.Vertex<Integer>>)vNeighComps.get(1).vertices();
+					Iterable<Graph.Vertex<Integer>> c3Vertices = (Iterable<Graph.Vertex<Integer>>)vNeighComps.get(2).vertices();
 					
 					List<Graph.Vertex<Integer>> clawVertices = new ArrayList<Graph.Vertex<Integer>>();
-					Graph.Vertex v1 = graph.getVertexWithElement((int) v.getElement());
+					Graph.Vertex<Integer> v1 = graph.getVertexWithElement(v.getElement());
 					clawVertices.add(v1);
 					
-					for(Graph.Vertex vv: c1Vertices){
+					for(Graph.Vertex<Integer> vv: c1Vertices){
 						clawVertices.add(vv);
 						break;
 					}
-					for(Graph.Vertex vv: c2Vertices){
+					for(Graph.Vertex<Integer> vv: c2Vertices){
 						clawVertices.add(vv);
 						break;
 					}
-					for(Graph.Vertex vv: c3Vertices){
+					for(Graph.Vertex<Integer> vv: c3Vertices){
 						clawVertices.add(vv);
 						break;
 					}
@@ -121,22 +128,25 @@ public class DetectClaw {
 		UndirectedGraph<Integer,Integer> claw = null;
 		List<Graph.Vertex<Integer>> clawVertices = new ArrayList<Graph.Vertex<Integer>>();
 		
-		Iterable<Graph.Vertex> vertices = (Iterable<Graph.Vertex>)graph.vertices();
+		Iterator<Graph.Vertex<Integer>> vertices = graph.vertices();
 		
 		//create a mapping between vertices and matrix indices
-		List<Graph.Vertex> vertexIndexMap1 = new ArrayList<Graph.Vertex>();
-		int a = 0;
+		List<Graph.Vertex<Integer>> vertexIndexMap1 = new ArrayList<Graph.Vertex<Integer>>();
 		
-		for(Graph.Vertex v: (Iterable<Graph.Vertex>)graph.vertices()){
-			vertexIndexMap1.add(a, v);
-			a++;
+		Iterator<Graph.Vertex<Integer>> vs = graph.vertices();
+		while(vs.hasNext()){
+			Graph.Vertex<Integer> v = vs.next();
+			vertexIndexMap1.add(v);
 		}
-		double[][] A = graph.getAdjacencyMatrix();
+		
+		//double[][] A = graph.getAdjacencyMatrix();
 		
 		here:
-		for(Graph.Vertex v: vertices){
+		
+		while(vertices.hasNext()){
 			//get neighbourhood graph
-			UndirectedGraph vNeigh = Utility.getNeighbourGraph(graph, v);
+			Graph.Vertex<Integer> v = vertices.next();
+			UndirectedGraph<Integer,Integer> vNeigh = Utility.getNeighbourGraph(graph, v);
 			
 			if(vNeigh.size()<3)
 				continue;
@@ -146,12 +156,12 @@ public class DetectClaw {
 			Matrix cmSquared = cm.times(cm);
 			
 			//create a map between vertices and matrix indices
-			Map<Integer, Graph.Vertex> vertexIndexMap2 = new HashMap<Integer, Graph.Vertex>();
-			int b = 0;
+			List<Graph.Vertex<Integer>> vertexIndexMap2 = new ArrayList<Graph.Vertex<Integer>>();
 			
-			for(Graph.Vertex vv: (Iterable<Graph.Vertex>)vNeigh.vertices()){
-				vertexIndexMap2.put(b,vv);
-				b++;
+			Iterator<Graph.Vertex<Integer>> vss = vNeigh.vertices();
+			while(vss.hasNext()){
+				Graph.Vertex<Integer> vv = vss.next();
+				vertexIndexMap2.add(vv);
 			}
 			
 			//check for presence of triangle in compliment
@@ -159,13 +169,13 @@ public class DetectClaw {
 				for(int j=i+1; j<cm.getRowDimension();j++){
 					//if there is an edge between i and j and there is a path of length 2 between
 					//i and j, then there is a triangle in that neighbourhood
-					if(cm.get(i,j)>0 && cmSquared.get(i,j)>0){
+					if(cm.get(i,j)==1 && cmSquared.get(i,j)>0){
 						//find the third vertex asides i and j to complete the triangle
 
 						//get i's and j's neighbour vertices
-						Graph.Vertex iVertex = vertexIndexMap2.get(i);
-						Graph.Vertex jVertex = vertexIndexMap2.get(j);
-						Graph.Vertex kVertex;
+						Graph.Vertex<Integer> iVertex = vertexIndexMap2.get(i);
+						Graph.Vertex<Integer> jVertex = vertexIndexMap2.get(j);
+						Graph.Vertex<Integer> kVertex;
 						
 //						int iVertexId = (int) ((UndirectedGraph.UnVertex)iVertex).getElement();
 //						int jVertexId = (int) ((UndirectedGraph.UnVertex)jVertex).getElement();
@@ -180,7 +190,7 @@ public class DetectClaw {
 								//then k is the index of the last vertex of the claw 
 								kVertex = vertexIndexMap2.get(k);
 								clawVertices.add(iVertex);
-								clawVertices.add(jVertex);
+								clawVertices.add(jVertex); 
 								clawVertices.add(v);
 								clawVertices.add(kVertex);
 //								System.out.println("Vertices are "+iVertex.getElement()+" and "+

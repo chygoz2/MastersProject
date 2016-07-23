@@ -1,47 +1,84 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Queue;
-import java.util.Stack;
+import java.util.*;
 
-public class UndirectedGraph<E,A> implements Graph<E,A>{
+public class UndirectedGraph2<E,A> implements Graph<E,A>{
 
+	private UnVertex firstVertex;
+	private UnVertex lastVertex;
 	private UnEdge firstEdge;
+	private int size;
+	//private int size,order;
 	private Map<Integer,Vertex<E>> vertexElementMap;
 	
-	public UndirectedGraph(){
+	public UndirectedGraph2(){
+		firstVertex = null;
+		lastVertex = null;
 		firstEdge = null;
+		size = 0;
 		vertexElementMap = new HashMap<Integer,Vertex<E>>();
 	}
 	
 	@Override
 	public int size() {
-		return vertexElementMap.size();
+		return this.size;
 	}
+	
+//	@Override
+//	public int order() {
+//		return this.order;
+//	}
 
 	@Override
 	public int degree(Vertex<E> v) {
+//		Iterator<Edge<A>> iterator = connectingEdges(v);
+//		int i = 0;
+//		while(iterator.hasNext()){
+//			i++;
+//			iterator.next();
+//		}
+//		return i;
 		return ((UnVertex)v).neighbours.size();
 	}
 
 	@Override
 	public boolean containsEdge(Vertex<E> v0, Vertex<E> v1) {
+		
+//		Iterator<Edge<A>> iterator = edges();
+//		while(iterator.hasNext()){
+//			UnEdge edge = (UnEdge)iterator.next();
+//			if((edge.source.equals(v0) && edge.destination.equals(v1)) ||
+//					(edge.source.equals(v1) && edge.destination.equals(v0))){
+//				return true;
+//			}
+//		}
+		//System.out.println(v1==null);
 		return ((UnVertex)v0).neighbours.contains(v1);
+//		return false;
 	}
 
 	@Override
 	public void clear() {
-		vertexElementMap.clear();
+		size = 0;
+//		order = 0;
+		firstVertex = null;
+		firstEdge = null;
 	}
 
 	@Override
 	public Vertex<E> addVertex(E elem) {
-		UnVertex vertex = new UnVertex(elem);		
+		UnVertex vertex = new UnVertex(elem, null, null);
+		UnVertex curr = lastVertex;
+		if(curr==null){
+			firstVertex = vertex;
+			lastVertex = vertex;
+		}
+		else{
+			vertex.pred = lastVertex;
+			lastVertex.succ = vertex;
+			lastVertex = vertex;
+		}
+		
 		vertexElementMap.put((Integer) vertex.getElement(), vertex);
+		size++;
 		return vertex;
 	}
 
@@ -66,6 +103,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 			((UnVertex)v1).neighbours.add(v0);
 		}
 		
+		//size++;
 		return edge;
 	}
 
@@ -79,7 +117,25 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		}
 		
 		//then remove v
-		vertexElementMap.remove((int)v.getElement());
+		UnVertex remVertex = (UnVertex)v;
+		UnVertex before = remVertex.pred;
+		UnVertex next = remVertex.succ;
+		if(before==null){
+			firstVertex = next; //if v is first, remove from first
+			
+			if(next != null)
+				next.pred = before;
+			else
+				lastVertex = null; //if v is also last, re-point last
+		}
+		else{ //else remove from its position
+			before.succ = next;
+			if(next!=null)
+				next.pred = before;
+			else
+				lastVertex = before;
+		}
+		size--; //decrement the size of the graph
 
 	}
 
@@ -106,7 +162,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 
 	@Override
 	public Iterator<Vertex<E>> vertices() {
-		return vertexElementMap.values().iterator();
+		return new VertexIterator();
 	}
 
 	@Override
@@ -116,6 +172,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 
 	@Override
 	public Iterator<Vertex<E>> neighbours(Vertex<E> v) {
+//		return new VertexNeighbourIterator(v);
 		return ((UnVertex)v).neighbours.iterator();
 	}
 
@@ -161,7 +218,6 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		while(!vertexQueue.isEmpty()){
 			Vertex<E> v = vertexQueue.remove();
 			list.add(v);
-			System.out.println(v.getElement());
 			//get vertex v's neighbours
 			Iterator<Vertex<E>> vNeighbours = this.neighbours(v);
 			while(vNeighbours.hasNext()){
@@ -178,49 +234,64 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 	}
 	
 	public void resetVisited(){
-		for(Integer i: vertexElementMap.keySet()){
-			UnVertex v = (UnVertex)vertexElementMap.get(i);
-			v.visited = false;
+		UnVertex curr = firstVertex;
+		while(curr != null){
+			curr.visited = false;
+			curr = curr.succ;
 		}
 	}
 	
 	public double[][] getAdjacencyMatrix(){
-		int size = vertexElementMap.size();
 		double[][] A = new double[size][size];
+		UnVertex curr = firstVertex;
 		int i=0, j=0;
-		for(int a: vertexElementMap.keySet()){
-			for(int b: vertexElementMap.keySet()){
-				if(containsEdge(vertexElementMap.get(a),vertexElementMap.get(b))){
+		UnVertex next = firstVertex;
+		while(curr!=null){
+			while(next != null){
+				if(containsEdge(curr,next)){
+					//System.out.println("i= "+i+", j= "+j+", next is "+next.getElement());
 					A[i][j] = 1;
-				}else{
+				}
+				else{
+					//System.out.println("i= "+i+", j= "+j+", next is "+next.getElement());
 					A[i][j] = 0;
 				}
+				next = next.succ;
 				j++;
 			}
-			i++; j = 0;
+			curr = curr.succ;
+			i++; j=0;
+			next = firstVertex;
 		}
+		
+		
 		return A;
 	}
 	
 	public double[][] getComplementMatrix(){
-		int size = vertexElementMap.size();
 		double[][] A = new double[size][size];
+		UnVertex curr = firstVertex;
 		int i=0, j=0;
-		for(int a: vertexElementMap.keySet()){
-			for(int b: vertexElementMap.keySet()){
-				if(i==j){
-					j++;
-					continue;
-				}
-				if(containsEdge(vertexElementMap.get(a),vertexElementMap.get(b))){
+		UnVertex next = firstVertex;
+		while(curr!=null){
+			while(next != null){
+				if(containsEdge(curr,next) || curr.equals(next)){
+					//System.out.println("i= "+i+", j= "+j+", next is "+next.getElement());
 					A[i][j] = 0;
-				}else{
+				}
+				else{
+					//System.out.println("i= "+i+", j= "+j+", next is "+next.getElement());
 					A[i][j] = 1;
 				}
+				next = next.succ;
 				j++;
 			}
-			i++; j = 0;
+			curr = curr.succ;
+			i++; j=0;
+			next = firstVertex;
 		}
+		
+		
 		return A;
 	}
 	
@@ -234,8 +305,76 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		}
 	}
 	
+//	public void mapVertexToId(){
+//		int i = 0;
+//		UnVertex curr = firstVertex;
+//		while(curr!=null){
+//			vertexIdMap.put(i,curr);
+//			curr.setId(i);
+//			i++;
+//			curr = curr.succ;
+//		}
+//	}
+	
+//	public void setVertexId(Vertex<E> v, int i){
+//		((UnVertex)v).setId(i);
+//		vertexIdMap.put(i, v);
+//	}
+//	
 	public Vertex<E> getVertexWithElement(int i){
 		return vertexElementMap.get(i);
+	}
+	
+	private class VertexNeighbourIterator implements Iterator<Vertex<E>>, Iterable<Vertex<E>>{
+		
+		private UnVertex vertex;
+		private UnEdge pos;
+		
+		public VertexNeighbourIterator(Vertex<E> v){
+			this.vertex = (UnVertex)v;
+			//look for the first edge containing vertex v and move pos there
+			UnEdge curr = firstEdge;
+			
+			while(curr != null){
+				if(curr.source.equals(vertex) || curr.destination.equals(vertex)){
+					pos = curr;
+					break;
+				}else{
+					curr=curr.succ;
+				}
+			}
+		}
+		
+		@Override
+		public boolean hasNext() {
+			UnEdge curr = pos; 
+			while(curr != null){
+				if(curr.source.equals(vertex) || curr.destination.equals(vertex)){
+					pos = curr;
+					return true;
+				}
+				else
+					curr = curr.succ;
+			}
+			return false;
+		}
+
+		@Override
+		public Vertex<E> next() {
+			Vertex<E> current = null;
+			if(pos.source.equals(vertex))
+				current = pos.destination;
+			else
+				current = pos.source;
+			pos = pos.succ;
+			return current;
+		}
+
+		@Override
+		public Iterator<Vertex<E>> iterator() {
+			return this;
+		}
+		
 	}
 	
 	private class EdgeIterator implements Iterator<Edge<A>>, Iterable<Edge<A>>{
@@ -264,6 +403,37 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 
 		@Override
 		public Iterator<Edge<A>> iterator() {
+			return this;
+		}
+		
+	}
+	
+	private class VertexIterator implements Iterator<Vertex<E>>, Iterable<Vertex<E>>{
+
+		private UnVertex post;
+		
+		public VertexIterator(){
+			post = firstVertex;
+		}
+		
+		@Override
+		public boolean hasNext() {
+			return (post != null);
+		}
+
+		@Override
+		public Vertex<E> next() {
+			if(!hasNext())
+				throw new NoSuchElementException();
+			
+			Vertex<E> vertex = post;
+			post = post.succ;
+			return vertex;
+			
+		}
+
+		@Override
+		public Iterator<Vertex<E>> iterator() {
 			return this;
 		}
 		
@@ -322,12 +492,16 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 	public class UnVertex implements Vertex<E>{
 		
 		private E elem;
+		private UnVertex pred;
+		private UnVertex succ;
 		private boolean visited;
 		//private int id;
 		private List<Vertex<E>> neighbours;
 		
-		public UnVertex(E elem){
+		public UnVertex(E elem, UnVertex pred, UnVertex succ){
 			this.elem = elem;
+			this.pred = pred;
+			this.succ = succ;
 			visited = false;
 			neighbours = new ArrayList<Vertex<E>>();
 		}
@@ -342,6 +516,14 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 
 			this.elem = elem;
 		}
+		
+//		public void setId(int id){
+//			this.id = id;
+//		}
+//		
+//		public int getId(){
+//			return this.id;
+//		}
 		
 	}
 	
@@ -373,7 +555,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 
 		@Override
 		public Vertex<E>[] getVertices() {
-			Vertex<E> [] v = (UnVertex [])new Object[2];
+			Vertex<E> [] v = (UnVertex [])(new Object[2]);
 			v[0] = source;
 			v[1] = destination;
 			return v;

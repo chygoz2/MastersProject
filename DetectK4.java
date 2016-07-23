@@ -19,7 +19,7 @@ public class DetectK4 {
 		graph.addEdge(v3, v4);
 		graph.addEdge(v1, v3);
 		graph.addEdge(v1, v5);
-		graph.addEdge(v3, v5);
+		//graph.addEdge(v3, v5);
 		graph.addEdge(v2, v5);
 		graph.addEdge(v4, v5);
 		graph.addEdge(v2, v4);
@@ -91,8 +91,9 @@ public class DetectK4 {
 			
 			//create map of indices to vertex
 			List<Graph.Vertex<Integer>> indexVertexMap = new ArrayList<Graph.Vertex<Integer>>();
-			Iterable<Graph.Vertex> vIt = (Iterable<Graph.Vertex>)graph2.vertices();
-			for(Graph.Vertex v: vIt){
+			Iterator<Graph.Vertex<Integer>> vIt = graph2.vertices();
+			while(vIt.hasNext()){
+				Graph.Vertex<Integer> v = vIt.next();
 				indexVertexMap.add(v);
 			}
 			
@@ -141,7 +142,7 @@ public class DetectK4 {
 				nXList.add(nXIter.next());
 			}
 			
-			UndirectedGraph graph2 = Utility.makeGraphFromVertexSet(graph, nXList);
+			UndirectedGraph<Integer,Integer> graph2 = Utility.makeGraphFromVertexSet(graph, nXList);
 			double [][] adj = graph2.getAdjacencyMatrix();
 			Matrix adjMatrix = new Matrix(adj);
 			
@@ -149,9 +150,10 @@ public class DetectK4 {
 			Matrix adjMatrixSquare = adjMatrix.times(adjMatrix);
 			
 			//create map of indices to vertex
-			List<Graph.Vertex> indexVertexMap = new ArrayList<Graph.Vertex>();
-			Iterable<Graph.Vertex> vIt = (Iterable<Graph.Vertex>)graph2.vertices();
-			for(Graph.Vertex v: vIt){
+			List<Graph.Vertex<Integer>> indexVertexMap = new ArrayList<Graph.Vertex<Integer>>();
+			Iterator<Graph.Vertex<Integer>> vIt = graph2.vertices();
+			while(vIt.hasNext()){
+				Graph.Vertex<Integer> v = vIt.next();
 				indexVertexMap.add(v);
 			}
 			

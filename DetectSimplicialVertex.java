@@ -26,10 +26,10 @@ public class DetectSimplicialVertex {
 //		graph.addEdge(v4, v5);
 		
 //		Utility.saveGraphToFile(graph, 0.7, 10);
-//		String fileName = "generated_graphs\\size_5\\graph_5_0.7_10.txt";
-		String fileName = "generated_graphs\\size_6\\graph_6_0.6_2.txt";
+		String fileName = "generated_graphs\\size_5\\graph_5_0.7_10.txt";
+//		String fileName = "generated_graphs\\size_6\\graph_6_0.6_2.txt";
 		//graph.mapVertexToId();
-		for(int i=0; i<20; i++){
+		for(int i=0; i<1; i++){
 			UndirectedGraph<Integer, Integer> graph = Utility.makeGraphFromFile(fileName);
 			Graph.Vertex<Integer> simpVertex = detect(graph);
 			if(simpVertex!=null){
@@ -134,7 +134,10 @@ public class DetectSimplicialVertex {
 		Map<Integer, Integer> vertexIndexMap = new HashMap<Integer, Integer>();
 		int a = 0;
 		
-		for(Graph.Vertex<Integer> v: (Iterable<Graph.Vertex<Integer>>)graph.vertices()){
+		Iterator<Graph.Vertex<Integer>> vIt1 = graph.vertices();
+		
+		while(vIt1.hasNext()){
+			Graph.Vertex<Integer> v = vIt1.next();
 			vertexIndexMap.put(v.getElement(), a);
 			a++;
 		}
@@ -150,10 +153,11 @@ public class DetectSimplicialVertex {
 		Matrix A = new Matrix(adj);
 		Matrix aSquared = A.times(A);
 		
-		
-		for(Graph.Vertex<Integer> x: (Iterable<Graph.Vertex<Integer>>)graph.vertices()){
+		vIt1 = graph.vertices();
+		while(vIt1.hasNext()){
 			//get v's neighbours
 			//System.out.println("Contains: "+markedVertices.contains(x));
+			Graph.Vertex<Integer> x = vIt1.next();
 			if(!markedVertices.contains(graph.getVertexWithElement(x.getElement()))) //do check only on unmarked vertices from phase 2
 			{
 				Iterator<Graph.Vertex<Integer>> vNeigh = graph.neighbours(x);

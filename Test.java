@@ -98,5 +98,14 @@ public class Test {
 			}
 			System.out.println();
 		}
+		
+		System.out.println("Printing out complement matrix. CompA: ");
+		A = graph.getComplementMatrix();
+		for(int i=0; i<A.length; i++){
+			for(int j=0; j<A[i].length; j++){
+				System.out.print((int)A[i][j]+" ");
+			}
+			System.out.println();
+		}
 	}
 }
