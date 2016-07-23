@@ -30,12 +30,33 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 
 	@Override
 	public boolean containsEdge(Vertex<E> v0, Vertex<E> v1) {
-		return ((UnVertex)v0).neighbours.contains(v1);
+		if(degree(v0) > degree(v1)){
+			List<Edge<A>> neighbours = ((UnVertex)v0).neighbours;
+			for(Edge<A> edge1: neighbours){
+				UnEdge edge = (UnEdge)edge1;
+				if(edge.getSource().equals(v1) && edge.getDestination().equals(v0) ||
+						edge.getSource().equals(v0) && edge.getDestination().equals(v1)){
+					return true;
+				}
+			}
+		}
+		else{
+			List<Edge<A>> neighbours = ((UnVertex)v1).neighbours;
+			for(Edge<A> edge1: neighbours){
+				UnEdge edge = (UnEdge)edge1;
+				if(edge.getSource().equals(v1) && edge.getDestination().equals(v0) ||
+						edge.getSource().equals(v0) && edge.getDestination().equals(v1)){
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override
 	public void clear() {
 		vertexElementMap.clear();
+		firstEdge = null;
 	}
 
 	@Override
@@ -62,8 +83,8 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 			firstEdge = edge;
 		}
 		if(!v0.getElement().equals(v1.getElement())){
-			((UnVertex)v0).neighbours.add(v1);
-			((UnVertex)v1).neighbours.add(v0);
+			((UnVertex)v0).neighbours.add(edge);
+			((UnVertex)v1).neighbours.add(edge);
 		}
 		
 		return edge;
@@ -100,8 +121,8 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		}
 		UnVertex s = (UnVertex)e.getSource();
 		UnVertex d = (UnVertex)e.getDestination();
-		s.neighbours.remove(d);
-		d.neighbours.remove(s);
+		s.neighbours.remove(e);
+		d.neighbours.remove(e);
 	}
 
 	@Override
@@ -116,7 +137,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 
 	@Override
 	public Iterator<Vertex<E>> neighbours(Vertex<E> v) {
-		return ((UnVertex)v).neighbours.iterator();
+		return new VertexNeighbourIterator(v);
 	}
 
 	@Override
@@ -161,7 +182,6 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		while(!vertexQueue.isEmpty()){
 			Vertex<E> v = vertexQueue.remove();
 			list.add(v);
-			System.out.println(v.getElement());
 			//get vertex v's neighbours
 			Iterator<Vertex<E>> vNeighbours = this.neighbours(v);
 			while(vNeighbours.hasNext()){
@@ -271,49 +291,30 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 	
 	private class VertexEdgesIterator implements Iterator<Edge<A>>, Iterable<Edge<A>>{
 
-		private UnVertex vertex;
-		private UnEdge pos;
+		private int pos;
+		private List<Edge<A>> neighbours;
 		
 		public VertexEdgesIterator(Vertex<E> v){
-			this.vertex = (UnVertex)v;
-			//look for the first edge containing vertex v and move pos there
-			UnEdge curr = firstEdge;
-			while(curr != null){
-				if(curr.source.equals(v) || curr.destination.equals(v)){
-					pos = curr;
-					break;
-				}
-				else
-					curr = curr.succ;
-			}
+			this.neighbours = ((UnVertex)v).neighbours;
+			this.pos = neighbours.size()-1;
 		}
 		
 		@Override
 		public boolean hasNext() {
-			//the method checks the edges list and looks for the next edge that links vertex
-			UnEdge curr = pos; 
-			while(curr != null){
-				if(curr.source.equals(vertex) || curr.destination.equals(vertex)){
-					pos = curr;
-					return true;
-				}
-				else
-					curr = curr.succ;
-			}
-			
-			return false;
+			return !(pos == -1);
 		}
 
 		@Override
 		public Edge<A> next() {
-			Edge<A> current = pos;
-			pos = pos.succ;
-			return current;
+			if(!hasNext())
+				throw new NoSuchElementException();
+			UnEdge edge = (UnEdge)neighbours.get(pos);
+			pos--;
+			return edge;
 		}
 
 		@Override
 		public Iterator<Edge<A>> iterator() {
-
 			return this;
 		}
 		
@@ -323,13 +324,12 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		
 		private E elem;
 		private boolean visited;
-		//private int id;
-		private List<Vertex<E>> neighbours;
+		private List<Edge<A>> neighbours;
 		
 		public UnVertex(E elem){
 			this.elem = elem;
 			visited = false;
-			neighbours = new ArrayList<Vertex<E>>();
+			neighbours = new ArrayList<Edge<A>>();
 		}
 		@Override
 		public E getElement() {
@@ -385,6 +385,42 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		
 		public Vertex<E> getDestination(){
 			return destination;
+		}
+		
+	}
+	
+	private class VertexNeighbourIterator implements Iterator<Vertex<E>>, Iterable<Vertex<E>>{
+		
+		private int pos;
+		private List<Edge<A>> neighbours;
+		private Vertex<E> v;
+		
+		public VertexNeighbourIterator(Vertex<E> v){
+			this.neighbours = ((UnVertex)v).neighbours;
+			this.v = v;
+			pos = 0;
+		}
+		
+		@Override
+		public boolean hasNext() {
+			return !(pos == neighbours.size());
+		}
+
+		@Override
+		public Vertex<E> next() {
+			if(!hasNext())
+				throw new NoSuchElementException();
+			UnEdge edge = (UnEdge)neighbours.get(pos);
+			pos++;
+			if(edge.source.equals(v)){
+				return edge.destination;
+			}else
+				return edge.source;
+		}
+
+		@Override
+		public Iterator<Vertex<E>> iterator() {
+			return this;
 		}
 		
 	}

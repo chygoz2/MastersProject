@@ -338,10 +338,10 @@ public class UndirectedGraphTest2 {
 		graph.addEdge(v1, v3);
 		graph.addEdge(v1, v5);
 		
-		Iterator<Graph.Vertex<Integer>> vit = graph.neighbours(v2);
-		while(vit.hasNext())
-			System.out.print(vit.next().getElement()+", ");
-		System.out.println();
+//		Iterator<Graph.Vertex<Integer>> vit = graph.neighbours(v2);
+//		while(vit.hasNext())
+//			System.out.print(vit.next().getElement()+", ");
+//		System.out.println();
 		
 	}
 
