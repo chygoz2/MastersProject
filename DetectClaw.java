@@ -1,7 +1,5 @@
 import java.util.*;
 
-import Jama.Matrix;
-
 public class DetectClaw {
 	
 	private static String time = "";
@@ -151,9 +149,8 @@ public class DetectClaw {
 			if(vNeigh.size()<3)
 				continue;
 			
-			double[][] complementMatrix = vNeigh.getComplementMatrix();
-			Matrix cm = new Matrix(complementMatrix);
-			Matrix cmSquared = cm.times(cm);
+			double[][] cm = vNeigh.getComplementMatrix();
+			double[][] cmSquared = MatrixOperation.multiply(cm, cm);
 			
 			//create a map between vertices and matrix indices
 			List<Graph.Vertex<Integer>> vertexIndexMap2 = new ArrayList<Graph.Vertex<Integer>>();
@@ -165,11 +162,11 @@ public class DetectClaw {
 			}
 			
 			//check for presence of triangle in compliment
-			for(int i=0; i<cm.getRowDimension();i++){
-				for(int j=i+1; j<cm.getRowDimension();j++){
+			for(int i=0; i<cm.length;i++){
+				for(int j=i+1; j<cm.length;j++){
 					//if there is an edge between i and j and there is a path of length 2 between
 					//i and j, then there is a triangle in that neighbourhood
-					if(cm.get(i,j)==1 && cmSquared.get(i,j)>0){
+					if((int)cm[i][j]==1 && (int)cmSquared[i][j]>0){
 						//find the third vertex asides i and j to complete the triangle
 
 						//get i's and j's neighbour vertices
@@ -177,16 +174,10 @@ public class DetectClaw {
 						Graph.Vertex<Integer> jVertex = vertexIndexMap2.get(j);
 						Graph.Vertex<Integer> kVertex;
 						
-//						int iVertexId = (int) ((UndirectedGraph.UnVertex)iVertex).getElement();
-//						int jVertexId = (int) ((UndirectedGraph.UnVertex)jVertex).getElement();
-//						
-//						//get indices of these matrices in the parent graph
-//						int ip = vertexIndexMap1.indexOf(graph.getVertexWithElement(iVertexId));
-//						int jp = vertexIndexMap1.indexOf(graph.getVertexWithElement(jVertexId));
-//						
+
 						//look for the index of the third vertex to complete the claw in the adjacency matrix
-						for(int k=0; k<cm.getRowDimension();k++){
-							if(k!=i && k!= j && (cm.get(k, i) == 1) && (cm.get(k, j) == 1)){
+						for(int k=0; k<cm.length;k++){
+							if(k!=i && k!= j && ((int)cm[k][i] == 1) && ((int)cm[k][j] == 1)){
 								//then k is the index of the last vertex of the claw 
 								kVertex = vertexIndexMap2.get(k);
 								clawVertices.add(iVertex);

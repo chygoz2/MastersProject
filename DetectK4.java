@@ -1,7 +1,5 @@
 import java.util.*;
 
-import Jama.Matrix;
-
 public class DetectK4 {
 	
 	private static String time = "";
@@ -83,11 +81,10 @@ public class DetectK4 {
 			}
 			//make graph from new list of vertices
 			UndirectedGraph graph2 = Utility.makeGraphFromVertexSet(graph, nXList);
-			double [][] adj = graph2.getAdjacencyMatrix();
-			Matrix adjMatrix = new Matrix(adj);
+			double [][] adjMatrix = graph2.getAdjacencyMatrix();
 			
 			//get square of adjacency matrix
-			Matrix adjMatrixSquare = adjMatrix.times(adjMatrix);
+			double[][] adjMatrixSquare = MatrixOperation.multiply(adjMatrix, adjMatrix);
 			
 			//create map of indices to vertex
 			List<Graph.Vertex<Integer>> indexVertexMap = new ArrayList<Graph.Vertex<Integer>>();
@@ -98,14 +95,14 @@ public class DetectK4 {
 			}
 			
 			//look for a triangle in the adjacency matrix
-			for(int j=0; j<adjMatrix.getColumnDimension(); j++){
-				for(int k=0; k<adjMatrix.getRowDimension(); k++){
-					if(j!=k && adjMatrix.get(j,k)==1 && adjMatrixSquare.get(j,k)>0){
+			for(int j=0; j<adjMatrix.length; j++){
+				for(int k=0; k<adjMatrix.length; k++){
+					if(j!=k && (int)adjMatrix[j][k]==1 && (int)adjMatrixSquare[j][k]>0){
 						//triangle found with j and k as indices of two ends of the triangle.
 						//find the third one
 						
-						for(int m=0; m<adjMatrix.getRowDimension(); m++){
-							if(m!=j && m!= k && (adjMatrix.get(m, j) == 1) && (adjMatrix.get(m, k) == 1)){
+						for(int m=0; m<adjMatrix.length; m++){
+							if(m!=j && m!= k && ((int)adjMatrix[m][j] == 1) && ((int)adjMatrix[m][k] == 1)){
 								//third vertex index found.
 								//get the vertex that corresponds to all 3 indices
 								
@@ -143,11 +140,10 @@ public class DetectK4 {
 			}
 			
 			UndirectedGraph<Integer,Integer> graph2 = Utility.makeGraphFromVertexSet(graph, nXList);
-			double [][] adj = graph2.getAdjacencyMatrix();
-			Matrix adjMatrix = new Matrix(adj);
+			double [][] adjMatrix = graph2.getAdjacencyMatrix();
 			
 			//get square of adjacency matrix
-			Matrix adjMatrixSquare = adjMatrix.times(adjMatrix);
+			double[][] adjMatrixSquare = MatrixOperation.multiply(adjMatrix, adjMatrix);
 			
 			//create map of indices to vertex
 			List<Graph.Vertex<Integer>> indexVertexMap = new ArrayList<Graph.Vertex<Integer>>();
@@ -158,14 +154,14 @@ public class DetectK4 {
 			}
 			
 			//look for a triangle in the adjacency matrix
-			for(int j=0; j<adjMatrix.getColumnDimension(); j++){
-				for(int k=0; k<adjMatrix.getRowDimension(); k++){
-					if(j!=k && adjMatrix.get(j,k)==1 && adjMatrixSquare.get(j,k)>0){
+			for(int j=0; j<adjMatrix.length; j++){
+				for(int k=0; k<adjMatrix.length; k++){
+					if(j!=k && (int)adjMatrix[j][k]==1 && (int)adjMatrixSquare[j][k]>0){
 						//triangle found with j and k as indices of two ends of the triangle.
 						//find the third one
 						
-						for(int m=0; m<adjMatrix.getRowDimension(); m++){
-							if(m!=j && m!= k && (adjMatrix.get(m, j) == 1) && (adjMatrix.get(m, k) == 1)){
+						for(int m=0; m<adjMatrix.length; m++){
+							if(m!=j && m!= k && ((int)adjMatrix[m][j] == 1) && ((int)adjMatrix[m][k] == 1)){
 								//third vertex index found.
 								//get the vertex that corresponds to all 3 indices
 															

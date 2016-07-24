@@ -57,7 +57,7 @@ public class GUI2 extends JFrame implements ActionListener{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
 		setTitle("Subgraph Identification Tool");
-		setBounds(300, 100, 800, 350);
+		setBounds(300, 100, 600, 350);
 		contentPane = new JPanel();
 		//contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -225,6 +225,18 @@ public class GUI2 extends JFrame implements ActionListener{
 						if(simpVertex!=null){
 							String out = simpVertex.getElement()+"";
 							out = String.format("Simplicial vertex found %n%s", out);
+							outputArea.setText(out);
+						}else
+							outputArea.setText("Simplicial vertex not found");
+					}else if(selectedButton.equals("Triangle")){
+						Graph<Integer,Integer> triangle = DetectTriangle.detect(graph);
+						if(triangle!=null){
+							Iterator<Graph.Vertex<Integer>> vertices = triangle.vertices();
+							String out = "";
+							while(vertices.hasNext()){
+								out+=vertices.next().getElement()+",";
+							}
+							out = String.format("Triangle found %n%s", out.substring(0,out.length()-1));
 							outputArea.setText(out);
 						}else
 							outputArea.setText("Simplicial vertex not found");

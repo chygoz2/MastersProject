@@ -315,15 +315,15 @@ public final class Utility {
 	public static void main(String [] args){
 		String fileName = "matrix.txt";
 		//Utility.makeGraphFromFile(fileName);
-		//generateRandomGraphFile(15,0.7,5);
+		generateRandomGraphFile(7,0.2,5);
 		
-		double[][] a = {{1,2,3},{4,5,6},{7,8,9}};
-		double[][] res = matrixMultiply(a,a);
-		for(int i=0; i<res.length; i++){
-			for(int j=0; j<res[i].length; j++){
-				System.out.print((int)res[i][j]+" ");
-			}
-			System.out.println();
-		}
+//		double[][] a = {{1,2,3},{4,5,6},{7,8,9}};
+//		double[][] res = matrixMultiply(a,a);
+//		for(int i=0; i<res.length; i++){
+//			for(int j=0; j<res[i].length; j++){
+//				System.out.print((int)res[i][j]+" ");
+//			}
+//			System.out.println();
+//		}
 	}
 }

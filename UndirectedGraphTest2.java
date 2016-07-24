@@ -228,16 +228,19 @@ public class UndirectedGraphTest2 {
 		
 		Set<Integer> resultSet = new HashSet<Integer>();
 		Set<Integer> resultSet2 = new HashSet<Integer>();
-		resultSet2.add(1); resultSet2.add(3); resultSet2.add(4); resultSet2.add(2);    
+		resultSet2.add(1); resultSet2.add(3); resultSet2.add(4); resultSet2.add(2); 
+		
 		Iterator<Graph.Vertex<Integer>> it = graph.vertices();
 		
+		String out = "";
 		while (it.hasNext()){
 			Graph.Vertex<Integer> v = it.next();
-			resultSet.add(v.getElement());
+//			resultSet.add(v.getElement());
+			out += v.getElement()+", ";
 		}
 		
 		
-		assertTrue((resultSet.containsAll(resultSet2)));
+		assertEquals("1, 2, 3, 4, ", out);
 		assertEquals(4,graph.size());
 	}
 

@@ -1,7 +1,5 @@
 import java.util.*;
 
-import Jama.Matrix;
-
 public class DetectSimplicialVertex {
 	
 	private static String time = "";
@@ -142,16 +140,15 @@ public class DetectSimplicialVertex {
 			a++;
 		}
 		
-		double[][] adj = graph.getAdjacencyMatrix();
+		double[][] A = graph.getAdjacencyMatrix();
 		
 		//put 1's on the diagonal
-		for(int i=0;i<adj.length;i++){
-			adj[i][i] = 1.0;
+		for(int i=0;i<A.length;i++){
+			A[i][i] = 1.0;
 		}
 		
 		//square the resulting adjacency matrix
-		Matrix A = new Matrix(adj);
-		Matrix aSquared = A.times(A);
+		double[][] aSquared = MatrixOperation.multiply(A, A);
 		
 		vIt1 = graph.vertices();
 		while(vIt1.hasNext()){
@@ -167,9 +164,9 @@ public class DetectSimplicialVertex {
 				//perform simplicial vertices check of theorem 1
 				while(vNeigh.hasNext()){
 					Graph.Vertex<Integer> y = vNeigh.next();
-					double i = aSquared.get(vertexIndexMap.get(x.getElement()),vertexIndexMap.get(y.getElement()));
-					double j = aSquared.get(vertexIndexMap.get(x.getElement()),vertexIndexMap.get(x.getElement()));
-					if(Math.abs(i-j)>1e-6){
+					int i = (int)aSquared[vertexIndexMap.get(x.getElement())][vertexIndexMap.get(y.getElement())];
+					int j = (int)aSquared[vertexIndexMap.get(x.getElement())][vertexIndexMap.get(x.getElement())];
+					if(i==j){
 						isSimplicial = false;
 						break;
 					}
