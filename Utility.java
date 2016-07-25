@@ -79,7 +79,6 @@ public final class Utility {
 			scanner.close();
 			reader.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return graph;
@@ -148,9 +147,9 @@ public final class Utility {
 			Graph.Vertex<Integer> one = vIt.next();
 			while(vIt2.hasNext()){
 				Graph.Vertex<Integer> two = vIt2.next();
-				if(!two.equals(one)){
-					Graph.Vertex<Integer> nOne = graph.getVertexWithElement((int) one.getElement());
-					Graph.Vertex<Integer> nTwo = graph.getVertexWithElement((int)two.getElement());
+				if((int)two.getElement()!=(int)(one.getElement())){
+					Graph.Vertex<Integer> nOne = graph.getVertexWithElement(one.getElement());
+					Graph.Vertex<Integer> nTwo = graph.getVertexWithElement(two.getElement());
 					
 					if(graph.containsEdge(nOne, nTwo)){
 						if(!g1.containsEdge(one,two)){
@@ -213,14 +212,13 @@ public final class Utility {
 			writer.write(out);
 			writer.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 	}
 	
 	//method to create subgraph in the neighbourhood of Graph.Vertex v
-	public static UndirectedGraph<Integer,Integer> getNeighbourGraph(UndirectedGraph graph, Graph.Vertex v){
+	public static UndirectedGraph<Integer,Integer> getNeighbourGraph(UndirectedGraph<Integer,Integer> graph, Graph.Vertex<Integer> v){
 		//get v's neighbours;
 		List<Graph.Vertex<Integer>> neighbours = new ArrayList<Graph.Vertex<Integer>>();
 		Iterator<Graph.Vertex<Integer>> it = graph.neighbours(v);
@@ -233,21 +231,24 @@ public final class Utility {
 	public static List<UndirectedGraph<Integer,Integer>> getComponents(UndirectedGraph<Integer,Integer> graph){
 		List<UndirectedGraph<Integer,Integer>> components = new ArrayList<UndirectedGraph<Integer,Integer>>();
 		//get vertices list
-		List<Graph.Vertex<Integer>> vertices = new ArrayList<Graph.Vertex<Integer>>();
+		List<Integer> vertices = new ArrayList<Integer>();
 		Iterator<Graph.Vertex<Integer>> it = graph.vertices();
 		while(it.hasNext()){
-			vertices.add(it.next());
+			vertices.add(it.next().getElement());
 		}
 		
 		//find components
 		while(!vertices.isEmpty()){
-			List<Graph.Vertex<Integer>> compList = graph.depthFirstTraversal(vertices.get(0));
+			List<Graph.Vertex<Integer>> compList = graph.depthFirstTraversal(graph.getVertexWithElement(vertices.get(0)));
 //			System.out.println("Vertices in component found are ");
 //			for(Graph.Vertex v: compList){
 //				System.out.print(v.getElement()+", ");
 //			}
 			components.add(makeGraphFromVertexSet(graph, compList));
-			vertices.removeAll(compList);
+			for(Graph.Vertex<Integer> v: compList){
+				vertices.remove(v.getElement());
+			}
+//			vertices.removeAll(compList);
 		}
 		
 		return components;
@@ -309,13 +310,13 @@ public final class Utility {
 	}
 	
 	public static double[][] matrixMultiply(double[][] a, double[][] b){
-		return Strassen.multiply(a, b);
+		return Strassen.strassen(a, b);
 	}
 	
 	public static void main(String [] args){
 		String fileName = "matrix.txt";
 		//Utility.makeGraphFromFile(fileName);
-		generateRandomGraphFile(7,0.2,5);
+//		generateRandomGraphFile(7,0.2,5);
 		
 //		double[][] a = {{1,2,3},{4,5,6},{7,8,9}};
 //		double[][] res = matrixMultiply(a,a);
@@ -325,5 +326,10 @@ public final class Utility {
 //			}
 //			System.out.println();
 //		}
+		
+		Integer i = 50;
+		Integer j = 50;
+		System.out.println(i.hashCode());
+		System.out.println(j.hashCode());
 	}
 }

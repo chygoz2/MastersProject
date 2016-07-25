@@ -342,7 +342,6 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 
 			this.elem = elem;
 		}
-		
 	}
 	
 	public class UnEdge implements Edge<A>{
