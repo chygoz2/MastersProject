@@ -1,3 +1,4 @@
+package general;
 import java.util.Iterator;
 
 public interface Graph<E,A> {

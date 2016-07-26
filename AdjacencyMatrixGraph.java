@@ -1,5 +1,7 @@
 import java.util.Iterator;
 
+import general.Graph;
+
 public class AdjacencyMatrixGraph<E,A> implements Graph<E,A> {
 	
 	private Object[][] matrix;

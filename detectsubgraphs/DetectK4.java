@@ -1,4 +1,11 @@
+package detectsubgraphs;
 import java.util.*;
+
+import general.Graph;
+import general.MatrixOperation;
+import general.UndirectedGraph;
+import general.Utility;
+import general.Graph.Vertex;
 
 public class DetectK4 {
 	
@@ -79,6 +86,11 @@ public class DetectK4 {
 				if(highDegreeVertices.contains(v))
 					nXList.add(v);
 			}
+			
+			//if x's neighbourhood does not have any high degree vertex as its neighbour, then continue
+			if(nXList.isEmpty())
+				continue;
+			
 			//make graph from new list of vertices
 			UndirectedGraph graph2 = Utility.makeGraphFromVertexSet(graph, nXList);
 			double [][] adjMatrix = graph2.getAdjacencyMatrix();
@@ -138,6 +150,10 @@ public class DetectK4 {
 			while(nXIter.hasNext()){
 				nXList.add(nXIter.next());
 			}
+			
+			//if a vertex is isolated, then it won't have any neighbours
+			if(nXList.isEmpty())
+				continue;
 			
 			UndirectedGraph<Integer,Integer> graph2 = Utility.makeGraphFromVertexSet(graph, nXList);
 			double [][] adjMatrix = graph2.getAdjacencyMatrix();

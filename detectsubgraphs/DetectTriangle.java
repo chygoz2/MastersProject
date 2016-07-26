@@ -1,4 +1,11 @@
+package detectsubgraphs;
 import java.util.*;
+
+import general.Graph;
+import general.MatrixOperation;
+import general.UndirectedGraph;
+import general.Utility;
+import general.Graph.Vertex;
 
 public class DetectTriangle {
 	

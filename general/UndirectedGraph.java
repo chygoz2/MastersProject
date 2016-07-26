@@ -1,3 +1,4 @@
+package general;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -7,6 +8,9 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.Stack;
+
+import general.Graph.Edge;
+import general.Graph.Vertex;
 
 public class UndirectedGraph<E,A> implements Graph<E,A>{
 

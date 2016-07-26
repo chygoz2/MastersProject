@@ -1,13 +1,10 @@
+package general;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 import java.util.Scanner;
-import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.swing.JOptionPane;
@@ -41,7 +38,7 @@ public final class Utility {
 		}
 		
 		if(vertexCount<1){
-			JOptionPane.showMessageDialog(null, "Graph.Vertex count should be greater than zero");
+			JOptionPane.showMessageDialog(null, "Vertex count should be greater than zero");
 			System.exit(0);
 		}
 		
@@ -53,7 +50,7 @@ public final class Utility {
 		while(scanner.hasNextLine()){
 			//validate if the number of lines is equal to the specified number of vertices
 			if(c>=vertexCount){
-				JOptionPane.showMessageDialog(null, "The number of lines in file do not match the required Graph.Vertex count");
+				JOptionPane.showMessageDialog(null, "The number of lines in file do not match the required Vertex count");
 				System.exit(0);
 			}
 			lines[c++] = scanner.nextLine();
@@ -63,7 +60,7 @@ public final class Utility {
 		for(int i=0; i<vertexCount; i++){
 			String[] stringI = lines[i].split("[ ]+");
 			if(stringI.length != vertexCount){
-				JOptionPane.showMessageDialog(null, "The number of columns in file do not match the required Graph.Vertex count");
+				JOptionPane.showMessageDialog(null, "The number of columns in file do not match the required Vertex count");
 				System.exit(0);
 			}
 			for(int j=i+1; j<vertexCount; j++){
@@ -86,7 +83,7 @@ public final class Utility {
 	
 	public static UndirectedGraph<Integer,Integer> makeRandomGraph(int v, double p){
 		if(p<0.0 || p>1.0){
-			JOptionPane.showMessageDialog(null, "Graph.Edge probability should be between 0 and 1");
+			JOptionPane.showMessageDialog(null, "Edge probability should be between 0 and 1");
 			System.exit(0);
 		}
 		

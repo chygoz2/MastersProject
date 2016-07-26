@@ -1,3 +1,4 @@
+package general;
 import java.util.Random;
 
 public class Strassen2

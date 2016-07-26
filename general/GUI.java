@@ -1,3 +1,4 @@
+package general;
 import java.awt.BorderLayout;
 //import java.awt.Container;
 import java.awt.EventQueue;
@@ -11,7 +12,13 @@ import java.util.Iterator;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-public class GUI2 extends JFrame implements ActionListener{
+import detectsubgraphs.DetectClaw;
+import detectsubgraphs.DetectDiamond;
+import detectsubgraphs.DetectK4;
+import detectsubgraphs.DetectSimplicialVertex;
+import detectsubgraphs.DetectTriangle;
+
+public class GUI extends JFrame implements ActionListener{
 
 	private JPanel contentPane;
 	private JRadioButton diamondRadioButton;		
@@ -41,7 +48,7 @@ public class GUI2 extends JFrame implements ActionListener{
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					GUI2 frame = new GUI2();
+					GUI frame = new GUI();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -53,7 +60,7 @@ public class GUI2 extends JFrame implements ActionListener{
 	/**
 	 * Create the frame.
 	 */
-	public GUI2() {
+	public GUI() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
 		setTitle("Subgraph Identification Tool");
@@ -91,6 +98,7 @@ public class GUI2 extends JFrame implements ActionListener{
 		k4RadioButton = new JRadioButton("K4");
 		simpVertexRadioButton = new JRadioButton("Simplicial Vertex");
 		triangleRadioButton = new JRadioButton("Triangle");
+		triangleRadioButton.setSelected(true);
 		kLRadioButton = new JRadioButton("KL");
 		detectButton = new JButton("Detect");
 		
@@ -181,7 +189,6 @@ public class GUI2 extends JFrame implements ActionListener{
 					if(selectedButton.equals("Diamond")){
 						UndirectedGraph<Integer,Integer> diamond = DetectDiamond.detect(graph);
 						if(diamond!=null){
-//							Utility.printGraph(diamond);
 							Iterator<Graph.Vertex<Integer>> vertices = diamond.vertices();
 							String out = "";
 							
@@ -190,7 +197,6 @@ public class GUI2 extends JFrame implements ActionListener{
 							}
 							out = String.format("Diamond found %n%s", out.substring(0,out.length()-1));
 							outputArea.setText(out);
-							//System.out.println(out);
 						}else{
 							outputArea.setText("Diamond not found");
 						}
@@ -198,7 +204,6 @@ public class GUI2 extends JFrame implements ActionListener{
 						
 						UndirectedGraph<Integer,Integer> claw = DetectClaw.detect(graph);
 						if(claw!=null){
-//							Utility.printGraph(claw);
 							Iterator<Graph.Vertex<Integer>> vertices = claw.vertices();
 							String out = "";
 							while(vertices.hasNext()){
@@ -239,9 +244,8 @@ public class GUI2 extends JFrame implements ActionListener{
 							out = String.format("Triangle found %n%s", out.substring(0,out.length()-1));
 							outputArea.setText(out);
 						}else
-							outputArea.setText("Simplicial vertex not found");
-					}
-				
+							outputArea.setText("Triangle not found");
+					}			
 				}
 				
 			};

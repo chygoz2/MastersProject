@@ -1,9 +1,13 @@
+package test;
 import static org.junit.Assert.*;
 
 import java.util.*;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import general.Graph;
+import general.UndirectedGraph;
 
 public class UndirectedGraphTest2 {
 
