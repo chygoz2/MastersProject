@@ -143,8 +143,14 @@ public class GraphGenerator {
 					UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(adjMatrix);
 					Graph.Vertex<Integer> v = DetectSimplicialVertex.detect(graph);
 					if(v!=null){
-						adjMatrix[i][j] = 0;
-						adjMatrix[j][i] = 0;
+						if(j+1!=n){
+							j++;
+							adjMatrix[i][j] = 1;
+							adjMatrix[j][i] = 1;
+						}else{
+							adjMatrix[i][j] = 0;
+							adjMatrix[j][i] = 0;
+						}
 					}
 				}
 			}
@@ -190,7 +196,19 @@ public class GraphGenerator {
 //		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(A);
 //		Utility.saveGraphToFile(graph, 0.5, 22);
 		
-		int[][] A = generateK4FreeGraph(20);
+//		int[][] A = generateK4FreeGraph(20);
+//		
+//		for(int i=0;i<A.length;i++){
+//			for(int j=0; j<A.length; j++){
+//				System.out.print(A[i][j]+" ");
+//			}
+//			System.out.println();
+//		}
+//		
+//		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(A);
+//		Utility.saveGraphToFile(graph, 0.5, 23);
+		
+		int[][] A = generateSimplicialFreeGraph(5);
 		
 		for(int i=0;i<A.length;i++){
 			for(int j=0; j<A.length; j++){
@@ -200,7 +218,7 @@ public class GraphGenerator {
 		}
 		
 		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(A);
-		Utility.saveGraphToFile(graph, 0.5, 23);
+		Utility.saveGraphToFile(graph, 0.5, 24);
 		
 		
 	}

@@ -194,25 +194,25 @@ public class Strassen {
     public static void main(String[] args) {
        Random r = new Random(10000);
        Random r1 = new Random(1000);
-       int n = 256;
-       double[][] arr = new double[n][n];
+       int n = 8192;
+       double[][] arr;
        a = new double[n][n];
        b = new double[n][n];
        c = new double[n][n];
        int i,j;
-       for(i=0;i<200;i++)
+       for(i=0;i<n;i++)
         {
-            for(j =0; j<200;j++)
+            for(j =0; j<n;j++)
             {
                 a[i][j] = r.nextInt(10000);
                 b[i][j] = r1.nextInt(1000);
             }
         }
        long start = System.currentTimeMillis();
-       arr = strassen(a,b);
+       //arr = strassen(a,b);
        long end = System.currentTimeMillis();
        String out = "Time taken by strassen= "+(end-start);
-       print(arr);
+       //print(arr);
        start = System.currentTimeMillis();
        multiply(a,b);
        end = System.currentTimeMillis();

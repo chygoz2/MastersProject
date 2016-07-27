@@ -61,7 +61,7 @@ public class GUI extends JFrame implements ActionListener{
 	 * Create the frame.
 	 */
 	public GUI() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setTitle("Subgraph Identification Tool");
 		setBounds(300, 100, 600, 350);
@@ -182,6 +182,8 @@ public class GUI extends JFrame implements ActionListener{
 			
 			String fileName = selectFileField.getText();
 			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(fileName);
+			if(graph==null)
+				return;
 			
 			Runnable r = new Runnable(){
 				@Override

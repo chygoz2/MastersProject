@@ -17,51 +17,35 @@ public final class Utility {
 			reader = new FileReader(fileName);
 		} catch (FileNotFoundException e1) {
 			JOptionPane.showMessageDialog(null, "Input file not found");
-			System.exit(0);
+			return null;
 		}
 		Scanner scanner;
 		int vertexCount = -1;
-		int[][] adjMatrix;
 		scanner = new Scanner(reader);
 		//get number of vertices
 		if(!scanner.hasNextLine()){
 			JOptionPane.showMessageDialog(null, "Input file is empty");
-			System.exit(0);
+			scanner.close();
+			return null;
 		}
 		
-		try{
-			String vertexCountLine = scanner.nextLine();
-			vertexCount = Integer.parseInt(vertexCountLine);
-		}catch(NumberFormatException e){
-			JOptionPane.showMessageDialog(null, "Invalid entry for Graph.Vertex count");
-			System.exit(0);
-		}
 		
-		if(vertexCount<1){
-			JOptionPane.showMessageDialog(null, "Vertex count should be greater than zero");
-			System.exit(0);
-		}
-		
-		//if Graph.Vertex count is valid, create empty adjacency matrix array
-		adjMatrix = new int[vertexCount][vertexCount];
-		
-		String[] lines = new String[vertexCount];
-		int c = 0;
+		List<String> lines = new ArrayList<String>();
 		while(scanner.hasNextLine()){
-			//validate if the number of lines is equal to the specified number of vertices
-			if(c>=vertexCount){
-				JOptionPane.showMessageDialog(null, "The number of lines in file do not match the required Vertex count");
-				System.exit(0);
-			}
-			lines[c++] = scanner.nextLine();
+			lines.add(scanner.nextLine());
 		}
+		
+		//get vertex count from the size of first row of file
+		vertexCount = lines.get(0).split("[ ]+").length;
+		int[][] adjMatrix = new int[vertexCount][vertexCount];
 		
 		//read adjacency matrix 
 		for(int i=0; i<vertexCount; i++){
-			String[] stringI = lines[i].split("[ ]+");
+			String[] stringI = lines.get(i).split("[ ]+");
 			if(stringI.length != vertexCount){
 				JOptionPane.showMessageDialog(null, "The number of columns in file do not match the required Vertex count");
-				System.exit(0);
+				scanner.close();
+				return null;
 			}
 			for(int j=i+1; j<vertexCount; j++){
 				adjMatrix[i][j] = Integer.parseInt(stringI[j]);
@@ -166,16 +150,15 @@ public final class Utility {
 			saveGraphToFile(g,p,i);
 		}
 	}
-	public static void saveGraphToFile(UndirectedGraph graph, double p, int no){
+	public static void saveGraphToFile(UndirectedGraph<Integer,Integer> graph, double p, int no){
 		String out = "";
-		out += String.format("%d%n", graph.size());
-		Iterator<Graph.Vertex> vertices = graph.vertices();
+		Iterator<Graph.Vertex<Integer>> vertices = graph.vertices();
 		
 		while(vertices.hasNext()){
-			Graph.Vertex v1 = vertices.next();
-			Iterator<Graph.Vertex> vertices2 = graph.vertices();
+			Graph.Vertex<Integer> v1 = vertices.next();
+			Iterator<Graph.Vertex<Integer>> vertices2 = graph.vertices();
 			while(vertices2.hasNext()){
-				Graph.Vertex v2 = vertices2.next();
+				Graph.Vertex<Integer> v2 = vertices2.next();
 				if(graph.containsEdge(v1, v2)){
 					out += "1 ";
 				}else{
@@ -312,8 +295,8 @@ public final class Utility {
 	
 	public static void main(String [] args){
 		String fileName = "matrix.txt";
-		//Utility.makeGraphFromFile(fileName);
-//		generateRandomGraphFile(7,0.2,5);
+		Utility.makeGraphFromFile(fileName);
+		//generateRandomGraphFile(7,0.2,5);
 		
 //		double[][] a = {{1,2,3},{4,5,6},{7,8,9}};
 //		double[][] res = matrixMultiply(a,a);
@@ -324,9 +307,5 @@ public final class Utility {
 //			System.out.println();
 //		}
 		
-		Integer i = 50;
-		Integer j = 50;
-		System.out.println(i.hashCode());
-		System.out.println(j.hashCode());
 	}
 }
