@@ -23,12 +23,12 @@ public class DetectTriangle {
 			
 			List<UndirectedGraph<Integer,Integer>> triangles = detect(graph);
 			
-//			if(!triangles.isEmpty())
-//				for(UndirectedGraph<Integer, Integer> triangle: triangles)
-//					Utility.printGraph(triangle);
-//			else{
-//				System.out.println("Triangle not found");
-//			}
+			if(!triangles.isEmpty())
+				for(UndirectedGraph<Integer, Integer> triangle: triangles)
+					Utility.printGraph(triangle);
+			else{
+				System.out.println("Triangle not found");
+			}
 
 	}
 	
@@ -65,29 +65,7 @@ public class DetectTriangle {
 		return triangles;
 	}
 	
-//	public static List<UndirectedGraph<Integer,Integer>> phaseOneB(UndirectedGraph<Integer, Integer> graph, List<Graph.Vertex<Integer>> lowDegreeVertices){
-//		System.out.println("In phase one");
-//		List<UndirectedGraph<Integer,Integer>> triangles = new ArrayList<UndirectedGraph<Integer, Integer>>();
-//		
-//		for(Graph.Vertex<Integer> v: lowDegreeVertices){
-//			List<Graph.Vertex<Integer>> path = customBFS(v,graph);
-//			if(path!=null){
-//				Graph.Vertex<Integer> first = path.get(1);
-//				Graph.Vertex<Integer> last = path.get(2);
-//				Graph.Vertex<Integer> mid = path.get(0);
-//				if(graph.containsEdge(first, last) && graph.containsEdge(mid, last)){
-//					UndirectedGraph<Integer, Integer> triangle = Utility.makeGraphFromVertexSet(graph, path);
-//					Utility.printGraph(triangle);
-//					triangles.add(triangle);
-//				}
-//			}
-//		}
-//
-//		return triangles;
-//	}
-	
 	public static List<UndirectedGraph<Integer,Integer>> phaseOne(UndirectedGraph<Integer, Integer> graph, List<Graph.Vertex<Integer>> lowDegreeVertices){
-		System.out.println("In phase one");
 		Set<Integer> marked = new HashSet<Integer>(); //to prevent creating the same triangle more than once
 		List<UndirectedGraph<Integer,Integer>> triangles = new ArrayList<UndirectedGraph<Integer, Integer>>();
 		
@@ -124,7 +102,6 @@ public class DetectTriangle {
 						if(!(!r1&&!r2&&!r3)){						
 							UndirectedGraph<Integer,Integer> triangle = Utility.makeGraphFromVertexSet(graph,triList);
 							triangles.add(triangle);
-							Utility.printGraph(triangle);
 						}
 					}
 				}
@@ -136,7 +113,6 @@ public class DetectTriangle {
 	}
 	
 	public static List<UndirectedGraph<Integer,Integer>> phaseTwo(UndirectedGraph<Integer,Integer> graph, List<Graph.Vertex<Integer>> lowDegreeVertices){
-		System.out.println("In phase Two");
 		Set<Integer> marked = new HashSet<Integer>(); //to prevent creating the same triangle more than once
 		//if no triangle was found
 		//remove all low degree vertices and get the adjacency matrix of resulting graph. 
@@ -166,73 +142,43 @@ public class DetectTriangle {
 		}
 		
 		//look for end vertices of a triangle from the square of the adjacency matrix
-		here:
-			for(int i=0; i<aSquared.length; i++){
-				for(int j=i+1; j<aSquared.length; j++){
-					if((int)aSquared[i][j]>0 && (int)A[i][j]==1){ //end vertices found
-						//look for the intermediate index to make up the P3
-						for(int k=0; k<A.length; k++){
-							if(k!=i && k!=j && (int)A[k][i]==1 && (int)A[k][j]==1){
-								//at this point, i, j and k represent matrix indices of the vertices which form the triangle
-								//get the actual vertices and create a list of them
-								List<Graph.Vertex<Integer>> tVertices = new ArrayList<Graph.Vertex<Integer>>();
-								Graph.Vertex<Integer> v1 = vertexIndexMap.get(i);
-								Graph.Vertex<Integer> v2 = vertexIndexMap.get(j);
-								Graph.Vertex<Integer> v3 = vertexIndexMap.get(k);
-								tVertices.add(v1);
-								tVertices.add(v2);
-								tVertices.add(v3);
-								
-								boolean r1=false,r2=false,r3=false;
-								if(!marked.contains(v1.getElement()))
-									r1=marked.add(v1.getElement());
-								if(!marked.contains(v2.getElement()))
-									r2=marked.add(v2.getElement());
-								if(!marked.contains(v3.getElement()))
-									r2=marked.add(v3.getElement());
-								
-								//check if such triangle with those vertices has been created previously
-								if(!(!r1&&!r2&&!r3)){						
-									UndirectedGraph<Integer, Integer> triangle = Utility.makeGraphFromVertexSet(graph, tVertices);
-									triangles.add(triangle);
-									Utility.printGraph(triangle);
-								}
+		for(int i=0; i<aSquared.length; i++){
+			for(int j=i+1; j<aSquared.length; j++){
+				if((int)aSquared[i][j]>0 && (int)A[i][j]==1){ //end vertices found
+					//look for the intermediate index to make up the P3
+					for(int k=0; k<A.length; k++){
+						if(k!=i && k!=j && (int)A[k][i]==1 && (int)A[k][j]==1){
+							//at this point, i, j and k represent matrix indices of the vertices which form the triangle
+							//get the actual vertices and create a list of them
+							List<Graph.Vertex<Integer>> tVertices = new ArrayList<Graph.Vertex<Integer>>();
+							Graph.Vertex<Integer> v1 = vertexIndexMap.get(i);
+							Graph.Vertex<Integer> v2 = vertexIndexMap.get(j);
+							Graph.Vertex<Integer> v3 = vertexIndexMap.get(k);
+							tVertices.add(v1);
+							tVertices.add(v2);
+							tVertices.add(v3);
+							
+							boolean r1=false,r2=false,r3=false;
+							if(!marked.contains(v1.getElement()))
+								r1=marked.add(v1.getElement());
+							if(!marked.contains(v2.getElement()))
+								r2=marked.add(v2.getElement());
+							if(!marked.contains(v3.getElement()))
+								r2=marked.add(v3.getElement());
+							
+							//check if such triangle with those vertices has been created previously
+							if(!(!r1&&!r2&&!r3)){						
+								UndirectedGraph<Integer, Integer> triangle = Utility.makeGraphFromVertexSet(graph, tVertices);
+								triangles.add(triangle);
 							}
 						}
 					}
 				}
 			}
+		}
 		
 		return triangles;
 	}
-	
-//	public static List<Graph.Vertex<Integer>> customBFS(Graph.Vertex<Integer> start, UndirectedGraph<Integer,Integer> graph){
-//		Queue<Graph.Vertex<Integer>> vertexQueue = new LinkedList<Graph.Vertex<Integer>>();
-//		List<Graph.Vertex<Integer>> list = new ArrayList<Graph.Vertex<Integer>>();
-//		List<Graph.Vertex<Integer>> visited = new ArrayList<Graph.Vertex<Integer>>();
-//		
-//		vertexQueue.add(start);
-//		visited.add(start);
-//		
-//		while(!vertexQueue.isEmpty()){
-//			Graph.Vertex<Integer> v = vertexQueue.remove();
-//			list.add(v);
-//			if(list.size()==3)
-//				return list;
-//			//get vertex v's neighbours
-//			Iterator<Graph.Vertex<Integer>> vNeighbours = graph.neighbours(v);
-//			while(vNeighbours.hasNext()){
-//				Graph.Vertex<Integer> w = vNeighbours.next();
-//				if(!visited.contains(w)){
-//					vertexQueue.add(w);
-//					visited.add(w);
-//				}
-//			}
-//			
-//		}
-//		
-//		return list;
-//	}
 	
 	public static String getTime(){
 		return time;
