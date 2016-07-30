@@ -64,7 +64,7 @@ public class DetectK4 {
 			time+="1";
 		else
 			time+="0";
-		System.out.println(time);
+		//System.out.println(time);
 		DetectK4.resetTime();
 		return k4;
 	}
@@ -96,7 +96,12 @@ public class DetectK4 {
 			double [][] adjMatrix = graph2.getAdjacencyMatrix();
 			
 			//get square of adjacency matrix
-			double[][] adjMatrixSquare = MatrixOperation.multiply(adjMatrix, adjMatrix);
+			double[][] adjMatrixSquare;
+			try {
+				adjMatrixSquare = MatrixOperation.multiply(adjMatrix, adjMatrix);
+			} catch (MatrixException e) {
+				continue;
+			}
 			
 			//create map of indices to vertex
 			List<Graph.Vertex<Integer>> indexVertexMap = new ArrayList<Graph.Vertex<Integer>>();
@@ -159,7 +164,12 @@ public class DetectK4 {
 			double [][] adjMatrix = graph2.getAdjacencyMatrix();
 			
 			//get square of adjacency matrix
-			double[][] adjMatrixSquare = MatrixOperation.multiply(adjMatrix, adjMatrix);
+			double[][] adjMatrixSquare;
+			try {
+				adjMatrixSquare = MatrixOperation.multiply(adjMatrix, adjMatrix);
+			} catch (MatrixException e) {
+				continue;
+			}
 			
 			//create map of indices to vertex
 			List<Graph.Vertex<Integer>> indexVertexMap = new ArrayList<Graph.Vertex<Integer>>();

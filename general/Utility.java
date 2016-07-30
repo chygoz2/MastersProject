@@ -185,7 +185,6 @@ public final class Utility {
 		
 		//select suitable file name for the generated graph
 		String graphFileName = dir2.getAbsolutePath()+File.separator+"graph_"+size+"_"+p+"_"+no+".txt";
-//		System.out.println(graphFileName);
 		
 		try {
 			FileWriter writer = new FileWriter(graphFileName);
@@ -195,6 +194,56 @@ public final class Utility {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	public static String saveGraphToFile(UndirectedGraph<Integer,Integer> graph, int no, String type){
+		String out = "";
+		Iterator<Graph.Vertex<Integer>> vertices = graph.vertices();
+		
+		while(vertices.hasNext()){
+			Graph.Vertex<Integer> v1 = vertices.next();
+			Iterator<Graph.Vertex<Integer>> vertices2 = graph.vertices();
+			while(vertices2.hasNext()){
+				Graph.Vertex<Integer> v2 = vertices2.next();
+				if(graph.containsEdge(v1, v2)){
+					out += "1 ";
+				}else{
+					out += "0 ";
+				}
+			}
+			out+=String.format("%n");
+		}
+		
+		//get graph size
+		int size = graph.size();
+		
+		//create folder for saving generated graphs if none exists
+		File f = new File("");
+		String path = f.getAbsolutePath();
+		String ggFolder = "generated_patternfree_graphs";
+		File dir = new File(path+File.separator+ggFolder);
+		dir.mkdir();
+		
+		//create folder for the pattern type if not existing
+		File dir3 = new File(path+File.separator+ggFolder+File.separator+type+"_free");
+		dir3.mkdir();
+		
+		//create folder for that size if not existing
+		File dir2 = new File(path+File.separator+ggFolder+File.separator+type+"_free"+File.separator+"size_"+size);
+		dir2.mkdir();
+		
+		//select suitable file name for the generated graph
+		String graphFileName = dir2.getAbsolutePath()+File.separator+"graph_"+size+"_"+no+".txt";
+		
+		try {
+			FileWriter writer = new FileWriter(graphFileName);
+			writer.write(out);
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return graphFileName;
 	}
 	
 	//method to create subgraph in the neighbourhood of Graph.Vertex v

@@ -198,7 +198,7 @@ public class Strassen {
        double[][] arr;
        a = new double[n][n];
        b = new double[n][n];
-       c = new double[n][n];
+       //c = new double[n][n];
        int i,j;
        for(i=0;i<n;i++)
         {
@@ -209,14 +209,14 @@ public class Strassen {
             }
         }
        long start = System.currentTimeMillis();
-       //arr = strassen(a,b);
+       arr = strassen(a,b);
        long end = System.currentTimeMillis();
        String out = "Time taken by strassen= "+(end-start);
        //print(arr);
-       start = System.currentTimeMillis();
-       multiply(a,b);
-       end = System.currentTimeMillis();
-       out +=("\nTime taken by normal= "+(end-start));
+//       start = System.currentTimeMillis();
+//       multiply(a,b);
+//       end = System.currentTimeMillis();
+//       out +=("\nTime taken by normal= "+(end-start));
        System.out.println(out);
        
     }

@@ -75,7 +75,7 @@ public class DetectClaw {
 			time+="1";
 		else
 			time+="0";
-		System.out.println(time);
+		//System.out.println(time);
 		DetectClaw.resetTime();
 		return claw;
 	}
@@ -158,7 +158,12 @@ public class DetectClaw {
 				continue;
 			
 			double[][] cm = vNeigh.getComplementMatrix();
-			double[][] cmSquared = MatrixOperation.multiply(cm, cm);
+			double[][] cmSquared;
+			try {
+				cmSquared = MatrixOperation.multiply(cm, cm);
+			} catch (MatrixException e) {
+				continue;
+			}
 			
 			//create a map between vertices and matrix indices
 			List<Graph.Vertex<Integer>> vertexIndexMap2 = new ArrayList<Graph.Vertex<Integer>>();

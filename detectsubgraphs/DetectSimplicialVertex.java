@@ -69,7 +69,7 @@ public class DetectSimplicialVertex {
 			time+="1";
 		else
 			time+="0";
-		System.out.println(time);
+		//System.out.println(time);
 		DetectSimplicialVertex.resetTime();
 		
 		return simpVertex;
@@ -155,7 +155,12 @@ public class DetectSimplicialVertex {
 		}
 		
 		//square the resulting adjacency matrix
-		double[][] aSquared = MatrixOperation.multiply(A, A);
+		double[][] aSquared;
+		try {
+			aSquared = MatrixOperation.multiply(A, A);
+		} catch (MatrixException e) {
+			return null;
+		}
 		
 		vIt1 = graph.vertices();
 		while(vIt1.hasNext()){

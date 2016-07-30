@@ -87,7 +87,7 @@ public class DetectDiamond {
 			time+="1";
 		else
 			time+="0";
-		System.out.println(time);
+		//System.out.println(time);
 		DetectDiamond.resetTime();
 		return diamond;
 	}
@@ -148,7 +148,12 @@ public class DetectDiamond {
 		
 		//get adjacency matrix of graph
 		double[][] A = graph.getAdjacencyMatrix();
-		double[][] squareA = MatrixOperation.multiply(A, A);
+		double[][] squareA;
+		try {
+			squareA = MatrixOperation.multiply(A, A);
+		} catch (MatrixException e) {
+			return null;
+		}
 //	
 		Set<Integer> vertexKeys = cliques.keySet();
 
@@ -301,7 +306,12 @@ public class DetectDiamond {
 		}
 		
 		double[][] A = graph.getAdjacencyMatrix();
-		double[][] A2 = MatrixOperation.multiply(A, A);
+		double[][] A2;
+		try {
+			A2 = MatrixOperation.multiply(A, A);
+		} catch (MatrixException e) {
+			return null;
+		}
 		
 		//look for a path of length 2 in A2
 		for(int i=0; i<A2.length;i++){
