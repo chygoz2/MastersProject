@@ -122,24 +122,42 @@ public final class Utility {
 			g1.addVertex(ve.getElement());
 		}		
 		
-		Iterator<Graph.Vertex<Integer>> vIt = g1.vertices();
-		while(vIt.hasNext()){
-			Iterator<Graph.Vertex<Integer>> vIt2 = g1.vertices();
-			Graph.Vertex<Integer> one = vIt.next();
-			while(vIt2.hasNext()){
-				Graph.Vertex<Integer> two = vIt2.next();
-				if((int)two.getElement()!=(int)(one.getElement())){
-					Graph.Vertex<Integer> nOne = graph.getVertexWithElement(one.getElement());
-					Graph.Vertex<Integer> nTwo = graph.getVertexWithElement(two.getElement());
+		for(Graph.Vertex<Integer> one: vertices){
+			for(Graph.Vertex<Integer> two: vertices){
+				if(two.getElement()!=one.getElement()){
+					Graph.Vertex<Integer> nOne = g1.getVertexWithElement(one.getElement());
+					Graph.Vertex<Integer> nTwo = g1.getVertexWithElement(two.getElement());
 					
-					if(graph.containsEdge(nOne, nTwo)){
-						if(!g1.containsEdge(one,two)){
-							g1.addEdge(one, two);
+					if(graph.containsEdge(graph.getVertexWithElement(one.getElement()),graph.getVertexWithElement(two.getElement()))){
+						if(!g1.containsEdge(nOne,nTwo)){
+							g1.addEdge(nOne, nTwo);
 						}
 					}
 				}
 			}
 		}
+		
+		
+		
+		
+//		Iterator<Graph.Vertex<Integer>> vIt = g1.vertices();
+//		while(vIt.hasNext()){
+//			Iterator<Graph.Vertex<Integer>> vIt2 = g1.vertices();
+//			Graph.Vertex<Integer> one = vIt.next();
+//			while(vIt2.hasNext()){
+//				Graph.Vertex<Integer> two = vIt2.next();
+//				if((int)two.getElement()!=(int)(one.getElement())){
+//					Graph.Vertex<Integer> nOne = graph.getVertexWithElement(one.getElement());
+//					Graph.Vertex<Integer> nTwo = graph.getVertexWithElement(two.getElement());
+//					
+//					if(graph.containsEdge(nOne, nTwo)){
+//						if(!g1.containsEdge(one,two)){
+//							g1.addEdge(one, two);
+//						}
+//					}
+//				}
+//			}
+//		}
 		
 		return g1;
 	}
