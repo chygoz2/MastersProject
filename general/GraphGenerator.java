@@ -1,5 +1,6 @@
 package general;
 
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.swing.JOptionPane;
@@ -54,8 +55,8 @@ public class GraphGenerator {
 					adjMatrix[j][i] = 1;
 					
 					UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(adjMatrix);
-					UndirectedGraph<Integer,Integer> triangle = DetectTriangle.detect(graph);
-					if(triangle!=null){
+					List<UndirectedGraph<Integer,Integer>> triangle = DetectTriangle.detect(graph);
+					if(!triangle.isEmpty()){
 						adjMatrix[i][j] = 0;
 						adjMatrix[j][i] = 0;
 					}
@@ -172,17 +173,17 @@ public class GraphGenerator {
 //		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(A);
 //		Utility.saveGraphToFile(graph, 0.5, 20);
 		
-//		int[][] A = generateTriangleFreeGraph(20);
-//		
-//		for(int i=0;i<A.length;i++){
-//			for(int j=0; j<A.length; j++){
-//				System.out.print(A[i][j]+" ");
-//			}
-//			System.out.println();
-//		}
-//		
-//		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(A);
-//		Utility.saveGraphToFile(graph, 0.5, 21);
+		int[][] A = generateTriangleFreeGraph(20);
+		
+		for(int i=0;i<A.length;i++){
+			for(int j=0; j<A.length; j++){
+				System.out.print(A[i][j]+" ");
+			}
+			System.out.println();
+		}
+		
+		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(A);
+		Utility.saveGraphToFile(graph, 21, "triangle");
 		
 //		int[][] A = generateClawFreeGraph(20);
 //		
@@ -208,18 +209,18 @@ public class GraphGenerator {
 //		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(A);
 //		Utility.saveGraphToFile(graph, 0.5, 23);
 		
-		int[][] A = generateSimplicialFreeGraph(5);
-		
-		for(int i=0;i<A.length;i++){
-			for(int j=0; j<A.length; j++){
-				System.out.print(A[i][j]+" ");
-			}
-			System.out.println();
-		}
-		
-		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(A);
-		Utility.saveGraphToFile(graph, 0.5, 24);
-		
+//		int[][] A = generateSimplicialFreeGraph(5);
+//		
+//		for(int i=0;i<A.length;i++){
+//			for(int j=0; j<A.length; j++){
+//				System.out.print(A[i][j]+" ");
+//			}
+//			System.out.println();
+//		}
+//		
+//		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(A);
+//		Utility.saveGraphToFile(graph, 0.5, 24);
+//		
 		
 	}
 }
