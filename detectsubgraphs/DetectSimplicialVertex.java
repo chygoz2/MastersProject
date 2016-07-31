@@ -12,72 +12,70 @@ public class DetectSimplicialVertex {
 	private static String time = "";
 	
 	public static void main(String [] args){
-//		UndirectedGraph<Integer, Integer> graph = new UndirectedGraph<Integer,Integer>();
+		UndirectedGraph<Integer, Integer> graph = new UndirectedGraph<Integer,Integer>();
 		
-//		Graph.Vertex<Integer> v1 = graph.addVertex(1);
-//		Graph.Vertex<Integer> v2 = graph.addVertex(2);
-//		Graph.Vertex<Integer> v3 = graph.addVertex(3);
-//		Graph.Vertex<Integer> v4 = graph.addVertex(4);
-//		Graph.Vertex<Integer> v5 = graph.addVertex(5);
-//		graph.addEdge(v1, v2);
-//		graph.addEdge(v3, v2);
-//		graph.addEdge(v3, v4);
-//		graph.addEdge(v1, v3);
+		Graph.Vertex<Integer> v1 = graph.addVertex(1);
+		Graph.Vertex<Integer> v2 = graph.addVertex(2);
+		Graph.Vertex<Integer> v3 = graph.addVertex(3);
+		Graph.Vertex<Integer> v4 = graph.addVertex(4);
+		Graph.Vertex<Integer> v5 = graph.addVertex(5);
+		graph.addEdge(v1, v2);
+		graph.addEdge(v3, v2);
+		graph.addEdge(v3, v4);
+		graph.addEdge(v1, v3);
 //		graph.addEdge(v1, v5);
 //		graph.addEdge(v3, v5);
-//		graph.addEdge(v2, v5);
-//		graph.addEdge(v2, v4);
-//		graph.addEdge(v1, v4);
-//		graph.addEdge(v4, v5);
+		graph.addEdge(v2, v5);
+		graph.addEdge(v2, v4);
+		graph.addEdge(v1, v4);
+		graph.addEdge(v4, v5);
 		
-//		Utility.saveGraphToFile(graph, 0.7, 10);
-		String fileName = "generated_graphs\\size_5\\graph_5_0.7_10.txt";
+		Utility.saveGraphToFile(graph, 0.7, 10);
+//		String fileName = "generated_graphs\\size_5\\graph_5_0.7_10.txt";
 //		String fileName = "generated_graphs\\size_6\\graph_6_0.6_2.txt";
 		//graph.mapVertexToId();
 		for(int i=0; i<1; i++){
-			UndirectedGraph<Integer, Integer> graph = Utility.makeGraphFromFile(fileName);
-			Graph.Vertex<Integer> simpVertex = detect(graph);
-			if(simpVertex!=null){
-				System.out.println(simpVertex.getElement());
+//			UndirectedGraph<Integer, Integer> graph = Utility.makeGraphFromFile(fileName);
+			List<Graph.Vertex<Integer>> simpVertex = detect(graph);
+			if(!simpVertex.isEmpty()){
+				for(Graph.Vertex<Integer> s: simpVertex)
+					System.out.print(s.getElement()+", ");
 			}else{
 				System.out.println("Simplicial vertex not found");
 			}
 		}
 	}
 	
-	public static Graph.Vertex<Integer> detect(UndirectedGraph<Integer,Integer> graph){
+	public static List<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
 		List[] verticesPartition = Utility.partitionVertices(graph);
+		List<Graph.Vertex<Integer>> simplicialVertices = new ArrayList<Graph.Vertex<Integer>>();
 		
 		List<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
 		List<Graph.Vertex<Integer>> highDegreeVertices = verticesPartition[1];
 		
-		Graph.Vertex<Integer> simpVertex = null;
 		long starttime = System.currentTimeMillis();
-		simpVertex = phaseOne(graph, lowDegreeVertices);
+		simplicialVertices.addAll(phaseOne(graph, lowDegreeVertices));
 		long stoptime = System.currentTimeMillis();
 		time += "phase1("+(stoptime-starttime)+")_";
-		if(simpVertex == null){
-			starttime = System.currentTimeMillis();
-			List<Graph.Vertex<Integer>> markedVertices = phaseTwo(graph, highDegreeVertices);
-			phaseThree(graph, lowDegreeVertices);
-			simpVertex = phaseFour(graph, markedVertices);
-			stoptime = System.currentTimeMillis();
-			time += "phase4("+(stoptime-starttime)+")_";
-		}
+
+		starttime = System.currentTimeMillis();
+		simplicialVertices.addAll(phaseTwo(graph, lowDegreeVertices, highDegreeVertices));
+		stoptime = System.currentTimeMillis();
+		time += "phase2("+(stoptime-starttime)+")_";
 		
-		if(simpVertex!=null)
+		if(!simplicialVertices.isEmpty())
 			time+="1";
 		else
 			time+="0";
-		//System.out.println(time);
+//		System.out.println(time);
 		DetectSimplicialVertex.resetTime();
 		
-		return simpVertex;
+		return simplicialVertices;
 		
 	}
 	
-	public static Graph.Vertex<Integer> phaseOne(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> lowDegreeVertices){
-		
+	public static List<Graph.Vertex<Integer>> phaseOne(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> lowDegreeVertices){
+		List<Graph.Vertex<Integer>> simplicialVertices = new ArrayList<Graph.Vertex<Integer>>();
 		for(Graph.Vertex<Integer> v: lowDegreeVertices){
 			if(graph.degree(v) > 0){
 				//get the neighbours of v
@@ -101,15 +99,16 @@ public class DetectSimplicialVertex {
 					}
 			
 				if(isSimplicial){
-					return v;
+					simplicialVertices.add(v);
 				}
 			}
 		}
 		
-		return null;
+		return simplicialVertices;
 	}
 	
-	public static List<Graph.Vertex<Integer>> phaseTwo(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> highDegreeVertices){
+	public static List<Graph.Vertex<Integer>> phaseTwo(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> lowDegreeVertices, Collection<Graph.Vertex<Integer>> highDegreeVertices){
+		
 		List<Graph.Vertex<Integer>> markedVertices = new ArrayList<Graph.Vertex<Integer>>();
 		
 		for(Graph.Vertex<Integer> v: highDegreeVertices){
@@ -123,18 +122,12 @@ public class DetectSimplicialVertex {
 			}	
 		}
 		
-		return markedVertices;
-	}
-	
-	public static void phaseThree(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> lowDegreeVertices){
 		//remove all low degree vertices from graph
 		for(Graph.Vertex<Integer> v: lowDegreeVertices){
 			graph.removeVertex(v);
 		}	
-	}
-
-	public static Graph.Vertex<Integer> phaseFour(UndirectedGraph<Integer,Integer> graph, List<Graph.Vertex<Integer>> markedVertices){
 		
+		List<Graph.Vertex<Integer>> simplicialVertices = new ArrayList<Graph.Vertex<Integer>>();
 		//create a map between vertices and matrix indices
 		Map<Integer, Integer> vertexIndexMap = new HashMap<Integer, Integer>();
 		int a = 0;
@@ -159,13 +152,13 @@ public class DetectSimplicialVertex {
 		try {
 			aSquared = MatrixOperation.multiply(A, A);
 		} catch (MatrixException e) {
-			return null;
+			return simplicialVertices;
 		}
 		
 		vIt1 = graph.vertices();
 		while(vIt1.hasNext()){
 			//get v's neighbours
-			//System.out.println("Contains: "+markedVertices.contains(x));
+
 			Graph.Vertex<Integer> x = vIt1.next();
 			if(!markedVertices.contains(graph.getVertexWithElement(x.getElement()))) //do check only on unmarked vertices from phase 2
 			{
@@ -178,20 +171,21 @@ public class DetectSimplicialVertex {
 					Graph.Vertex<Integer> y = vNeigh.next();
 					int i = (int)aSquared[vertexIndexMap.get(x.getElement())][vertexIndexMap.get(y.getElement())];
 					int j = (int)aSquared[vertexIndexMap.get(x.getElement())][vertexIndexMap.get(x.getElement())];
-					if(i==j){
+					
+					if(i!=j){
 						isSimplicial = false;
 						break;
 					}
 				}
 				
 				if(isSimplicial){
-					return x;
+					simplicialVertices.add(x);
 				}
 			}
 		}
 		
 		//get simplicial vertices
-		return null;
+		return simplicialVertices;
 	}
 	
 	public static String getTime(){

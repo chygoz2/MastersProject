@@ -80,7 +80,6 @@ public class DetectK4 {
 	}
 	
 	public static List<UndirectedGraph<Integer,Integer>> phaseOne(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> highDegreeVertices){
-		System.out.println("In phase one");
 		List<Set<Integer>> marked = new ArrayList<Set<Integer>>(); //to prevent creating the same k4 more than once
 		//Set<Integer> marked = new HashSet<Integer>(); 
 		List<UndirectedGraph<Integer,Integer>> k4List = new ArrayList<UndirectedGraph<Integer,Integer>>();
@@ -156,7 +155,6 @@ public class DetectK4 {
 									UndirectedGraph<Integer,Integer> k4 = Utility.makeGraphFromVertexSet(graph, k4Vertices);
 									k4List.add(k4);
 									marked.add(k4VerticesElem);
-									Utility.printGraph(k4);
 								}
 							}
 						}
@@ -169,7 +167,6 @@ public class DetectK4 {
 	}
 	
 	public static List<UndirectedGraph<Integer,Integer>> phaseTwo(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> lowDegreeVertices){
-		System.out.println("In phase two");
 		List<Set<Integer>> marked = new ArrayList<Set<Integer>>(); //to prevent creating the same k4 more than once
 		List<UndirectedGraph<Integer,Integer>> k4List = new ArrayList<UndirectedGraph<Integer,Integer>>();
 		
@@ -242,7 +239,6 @@ public class DetectK4 {
 									UndirectedGraph<Integer,Integer> k4 = Utility.makeGraphFromVertexSet(graph, k4Vertices);
 									k4List.add(k4);
 									marked.add(k4VerticesElem);
-									Utility.printGraph(k4);
 								}
 							}
 						}

@@ -1,6 +1,7 @@
 import java.awt.EventQueue;
 import java.io.File;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Scanner;
 
 import detectsubgraphs.*;
@@ -33,9 +34,9 @@ public class RunMe {
 					UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(path);
 					if(graph!=null){
 						if (words[1].equals("triangle")) {
-							Graph<Integer,Integer> triangle = DetectTriangle.detect(graph).get(0);
+							List<UndirectedGraph<Integer,Integer>> triangle = DetectTriangle.detect(graph);
 							if(triangle!=null){
-								Iterator<Graph.Vertex<Integer>> vertices = triangle.vertices();
+								Iterator<Graph.Vertex<Integer>> vertices = triangle.get(0).vertices();
 								String out = "";
 								while(vertices.hasNext()){
 									out+=vertices.next().getElement()+",";
@@ -87,9 +88,9 @@ public class RunMe {
 						}	
 						
 						else if (words[1].equals("k4")) {
-							UndirectedGraph<Integer,Integer> k4 = DetectK4.detect(graph);
+							List<UndirectedGraph<Integer,Integer>> k4 = DetectK4.detect(graph);
 							if(k4!=null){
-								Iterator<Graph.Vertex<Integer>> vertices = k4.vertices();
+								Iterator<Graph.Vertex<Integer>> vertices = k4.get(0).vertices();
 								String out = "";
 								while(vertices.hasNext()){
 									out+=vertices.next().getElement()+",";

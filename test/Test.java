@@ -1,6 +1,7 @@
 package test;
 import java.util.Iterator;
 
+import detectsubgraphs.MatrixException;
 import general.MatrixOperation;
 
 //import Jama.Matrix;
@@ -14,7 +15,13 @@ public class Test {
 		//mA.print(3, 2);
 		//Matrix squareMatrix = mA.times(mA);
 		//squareMatrix.print(3, 0);
-		double[][] result = MatrixOperation.multiply(a, a);
+		double[][] result = null;
+		try {
+			result = MatrixOperation.multiply(a, a);
+		} catch (MatrixException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		for(int i=0; i<result.length; i++){
 			for(int j=0; j<result[i].length; j++){
 				System.out.print((int)result[i][j]+" ");

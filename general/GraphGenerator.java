@@ -142,16 +142,10 @@ public class GraphGenerator {
 					adjMatrix[j][i] = 1;
 					
 					UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(adjMatrix);
-					Graph.Vertex<Integer> v = DetectSimplicialVertex.detect(graph);
-					if(v!=null){
-						if(j+1!=n){
-							j++;
-							adjMatrix[i][j] = 1;
-							adjMatrix[j][i] = 1;
-						}else{
-							adjMatrix[i][j] = 0;
-							adjMatrix[j][i] = 0;
-						}
+					List<Graph.Vertex<Integer>> v = DetectSimplicialVertex.detect(graph);
+					if(!v.isEmpty()){
+						adjMatrix[i][j] = 0;
+						adjMatrix[j][i] = 0;
 					}
 				}
 			}
@@ -173,17 +167,17 @@ public class GraphGenerator {
 //		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(A);
 //		Utility.saveGraphToFile(graph, 0.5, 20);
 		
-		int[][] A = generateTriangleFreeGraph(20);
-		
-		for(int i=0;i<A.length;i++){
-			for(int j=0; j<A.length; j++){
-				System.out.print(A[i][j]+" ");
-			}
-			System.out.println();
-		}
-		
-		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(A);
-		Utility.saveGraphToFile(graph, 21, "triangle");
+//		int[][] A = generateTriangleFreeGraph(20);
+//		
+//		for(int i=0;i<A.length;i++){
+//			for(int j=0; j<A.length; j++){
+//				System.out.print(A[i][j]+" ");
+//			}
+//			System.out.println();
+//		}
+//		
+//		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(A);
+//		Utility.saveGraphToFile(graph, 21, "triangle");
 		
 //		int[][] A = generateClawFreeGraph(20);
 //		
@@ -209,17 +203,17 @@ public class GraphGenerator {
 //		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(A);
 //		Utility.saveGraphToFile(graph, 0.5, 23);
 		
-//		int[][] A = generateSimplicialFreeGraph(5);
-//		
-//		for(int i=0;i<A.length;i++){
-//			for(int j=0; j<A.length; j++){
-//				System.out.print(A[i][j]+" ");
-//			}
-//			System.out.println();
-//		}
-//		
-//		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(A);
-//		Utility.saveGraphToFile(graph, 0.5, 24);
+		int[][] A = generateSimplicialFreeGraph(5);
+		
+		for(int i=0;i<A.length;i++){
+			for(int j=0; j<A.length; j++){
+				System.out.print(A[i][j]+" ");
+			}
+			System.out.println();
+		}
+		
+		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(A);
+		Utility.saveGraphToFile(graph, 24, "simplicial");
 //		
 		
 	}
