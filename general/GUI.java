@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -216,9 +217,9 @@ public class GUI extends JFrame implements ActionListener{
 						}else
 							outputArea.setText("Claw not found");
 					}else if(selectedButton.equals("K4")){
-						UndirectedGraph<Integer,Integer> k4 = DetectK4.detect(graph);
-						if(k4!=null){
-							Iterator<Graph.Vertex<Integer>> vertices = k4.vertices();
+						List<UndirectedGraph<Integer,Integer>> k4 = DetectK4.detect(graph);
+						if(!k4.isEmpty()){
+							Iterator<Graph.Vertex<Integer>> vertices = k4.get(0).vertices();
 							String out = "";
 							while(vertices.hasNext()){
 								out+=vertices.next().getElement()+",";
@@ -236,9 +237,9 @@ public class GUI extends JFrame implements ActionListener{
 						}else
 							outputArea.setText("Simplicial vertex not found");
 					}else if(selectedButton.equals("Triangle")){
-						Graph<Integer,Integer> triangle = DetectTriangle.detect(graph);
+						List<UndirectedGraph<Integer,Integer>> triangle = DetectTriangle.detect(graph);
 						if(triangle!=null){
-							Iterator<Graph.Vertex<Integer>> vertices = triangle.vertices();
+							Iterator<Graph.Vertex<Integer>> vertices = triangle.get(0).vertices();
 							String out = "";
 							while(vertices.hasNext()){
 								out+=vertices.next().getElement()+",";

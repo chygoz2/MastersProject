@@ -75,7 +75,7 @@ public class DetectClaw {
 			time+="1";
 		else
 			time+="0";
-		//System.out.println(time);
+		System.out.println(time);
 		DetectClaw.resetTime();
 		return claw;
 	}
@@ -107,8 +107,7 @@ public class DetectClaw {
 					Iterable<Graph.Vertex<Integer>> c3Vertices = (Iterable<Graph.Vertex<Integer>>)vNeighComps.get(2).vertices();
 					
 					List<Graph.Vertex<Integer>> clawVertices = new ArrayList<Graph.Vertex<Integer>>();
-					Graph.Vertex<Integer> v1 = graph.getVertexWithElement(v.getElement());
-					clawVertices.add(v1);
+					clawVertices.add(v);
 					
 					for(Graph.Vertex<Integer> vv: c1Vertices){
 						clawVertices.add(vv);

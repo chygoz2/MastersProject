@@ -33,7 +33,7 @@ public class RunMe {
 					UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(path);
 					if(graph!=null){
 						if (words[1].equals("triangle")) {
-							Graph<Integer,Integer> triangle = DetectTriangle.detect(graph);
+							Graph<Integer,Integer> triangle = DetectTriangle.detect(graph).get(0);
 							if(triangle!=null){
 								Iterator<Graph.Vertex<Integer>> vertices = triangle.vertices();
 								String out = "";

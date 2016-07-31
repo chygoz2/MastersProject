@@ -31,8 +31,9 @@ public class DetectDiamond {
 		UndirectedGraph<Integer,Integer> graph;
 		for(int a=0;a<1;a++){
 //			String fileName = "matrix2.txt";
-//			String fileName = "generated_graphs\\size_5\\graph_5_0.7_4.txt";
-			String fileName = "generated_graphs\\size_6\\graph_6_0.6_3.txt";
+			String fileName = "generated_graphs\\size_5\\graph_5_0.7_4.txt";
+//			String fileName = "generated_graphs\\size_6\\graph_6_0.6_3.txt";
+//			String fileName = "test\\testdata\\diamondtestdata.txt";
 //			UndirectedGraph<Integer,Integer> graphs[a] = Utility.makeGraphFromFile(fileName);
 			graph = Utility.makeGraphFromFile(fileName);
 			UndirectedGraph<Integer,Integer> diamond = detect(graph);
@@ -76,10 +77,9 @@ public class DetectDiamond {
 			
 			if(diamond==null){
 				starttime = System.currentTimeMillis();
-				DetectDiamond.phaseThree(graph, lowDegreeVertices);
-				diamond = DetectDiamond.phaseFour(graph);
+				diamond = DetectDiamond.phaseThree(graph, lowDegreeVertices);
 				stoptime = System.currentTimeMillis();
-				time += "phase4("+(stoptime-starttime)+")_";
+				time += "phase3("+(stoptime-starttime)+")_";
 				
 			}
 		}
@@ -87,7 +87,7 @@ public class DetectDiamond {
 			time+="1";
 		else
 			time+="0";
-		//System.out.println(time);
+		System.out.println(time);
 		DetectDiamond.resetTime();
 		return diamond;
 	}
@@ -102,13 +102,11 @@ public class DetectDiamond {
 		
 		here:
 		for(Graph.Vertex<Integer> v: lowDegreeVertices){
-//			System.out.println("Low degree vertex is "+v.getElement());
 			UndirectedGraph<Integer,Integer> graph2 = Utility.getNeighbourGraph(graph, v);
 			
 			//Create list for storing cliques in the neighbourhood of vertex v
 			List<UndirectedGraph<Integer,Integer>> cliques = new ArrayList<UndirectedGraph<Integer,Integer>>();
 			
-			//System.out.println("Getting components graph formed by the neighbourhood of v");
 			List<UndirectedGraph<Integer,Integer>> graph2Comps = Utility.getComponents(graph2); //get components of the induced neighbour graph
 			
 			//check if each component is a clique
@@ -210,15 +208,13 @@ public class DetectDiamond {
 	}
 	
 	
-	public static void phaseThree(UndirectedGraph<Integer,Integer> graph, List<Graph.Vertex<Integer>> lowDegreeVertices){
+	public static UndirectedGraph<Integer,Integer> phaseThree(UndirectedGraph<Integer,Integer> graph, List<Graph.Vertex<Integer>> lowDegreeVertices){
 		//remove low degree vertices from graph G
 		
 		for(Graph.Vertex<Integer> v: lowDegreeVertices){
 			graph.removeVertex(graph.getVertexWithElement(v.getElement()));
 		}
-	}
-	
-	public static UndirectedGraph<Integer,Integer> phaseFour(UndirectedGraph<Integer,Integer> graph){
+		
 		UndirectedGraph<Integer,Integer> diamond = null;
 		//look for a diamond in graph using the method listed in phase 1 applied on all vertices 
 		//of the graph

@@ -84,8 +84,8 @@ public class GraphGenerator {
 					adjMatrix[j][i] = 1;
 					
 					UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(adjMatrix);
-					UndirectedGraph<Integer,Integer> k4 = DetectK4.detect(graph);
-					if(k4!=null){
+					List<UndirectedGraph<Integer,Integer>> k4 = DetectK4.detect(graph);
+					if(!k4.isEmpty()){
 						adjMatrix[i][j] = 0;
 						adjMatrix[j][i] = 0;
 					}
