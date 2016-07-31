@@ -66,7 +66,7 @@ public class DetectTriangle {
 	}
 	
 	public static List<UndirectedGraph<Integer,Integer>> phaseOne(UndirectedGraph<Integer, Integer> graph, List<Graph.Vertex<Integer>> lowDegreeVertices){
-		Set<Integer> marked = new HashSet<Integer>(); //to prevent creating the same triangle more than once
+		List<Set<Integer>> marked = new ArrayList<Set<Integer>>(); //to prevent creating the same triangle more than once
 		List<UndirectedGraph<Integer,Integer>> triangles = new ArrayList<UndirectedGraph<Integer, Integer>>();
 		
 		for(Graph.Vertex<Integer> v: lowDegreeVertices){
@@ -87,21 +87,28 @@ public class DetectTriangle {
 					//check for presence of edge between v and next
 					//presence of an edge indicates a triangle
 					if(graph.containsEdge(v, next)){
-						List<Graph.Vertex<Integer>> triList = new ArrayList<Graph.Vertex<Integer>>();
-						boolean r1=false,r2=false,r3=false;
-						triList.add(v); triList.add(other); triList.add(next);
+						List<Graph.Vertex<Integer>> triList = new ArrayList<Graph.Vertex<Integer>>(); //list to store triangle elements
+						Set<Integer> triListElem = new HashSet<Integer>(); //list to store triangle vertices elements
 						
-						if(!marked.contains(v.getElement()))
-							r1=marked.add(v.getElement());
-						if(!marked.contains(other.getElement()))
-							r2=marked.add(other.getElement());
-						if(!marked.contains(next.getElement()))
-							r2=marked.add(next.getElement());
+						triList.add(v); triList.add(other); triList.add(next);
+						triListElem.add(v.getElement()); triListElem.add(other.getElement());
+						triListElem.add(next.getElement());
+						
+						//check in the marked list for an entry that contains all 3 vertex elements
+						boolean contains = false;
+						
+						for(Set<Integer> s: marked){
+							if(s.containsAll(triListElem)){
+								contains = true;
+								break;
+							}
+						}
 						
 						//check if such triangle with those vertices has been created previously
-						if(!(!r1&&!r2&&!r3)){						
+						if(!contains){						
 							UndirectedGraph<Integer,Integer> triangle = Utility.makeGraphFromVertexSet(graph,triList);
 							triangles.add(triangle);
+							marked.add(triListElem);
 						}
 					}
 				}
@@ -113,7 +120,7 @@ public class DetectTriangle {
 	}
 	
 	public static List<UndirectedGraph<Integer,Integer>> phaseTwo(UndirectedGraph<Integer,Integer> graph, List<Graph.Vertex<Integer>> lowDegreeVertices){
-		Set<Integer> marked = new HashSet<Integer>(); //to prevent creating the same triangle more than once
+		List<Set<Integer>> marked = new ArrayList<Set<Integer>>(); //to prevent creating the same triangle more than once
 		//if no triangle was found
 		//remove all low degree vertices and get the adjacency matrix of resulting graph. 
 		//Then detect a triangle from the square of the adjacency matrix
@@ -151,25 +158,30 @@ public class DetectTriangle {
 							//at this point, i, j and k represent matrix indices of the vertices which form the triangle
 							//get the actual vertices and create a list of them
 							List<Graph.Vertex<Integer>> tVertices = new ArrayList<Graph.Vertex<Integer>>();
+							Set<Integer> triListElem = new HashSet<Integer>(); //list to store triangle vertices elements
+							
 							Graph.Vertex<Integer> v1 = vertexIndexMap.get(i);
 							Graph.Vertex<Integer> v2 = vertexIndexMap.get(j);
 							Graph.Vertex<Integer> v3 = vertexIndexMap.get(k);
-							tVertices.add(v1);
-							tVertices.add(v2);
-							tVertices.add(v3);
+							tVertices.add(v1);	triListElem.add(v1.getElement());
+							tVertices.add(v2);	triListElem.add(v2.getElement());
+							tVertices.add(v3);	triListElem.add(v3.getElement());
 							
-							boolean r1=false,r2=false,r3=false;
-							if(!marked.contains(v1.getElement()))
-								r1=marked.add(v1.getElement());
-							if(!marked.contains(v2.getElement()))
-								r2=marked.add(v2.getElement());
-							if(!marked.contains(v3.getElement()))
-								r2=marked.add(v3.getElement());
+							//check in the marked list for an entry that contains all 3 vertex elements
+							boolean contains = false;
+							
+							for(Set<Integer> s: marked){
+								if(s.containsAll(triListElem)){
+									contains = true;
+									break;
+								}
+							}
 							
 							//check if such triangle with those vertices has been created previously
-							if(!(!r1&&!r2&&!r3)){						
+							if(!contains){						
 								UndirectedGraph<Integer, Integer> triangle = Utility.makeGraphFromVertexSet(graph, tVertices);
 								triangles.add(triangle);
+								marked.add(triListElem);
 							}
 						}
 					}
