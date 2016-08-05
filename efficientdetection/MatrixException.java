@@ -1,4 +1,5 @@
-package detectsubgraphs;
+package efficientdetection;
+
 
 public class MatrixException extends Exception{
 	private int status;

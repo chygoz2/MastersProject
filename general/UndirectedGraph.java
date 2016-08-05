@@ -29,6 +29,8 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 
 	@Override
 	public int degree(Vertex<E> v) {
+		if(v==null)
+			throw new NullPointerException();
 		return ((UnVertex)v).neighbours.size();
 	}
 
@@ -77,6 +79,8 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 
 	@Override
 	public Edge<A> addEdge(Vertex<E> v0, Vertex<E> v1, A attr) {
+		if(v0==null || v1==null)
+			throw new NullPointerException();
 		UnEdge edge = new UnEdge(attr,v0,v1,null,null);
 		UnEdge curr = firstEdge;
 		if(curr==null)
@@ -96,6 +100,8 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 
 	@Override
 	public void removeVertex(Vertex<E> v) {		
+		if(v==null)
+			throw new NullPointerException();
 		//remove all edges that connect to vertex v	
 		Iterator<Edge<A>> it = connectingEdges(v);
 		while(it.hasNext()){
@@ -110,6 +116,9 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 
 	@Override
 	public void removeEdge(Edge<A> e) {
+		if(e==null)
+			throw new NullPointerException();
+		
 		UnEdge reEdge = (UnEdge)e;
 		UnEdge pre = reEdge.pred;
 		UnEdge post = reEdge.succ;
@@ -141,15 +150,24 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 
 	@Override
 	public Iterator<Vertex<E>> neighbours(Vertex<E> v) {
+		if(v==null)
+			throw new NullPointerException();
+		
 		return new VertexNeighbourIterator(v);
 	}
 
 	@Override
 	public Iterator<Edge<A>> connectingEdges(Vertex<E> v) {
+		if(v==null)
+			throw new NullPointerException();
+		
 		return new VertexEdgesIterator(v);
 	}
 	
 	public List<Vertex<E>> depthFirstTraversal(Vertex<E> startV){
+		if(startV==null)
+			throw new NullPointerException();
+		
 		UnVertex start = (UnVertex)startV;
 		Stack<Vertex<E>> vertexStack = new Stack<Vertex<E>>();
 		List<Vertex<E>> list = new ArrayList<Vertex<E>>();
@@ -176,6 +194,9 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 	}
 	
 	public List<Vertex<E>> breadthFirstTraversal(Vertex<E> startV){
+		if(startV==null)
+			throw new NullPointerException();
+		
 		UnVertex start = (UnVertex)startV;
 		Queue<Vertex<E>> vertexQueue = new LinkedList<Vertex<E>>();
 		List<Vertex<E>> list = new ArrayList<Vertex<E>>();

@@ -4,8 +4,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
-import detectsubgraphs.*;
+import efficientdetection.*;
 import general.*;
+import generate.GraphGenerator;
+import gui.GUI;
 
 public class RunMe {
 	public static void main(String[] args){
@@ -78,9 +80,9 @@ public class RunMe {
 						}
 						
 						else if (words[1].equals("simplicial")) {
-							Graph.Vertex<Integer> simpVertex = DetectSimplicialVertex.detect(graph);
-							if(simpVertex!=null){
-								String out = simpVertex.getElement()+"";
+							List<Graph.Vertex<Integer>> simpVertex = DetectSimplicialVertex.detect(graph);
+							if(!simpVertex.isEmpty()){
+								String out = simpVertex.get(0).getElement()+"";
 								out = String.format("Simplicial vertex found %n%s", out);
 								System.out.println(out);
 							}else

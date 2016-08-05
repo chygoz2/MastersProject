@@ -10,7 +10,7 @@ import java.util.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import detectsubgraphs.*;
+import efficientdetection.*;
 import general.*;
 
 /**
@@ -29,7 +29,7 @@ public class DetectTriangleTest {
 	}
 	
 	/**
-	 * Test method for {@link detectsubgraphs.DetectTriangle#detect(general.UndirectedGraph)}.
+	 * Test method for {@link efficientdetection.DetectTriangle#detect(general.UndirectedGraph)}.
 	 */
 	@Test
 	public void testDetect() {
@@ -50,7 +50,7 @@ public class DetectTriangleTest {
 	}
 
 	/**
-	 * Test method for {@link detectsubgraphs.DetectTriangle#phaseOne(general.UndirectedGraph, java.util.List)}.
+	 * Test method for {@link efficientdetection.DetectTriangle#phaseOne(general.UndirectedGraph, java.util.List)}.
 	 */
 	@Test
 	public void testPhaseOne() {
@@ -71,7 +71,7 @@ public class DetectTriangleTest {
 	}
 
 	/**
-	 * Test method for {@link detectsubgraphs.DetectTriangle#phaseTwo(general.UndirectedGraph, java.util.List)}.
+	 * Test method for {@link efficientdetection.DetectTriangle#phaseTwo(general.UndirectedGraph, java.util.List)}.
 	 */
 	@Test
 	public void testPhaseTwo() {

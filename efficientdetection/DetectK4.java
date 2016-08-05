@@ -1,4 +1,4 @@
-package detectsubgraphs;
+package efficientdetection;
 import java.util.*;
 
 import general.Graph;
@@ -32,11 +32,17 @@ public class DetectK4 {
 ////		Utility.saveGraphToFile(graph, 1.0, 1);
 		String fileName = "matrix4.txt";
 		UndirectedGraph graph = Utility.makeGraphFromFile(fileName);
-		List<UndirectedGraph<Integer,Integer>> k4List = detect(graph);
 		
-//		for(UndirectedGraph<Integer,Integer> k4: k4List){
-//			Utility.printGraph(k4);
-//		}
+		long starttime = System.currentTimeMillis();
+		List<UndirectedGraph<Integer,Integer>> k4List = detect(graph);
+		long stoptime = System.currentTimeMillis();
+		
+		long timetaken = stoptime-starttime;
+		
+		for(UndirectedGraph<Integer,Integer> k4: k4List){
+			Utility.printGraph(k4);
+		}
+		System.out.println("Time taken in milliseconds: "+timetaken);
 					
 	}
 	
@@ -81,7 +87,6 @@ public class DetectK4 {
 	
 	public static List<UndirectedGraph<Integer,Integer>> phaseOne(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> highDegreeVertices){
 		List<Set<Integer>> marked = new ArrayList<Set<Integer>>(); //to prevent creating the same k4 more than once
-		//Set<Integer> marked = new HashSet<Integer>(); 
 		List<UndirectedGraph<Integer,Integer>> k4List = new ArrayList<UndirectedGraph<Integer,Integer>>();
 			
 		for(Graph.Vertex<Integer> x: highDegreeVertices){

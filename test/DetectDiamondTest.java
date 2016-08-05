@@ -9,8 +9,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import detectsubgraphs.DetectDiamond;
-import detectsubgraphs.DetectTriangle;
+import efficientdetection.DetectDiamond;
+import efficientdetection.DetectTriangle;
 import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;

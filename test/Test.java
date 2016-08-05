@@ -1,7 +1,7 @@
 package test;
 import java.util.Iterator;
 
-import detectsubgraphs.MatrixException;
+import efficientdetection.MatrixException;
 import general.MatrixOperation;
 
 //import Jama.Matrix;

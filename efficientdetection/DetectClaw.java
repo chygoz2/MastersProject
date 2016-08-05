@@ -1,12 +1,10 @@
-package detectsubgraphs;
+package efficientdetection;
 import java.util.*;
 
 import general.Graph;
 import general.MatrixOperation;
 import general.UndirectedGraph;
 import general.Utility;
-import general.Graph.Edge;
-import general.Graph.Vertex;
 
 public class DetectClaw {
 	

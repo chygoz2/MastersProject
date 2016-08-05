@@ -1,11 +1,15 @@
-package general;
+package generate;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.swing.JOptionPane;
 
-import detectsubgraphs.*;
+import efficientdetection.*;
+import general.Graph;
+import general.UndirectedGraph;
+import general.Utility;
+import general.Graph.Vertex;
 
 public class GraphGenerator {
 	

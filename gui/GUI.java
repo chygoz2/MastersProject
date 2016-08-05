@@ -1,4 +1,4 @@
-package general;
+package gui;
 import java.awt.BorderLayout;
 //import java.awt.Container;
 import java.awt.EventQueue;
@@ -13,11 +13,15 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import detectsubgraphs.DetectClaw;
-import detectsubgraphs.DetectDiamond;
-import detectsubgraphs.DetectK4;
-import detectsubgraphs.DetectSimplicialVertex;
-import detectsubgraphs.DetectTriangle;
+import efficientdetection.DetectClaw;
+import efficientdetection.DetectDiamond;
+import efficientdetection.DetectK4;
+import efficientdetection.DetectSimplicialVertex;
+import efficientdetection.DetectTriangle;
+import general.Graph;
+import general.UndirectedGraph;
+import general.Utility;
+import general.Graph.Vertex;
 
 public class GUI extends JFrame implements ActionListener{
 
@@ -229,9 +233,9 @@ public class GUI extends JFrame implements ActionListener{
 						}else
 							outputArea.setText("K4 not found");
 					}else if(selectedButton.equals("Simplicial Vertex")){
-						Graph.Vertex<Integer> simpVertex = DetectSimplicialVertex.detect(graph);
-						if(simpVertex!=null){
-							String out = simpVertex.getElement()+"";
+						List<Graph.Vertex<Integer>> simpVertex = DetectSimplicialVertex.detect(graph);
+						if(!simpVertex.isEmpty()){
+							String out = simpVertex.get(0).getElement()+"";
 							out = String.format("Simplicial vertex found %n%s", out);
 							outputArea.setText(out);
 						}else

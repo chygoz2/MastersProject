@@ -1,4 +1,4 @@
-package detectsubgraphs;
+package efficientdetection;
 import java.util.*;
 
 import general.Graph;

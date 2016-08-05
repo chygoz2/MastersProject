@@ -361,9 +361,9 @@ public final class Utility {
 	}
 	
 	public static void main(String [] args){
-		String fileName = "matrix.txt";
-		Utility.makeGraphFromFile(fileName);
-		//generateRandomGraphFile(7,0.2,5);
+//		String fileName = "matrix.txt";
+//		Utility.makeGraphFromFile(fileName);
+		generateRandomGraphFile(150,1.0,1);
 		
 //		double[][] a = {{1,2,3},{4,5,6},{7,8,9}};
 //		double[][] res = matrixMultiply(a,a);

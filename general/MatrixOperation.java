@@ -1,6 +1,6 @@
 package general;
 
-import detectsubgraphs.MatrixException;
+import efficientdetection.MatrixException;
 
 public class MatrixOperation {
 	

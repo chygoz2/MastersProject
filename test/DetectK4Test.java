@@ -9,7 +9,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import detectsubgraphs.DetectK4;
+import efficientdetection.DetectK4;
 import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
