@@ -11,7 +11,8 @@ public class ListTriangles {
 //		for(int a=0;a<15;a++){
 //			String fileName = "matrix3.txt";
 //			String fileName = "generated_graphs\\size_7\\graph_7_0.2_2.txt";
-			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
+//			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
+			String fileName = "generated_graphs\\size_15\\graph_15_1.0_1.txt";
 			graph = Utility.makeGraphFromFile(fileName);
 //			int[][] A = {{0,1,0,1,1},{1,0,1,0,0},{0,1,0,1,1},{1,0,1,0,0},{1,0,1,0,0}};
 //			graph = Utility.makeGraphFromAdjacencyMatrix(A);
@@ -49,7 +50,7 @@ public class ListTriangles {
 		
 		Collections.sort(vertices, new VertexComparator(graph));
 		
-		for(int i=0; i<vertices.size()-3; i++){
+		for(int i=0; i<vertices.size()-2; i++){
 			Graph.Vertex<Integer> v = vertices.get(i);
 			Iterator<Graph.Vertex<Integer>> nv = graph.neighbours(v);
 			List<Graph.Vertex<Integer>> marked = new ArrayList<Graph.Vertex<Integer>>();
