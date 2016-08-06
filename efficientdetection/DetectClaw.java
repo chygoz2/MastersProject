@@ -2,7 +2,6 @@ package efficientdetection;
 import java.util.*;
 
 import general.Graph;
-import general.MatrixOperation;
 import general.UndirectedGraph;
 import general.Utility;
 
@@ -157,7 +156,7 @@ public class DetectClaw {
 			double[][] cm = vNeigh.getComplementMatrix();
 			double[][] cmSquared;
 			try {
-				cmSquared = MatrixOperation.multiply(cm, cm);
+				cmSquared = Utility.multiplyMatrix(cm, cm);
 			} catch (MatrixException e) {
 				continue;
 			}

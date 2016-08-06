@@ -8,7 +8,6 @@ public class MatrixOperation {
 		
 		if (a.length==0 || b.length==0) 
 			throw new MatrixException(0);
-//        	throw new RuntimeException("Empty matrix found");
 		
 		if (a[0].length != b.length) 
 			throw new MatrixException(1);

@@ -2,7 +2,6 @@ package efficientdetection;
 import java.util.*;
 
 import general.Graph;
-import general.MatrixOperation;
 import general.UndirectedGraph;
 import general.Utility;
 import java.io.*;
@@ -148,7 +147,7 @@ public class DetectDiamond {
 		double[][] A = graph.getAdjacencyMatrix();
 		double[][] squareA;
 		try {
-			squareA = MatrixOperation.multiply(A, A);
+			squareA = Utility.multiplyMatrix(A, A);
 		} catch (MatrixException e) {
 			return null;
 		}
@@ -304,7 +303,7 @@ public class DetectDiamond {
 		double[][] A = graph.getAdjacencyMatrix();
 		double[][] A2;
 		try {
-			A2 = MatrixOperation.multiply(A, A);
+			A2 = Utility.multiplyMatrix(A, A);
 		} catch (MatrixException e) {
 			return null;
 		}

@@ -14,7 +14,7 @@ public class DetectK4 {
 	
 	public static void main(String [] args){
 		String fileName = "matrix4.txt";
-		UndirectedGraph graph = Utility.makeGraphFromFile(fileName);
+		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(fileName);
 		
 		long starttime = System.currentTimeMillis();
 		List<UndirectedGraph<Integer,Integer>> k4List = detect(graph);

@@ -2,7 +2,6 @@ package efficientdetection;
 import java.util.*;
 
 import general.Graph;
-import general.MatrixOperation;
 import general.UndirectedGraph;
 import general.Utility;
 import general.Graph.Vertex;
@@ -157,7 +156,7 @@ public class DetectSimplicialVertex {
 		//square the resulting adjacency matrix
 		double[][] aSquared;
 		try {
-			aSquared = MatrixOperation.multiply(A, A);
+			aSquared = Utility.multiplyMatrix(A, A);
 		} catch (MatrixException e) {
 			return simplicialVertices;
 		}

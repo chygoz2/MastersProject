@@ -25,19 +25,33 @@ public class DetectKL3 {
 //		graph.addEdge(v1, v3);
 //		graph.addEdge(v0, v3);
 	
+//		String fileName = "matrix5.txt";
+//		UndirectedGraph<Integer, Integer> graph = Utility.makeGraphFromFile(fileName);
+//		int l = 2;
+//		List<UndirectedGraph<Integer,Integer>> klList = detect(graph, l);
+//		System.out.println("No of k"+l+" found is "+klList.size()+"\n");
+//		if(!klList.isEmpty()){
+//			for(UndirectedGraph<Integer,Integer> kl: klList){
+//				Utility.printGraph(kl);
+//				System.out.println();
+//			}
+//		}else{
+//			System.out.println("Not found");
+//		}
+		
 		String fileName = "matrix5.txt";
-		UndirectedGraph<Integer, Integer> graph = Utility.makeGraphFromFile(fileName);
-		int l = 2;
-		List<UndirectedGraph<Integer,Integer>> klList = detect(graph, l);
-		System.out.println("No of k"+l+" found is "+klList.size()+"\n");
-		if(!klList.isEmpty()){
-			for(UndirectedGraph<Integer,Integer> kl: klList){
-				Utility.printGraph(kl);
-				System.out.println();
-			}
-		}else{
-			System.out.println("Not found");
+		UndirectedGraph graph = Utility.makeGraphFromFile(fileName);
+		
+		long starttime = System.currentTimeMillis();
+		List<Collection<Graph.Vertex<Integer>>> k4List = detect(graph,4);
+		long stoptime = System.currentTimeMillis();
+		
+		long timetaken = stoptime-starttime;
+		
+		for(Collection<Graph.Vertex<Integer>> k4: k4List){
+			Utility.printGraph(Utility.makeGraphFromVertexSet(graph, k4));
 		}
+		System.out.println("Time taken in milliseconds: "+timetaken);
 	}
 	
 	/**
@@ -46,16 +60,16 @@ public class DetectKL3 {
 	 * @param l	size of the complete subgraph to be found
 	 * @return	the list of complete subgraphs
 	 */
-	public static List<UndirectedGraph<Integer,Integer>> detect(UndirectedGraph<Integer,Integer> graph, int l){
-		List<UndirectedGraph<Integer,Integer>> klList = new ArrayList<UndirectedGraph<Integer,Integer>>();
+	public static List<Collection<Graph.Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph, int l){
+		List<Collection<Graph.Vertex<Integer>>> klList = new ArrayList<Collection<Graph.Vertex<Integer>>>();
 		
 		if(l == 1){
 			//create subgraphs with only one vertex
 			Iterator<Graph.Vertex<Integer>> vertices = graph.vertices();
 			while(vertices.hasNext()){
-				UndirectedGraph<Integer,Integer> k1 = new UndirectedGraph<Integer,Integer>();
-				k1.addVertex(vertices.next().getElement());
-				klList.add(k1);
+				Collection<Graph.Vertex<Integer>> temp = new ArrayList<Graph.Vertex<Integer>>();
+				temp.add(vertices.next());
+				klList.add(temp);
 			}
 		}
 		else if(l==2){
@@ -63,10 +77,10 @@ public class DetectKL3 {
 			Iterator<Graph.Edge<Integer>> edges = graph.edges();
 			while(edges.hasNext()){
 				Graph.Edge<Integer> edge = edges.next();
-				UndirectedGraph<Integer,Integer> k2 = new UndirectedGraph<Integer,Integer>();
-				k2.addVertex((Integer) edge.getSource().getElement());
-				k2.addVertex((Integer) edge.getDestination().getElement());
-				klList.add(k2);
+				Collection<Graph.Vertex<Integer>> temp = new ArrayList<Graph.Vertex<Integer>>();
+				temp.add(edge.getSource());
+				temp.add(edge.getDestination());
+				klList.add(temp);
 			}
 		}
 //		else if(l==4){
@@ -75,7 +89,7 @@ public class DetectKL3 {
 //		}
 		else if(l==3){
 			//get all triangles in graph
-			List<UndirectedGraph<Integer,Integer>> k3 = detectTriangle(graph);
+			List<Collection<Graph.Vertex<Integer>>> k3 = detectTriangle(graph);
 			klList.addAll(k3);
 			
 			
@@ -93,16 +107,15 @@ public class DetectKL3 {
 					//get the neighbourhood graph of x
 					UndirectedGraph<Integer,Integer> nx = Utility.getNeighbourGraph(graph, x);
 					//check if nx contains a k(l-1)
-					List<UndirectedGraph<Integer,Integer>> kqList = detect(nx,l-1);
-					for(UndirectedGraph<Integer,Integer> kq: kqList){
+					List<Collection<Graph.Vertex<Integer>>> kqList = detect(nx,l-1);
+					for(Collection<Graph.Vertex<Integer>> kq: kqList){
 						List<Graph.Vertex<Integer>> kqPlusVertices = new ArrayList<Graph.Vertex<Integer>>();
 						kqPlusVertices.add(x); //add x
-						Iterator<Graph.Vertex<Integer>> kqVertices = kq.vertices();
+						//Iterator<Graph.Vertex<Integer>> kqVertices = kq.vertices();
 						
 						Set<Integer> hh = new HashSet<Integer>(); //to store elements of the K(l-1) vertices
 						//add k(l-1) vertices
-						while(kqVertices.hasNext()){
-							Graph.Vertex<Integer> v = kqVertices.next();
+						for(Graph.Vertex<Integer> v: kq){
 							kqPlusVertices.add(v);
 							hh.add(v.getElement());
 						}
@@ -121,8 +134,7 @@ public class DetectKL3 {
 						
 						if(!contains){
 							//create Kl from kqPlusVertices list
-							UndirectedGraph<Integer,Integer> kl = Utility.makeGraphFromVertexSet(graph, kqPlusVertices);
-							klList.add(kl);
+							klList.add(kqPlusVertices);
 							marked.add(hh);
 						}
 					}
@@ -160,8 +172,8 @@ public class DetectKL3 {
 					UndirectedGraph<Integer,Integer> nXY = Utility.makeGraphFromVertexSet(graph, commonNeighbours);
 					
 					//check if nXY has a K(l-2)
-					List<UndirectedGraph<Integer,Integer>> kqList = detect(nXY,l-2);
-					for(UndirectedGraph<Integer,Integer> kq: kqList){
+					List<Collection<Graph.Vertex<Integer>>> kqList = detect(nXY,l-2);
+					for(Collection<Graph.Vertex<Integer>> kq: kqList){
 						Set<Integer> hh = new HashSet<Integer>(); //to store elements of the K(l-1) vertices
 						
 						List<Graph.Vertex<Integer>> kqPlusVertices = new ArrayList<Graph.Vertex<Integer>>();
@@ -171,10 +183,8 @@ public class DetectKL3 {
 						kqPlusVertices.add(destination); //add destination
 						hh.add(destination.getElement());
 						
-						Iterator<Graph.Vertex<Integer>> kqVertices = kq.vertices();
 						//add kq vertices
-						while(kqVertices.hasNext()){
-							Graph.Vertex<Integer> v = kqVertices.next();
+						for(Graph.Vertex<Integer> v: kq){
 							kqPlusVertices.add(v);
 							hh.add(v.getElement());
 						}
@@ -191,8 +201,7 @@ public class DetectKL3 {
 						
 						if(!contains){
 							//create Kl from kqPlusVertices list
-							UndirectedGraph<Integer,Integer> kl = Utility.makeGraphFromVertexSet(graph, kqPlusVertices);
-							klList.add(kl);
+							klList.add(kqPlusVertices);
 							marked.add(hh);
 						}
 					}
@@ -202,7 +211,7 @@ public class DetectKL3 {
 				//create auxiliary graph H
 				UndirectedGraph<Integer,Integer> H = new UndirectedGraph<Integer,Integer>();
 				//get Kq graphs
-				List<UndirectedGraph<Integer,Integer>> kqList = detect(graph,q);
+				List<Collection<Graph.Vertex<Integer>>> kqList = detect(graph,q);
 				
 				//need a means of mapping which vertex of H corresponds to which set of Kq vertices in G
 				HashMap<Integer, Collection<Integer>> hToGMapping = new HashMap<Integer, Collection<Integer>>();
@@ -213,9 +222,8 @@ public class DetectKL3 {
 
 					//do the mapping
 					Set<Integer> kqVertices = new HashSet<Integer>();
-					Iterator<Graph.Vertex<Integer>> kgvit = kqList.get(i).vertices();
-					while(kgvit.hasNext()){
-						Graph.Vertex<Integer> v = kgvit.next();
+					Collection<Graph.Vertex<Integer>> kqvit = kqList.get(i);
+					for(Graph.Vertex<Integer> v: kqvit){
 						kqVertices.add(v.getElement());
 					}
 					hToGMapping.put(i, kqVertices);
@@ -223,15 +231,14 @@ public class DetectKL3 {
 //				System.out.println(H.size() + " is size of H");
 				
 				//for each K2q found in G, add edges between corresponding vertices in H
-				List<UndirectedGraph<Integer,Integer>> k2qList = detect(graph,(2*q));
+				List<Collection<Graph.Vertex<Integer>>> k2qList = detect(graph,(2*q));
 				
 				//make a list of vertex sets of each k2q found.
 				List<Set<Integer>> k2qvertexset = new ArrayList<Set<Integer>>();
-				for(UndirectedGraph<Integer,Integer> k2q: k2qList){
-					Iterator<Graph.Vertex<Integer>> vIt = k2q.vertices();
+				for(Collection<Graph.Vertex<Integer>> k2q: k2qList){
 					Set<Integer> vElems = new HashSet<Integer>();
-					while(vIt.hasNext()){
-						vElems.add(vIt.next().getElement());
+					for(Graph.Vertex<Integer> v: k2q){
+						vElems.add(v.getElement());
 					}	
 					
 					k2qvertexset.add(vElems);
@@ -270,18 +277,16 @@ public class DetectKL3 {
 				}
 				
 				//look for triangles in H
-				List<UndirectedGraph<Integer,Integer>> triangles = detect(H, 3);
+				List<Collection<Graph.Vertex<Integer>>> triangles = detect(H, 3);
 //				Utility.printGraph(H);
 //				System.out.println(triangles.size());
 				
 				List<Set<Integer>> marked = new ArrayList<Set<Integer>>(); //to prevent creating the same Kl more than once
 				
 				//get a triangle and get its corresponding vertices in G
-				for(UndirectedGraph<Integer,Integer> triangle:triangles){
-					Iterator<Graph.Vertex<Integer>> tVertices = triangle.vertices();
+				for(Collection<Graph.Vertex<Integer>> triangle:triangles){
 					Set<Integer> hh = new HashSet<Integer>();
-					while(tVertices.hasNext()){
-						Graph.Vertex<Integer> next = tVertices.next();
+					for(Graph.Vertex<Integer> next: triangle){
 						Integer vElem = next.getElement();
 						Collection<Integer> corr = hToGMapping.get(vElem);
 						for(Integer i: corr){
@@ -305,8 +310,7 @@ public class DetectKL3 {
 						for(Integer i: hh)
 							klVertices.add(graph.getVertexWithElement(i));
 						
-						UndirectedGraph<Integer, Integer> kl = Utility.makeGraphFromVertexSet(graph, klVertices);
-						klList.add(kl);
+						klList.add(klVertices);
 						marked.add(hh);
 					}
 				}
@@ -316,15 +320,15 @@ public class DetectKL3 {
 		return klList;
 	}
 	
-	private static List<UndirectedGraph<Integer,Integer>> detectTriangle(UndirectedGraph<Integer,Integer> graph){
-		List<UndirectedGraph<Integer,Integer>> triangles = new ArrayList<UndirectedGraph<Integer,Integer>>();
+	private static List<Collection<Graph.Vertex<Integer>>> detectTriangle(UndirectedGraph<Integer,Integer> graph){
+		List<Collection<Graph.Vertex<Integer>>> triangles = new ArrayList<Collection<Graph.Vertex<Integer>>>();
 		List<Set<Integer>> marked = new ArrayList<Set<Integer>>(); //to prevent creating the same triangle more than once
 		
 		//get the adjacency matrix
 		double[][] A = graph.getAdjacencyMatrix();
 		double[][] aSquared = null; 
 		try{
-			aSquared = MatrixOperation.multiply(A, A);
+			aSquared = Utility.multiplyMatrix(A, A);
 		}catch(MatrixException e){
 			if(e.getStatus()==1)
 				System.out.println("Invalid matrix dimensions found");
@@ -369,8 +373,7 @@ public class DetectKL3 {
 							
 							//check if such triangle with those vertices has been created previously
 							if(!contains){						
-								UndirectedGraph<Integer, Integer> triangle = Utility.makeGraphFromVertexSet(graph, tVertices);
-								triangles.add(triangle);
+								triangles.add(tVertices);
 								marked.add(triListElem);
 							}
 						}

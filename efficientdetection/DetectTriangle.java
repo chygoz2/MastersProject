@@ -2,10 +2,8 @@ package efficientdetection;
 import java.util.*;
 
 import general.Graph;
-import general.MatrixOperation;
 import general.UndirectedGraph;
 import general.Utility;
-import general.Graph.Vertex;
 
 public class DetectTriangle {
 	
@@ -23,6 +21,7 @@ public class DetectTriangle {
 			
 			long starttime = System.currentTimeMillis();
 			List<UndirectedGraph<Integer,Integer>> triangles = detect(graph);
+//			List<UndirectedGraph<Integer,Integer>> triangles = DetectKL.detect(graph,3);
 			long stoptime = System.currentTimeMillis();
 			
 			long timetaken = stoptime-starttime;
@@ -32,6 +31,7 @@ public class DetectTriangle {
 				for(UndirectedGraph<Integer, Integer> triangle: triangles)
 					Utility.printGraph(triangle);
 				System.out.println("Time taken in milliseconds: "+timetaken);
+				System.out.println(triangles.size());
 			}
 			else{
 				System.out.println("Triangle not found");
@@ -42,7 +42,7 @@ public class DetectTriangle {
 	public static List<UndirectedGraph<Integer,Integer>> detect(UndirectedGraph<Integer,Integer> graph){
 		List<UndirectedGraph<Integer,Integer>> triangles = new ArrayList<UndirectedGraph<Integer,Integer>>();
 		
-		List[] verticesPartition = Utility.partitionVertices(graph);
+		List<Graph.Vertex<Integer>>[] verticesPartition = Utility.partitionVertices(graph);
 		List<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
 		
 		long starttime = System.currentTimeMillis();
@@ -141,7 +141,7 @@ public class DetectTriangle {
 		double[][] A = graph.getAdjacencyMatrix();
 		double[][] aSquared = null; 
 		try{
-			aSquared = MatrixOperation.multiply(A, A);
+			aSquared = Utility.multiplyMatrix(A, A);
 		}catch(MatrixException e){
 			if(e.getStatus()==1)
 				System.out.println("Invalid matrix dimensions found");

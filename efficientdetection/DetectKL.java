@@ -24,20 +24,34 @@ public class DetectKL {
 //		graph.addEdge(v3, v4);
 //		graph.addEdge(v1, v3);
 //		graph.addEdge(v0, v3);
-	
+//	
+////		String fileName = "matrix5.txt";
+////		UndirectedGraph<Integer, Integer> graph = Utility.makeGraphFromFile(fileName);
+//		int l = 5;
+//		List<UndirectedGraph<Integer,Integer>> klList = detect(graph, l);
+//		System.out.println("No of k"+l+" found is "+klList.size()+"\n");
+//		if(!klList.isEmpty()){
+//			for(UndirectedGraph<Integer,Integer> kl: klList){
+//				Utility.printGraph(kl);
+//				System.out.println();
+//			}
+//		}else{
+//			System.out.println("Not found");
+//		}
+		
 		String fileName = "matrix5.txt";
-		UndirectedGraph<Integer, Integer> graph = Utility.makeGraphFromFile(fileName);
-		int l = 2;
-		List<UndirectedGraph<Integer,Integer>> klList = detect(graph, l);
-		System.out.println("No of k"+l+" found is "+klList.size()+"\n");
-		if(!klList.isEmpty()){
-			for(UndirectedGraph<Integer,Integer> kl: klList){
-				Utility.printGraph(kl);
-				System.out.println();
-			}
-		}else{
-			System.out.println("Not found");
+		UndirectedGraph graph = Utility.makeGraphFromFile(fileName);
+		
+		long starttime = System.currentTimeMillis();
+		List<UndirectedGraph<Integer,Integer>> k4List = detect(graph,4);
+		long stoptime = System.currentTimeMillis();
+		
+		long timetaken = stoptime-starttime;
+		
+		for(UndirectedGraph<Integer,Integer> k4: k4List){
+			Utility.printGraph(k4);
 		}
+		System.out.println("Time taken in milliseconds: "+timetaken);
 	}
 	
 	/**
@@ -48,6 +62,9 @@ public class DetectKL {
 	 */
 	public static List<UndirectedGraph<Integer,Integer>> detect(UndirectedGraph<Integer,Integer> graph, int l){
 		List<UndirectedGraph<Integer,Integer>> klList = new ArrayList<UndirectedGraph<Integer,Integer>>();
+		if(l<1){
+			return klList; 
+		}
 		
 		if(l == 1){
 			//create subgraphs with only one vertex
@@ -69,16 +86,12 @@ public class DetectKL {
 				klList.add(k2);
 			}
 		}
-//		else if(l==4){
-//			List<UndirectedGraph<Integer,Integer>> k4 = DetectK4.detect(graph);
-//			klList.addAll(k4);
-//		}
+
 		else if(l==3){
 			//get all triangles in graph
 			List<UndirectedGraph<Integer,Integer>> k3 = detectTriangle(graph);
 			klList.addAll(k3);
-			
-			
+				
 		}
 		else if(l>3){
 			int q = l/3;
@@ -324,7 +337,7 @@ public class DetectKL {
 		double[][] A = graph.getAdjacencyMatrix();
 		double[][] aSquared = null; 
 		try{
-			aSquared = MatrixOperation.multiply(A, A);
+			aSquared = Utility.multiplyMatrix(A, A);
 		}catch(MatrixException e){
 			if(e.getStatus()==1)
 				System.out.println("Invalid matrix dimensions found");

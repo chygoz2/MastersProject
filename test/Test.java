@@ -2,7 +2,7 @@ package test;
 import java.util.Iterator;
 
 import efficientdetection.MatrixException;
-import general.MatrixOperation;
+import general.Utility;
 
 //import Jama.Matrix;
 
@@ -17,7 +17,7 @@ public class Test {
 		//squareMatrix.print(3, 0);
 		double[][] result = null;
 		try {
-			result = MatrixOperation.multiply(a, a);
+			result = Utility.multiplyMatrix(a, a);
 		} catch (MatrixException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

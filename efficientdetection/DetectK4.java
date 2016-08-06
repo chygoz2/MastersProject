@@ -2,7 +2,6 @@ package efficientdetection;
 import java.util.*;
 
 import general.Graph;
-import general.MatrixOperation;
 import general.UndirectedGraph;
 import general.Utility;
 
@@ -31,7 +30,7 @@ public class DetectK4 {
 //		
 ////		Utility.saveGraphToFile(graph, 1.0, 1);
 		String fileName = "matrix4.txt";
-		UndirectedGraph graph = Utility.makeGraphFromFile(fileName);
+		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(fileName);
 		
 		long starttime = System.currentTimeMillis();
 		List<UndirectedGraph<Integer,Integer>> k4List = detect(graph);
@@ -112,7 +111,7 @@ public class DetectK4 {
 			//get square of adjacency matrix
 			double[][] adjMatrixSquare;
 			try {
-				adjMatrixSquare = MatrixOperation.multiply(adjMatrix, adjMatrix);
+				adjMatrixSquare = Utility.multiplyMatrix(adjMatrix, adjMatrix);
 			} catch (MatrixException e) {
 				continue;
 			}
@@ -195,7 +194,7 @@ public class DetectK4 {
 			//get square of adjacency matrix
 			double[][] adjMatrixSquare;
 			try {
-				adjMatrixSquare = MatrixOperation.multiply(adjMatrix, adjMatrix);
+				adjMatrixSquare = Utility.multiplyMatrix(adjMatrix, adjMatrix);
 			} catch (MatrixException e) {
 				continue;
 			}

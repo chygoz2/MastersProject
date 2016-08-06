@@ -2,7 +2,6 @@ package efficientdetection;
 import java.util.*;
 
 import general.Graph;
-import general.MatrixOperation;
 import general.UndirectedGraph;
 import general.Utility;
 import general.Graph.Vertex;
@@ -98,7 +97,7 @@ public class DetectK4c {
 			//get square of adjacency matrix
 			double[][] adjMatrixSquare;
 			try {
-				adjMatrixSquare = MatrixOperation.multiply(adjMatrix, adjMatrix);
+				adjMatrixSquare = Utility.multiplyMatrix(adjMatrix, adjMatrix);
 			} catch (MatrixException e) {
 				continue;
 			}
@@ -166,7 +165,7 @@ public class DetectK4c {
 			//get square of adjacency matrix
 			double[][] adjMatrixSquare;
 			try {
-				adjMatrixSquare = MatrixOperation.multiply(adjMatrix, adjMatrix);
+				adjMatrixSquare = Utility.multiplyMatrix(adjMatrix, adjMatrix);
 			} catch (MatrixException e) {
 				continue;
 			}
