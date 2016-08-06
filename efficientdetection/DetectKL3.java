@@ -39,11 +39,12 @@ public class DetectKL3 {
 //			System.out.println("Not found");
 //		}
 		
-		String fileName = "matrix5.txt";
+//		String fileName = "matrix5.txt";
+		String fileName = "generated_graphs\\size_15\\graph_15_1.0_1.txt";
 		UndirectedGraph graph = Utility.makeGraphFromFile(fileName);
 		
 		long starttime = System.currentTimeMillis();
-		List<Collection<Graph.Vertex<Integer>>> k4List = detect(graph,4);
+		List<Collection<Graph.Vertex<Integer>>> k4List = detect(graph,3);
 		long stoptime = System.currentTimeMillis();
 		
 		long timetaken = stoptime-starttime;
@@ -83,16 +84,11 @@ public class DetectKL3 {
 				klList.add(temp);
 			}
 		}
-//		else if(l==4){
-//			List<UndirectedGraph<Integer,Integer>> k4 = DetectK4.detect(graph);
-//			klList.addAll(k4);
-//		}
+
 		else if(l==3){
 			//get all triangles in graph
 			List<Collection<Graph.Vertex<Integer>>> k3 = detectTriangle(graph);
 			klList.addAll(k3);
-			
-			
 		}
 		else if(l>3){
 			int q = l/3;

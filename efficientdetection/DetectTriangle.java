@@ -20,7 +20,7 @@ public class DetectTriangle {
 //			graph = Utility.makeGraphFromAdjacencyMatrix(A);
 			
 			long starttime = System.currentTimeMillis();
-			List<UndirectedGraph<Integer,Integer>> triangles = detect(graph);
+			List<Collection<Graph.Vertex<Integer>>> triangles = detect(graph);
 //			List<UndirectedGraph<Integer,Integer>> triangles = DetectKL.detect(graph,3);
 			long stoptime = System.currentTimeMillis();
 			
@@ -28,8 +28,9 @@ public class DetectTriangle {
 			
 			
 			if(!triangles.isEmpty()){
-				for(UndirectedGraph<Integer, Integer> triangle: triangles)
-					Utility.printGraph(triangle);
+				for(Collection<Graph.Vertex<Integer>> triangle: triangles){
+					Utility.printGraph(Utility.makeGraphFromVertexSet(graph, triangle));
+				}
 				System.out.println("Time taken in milliseconds: "+timetaken);
 				System.out.println(triangles.size());
 			}
@@ -39,14 +40,14 @@ public class DetectTriangle {
 
 	}
 	
-	public static List<UndirectedGraph<Integer,Integer>> detect(UndirectedGraph<Integer,Integer> graph){
-		List<UndirectedGraph<Integer,Integer>> triangles = new ArrayList<UndirectedGraph<Integer,Integer>>();
+	public static List<Collection<Graph.Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph){
+		List<Collection<Graph.Vertex<Integer>>> triangles = new ArrayList<Collection<Graph.Vertex<Integer>>>();
 		
 		List<Graph.Vertex<Integer>>[] verticesPartition = Utility.partitionVertices(graph);
 		List<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
 		
 		long starttime = System.currentTimeMillis();
-		List<UndirectedGraph<Integer, Integer>> p1Triangles = phaseOne(graph, lowDegreeVertices);
+		List<Collection<Graph.Vertex<Integer>>> p1Triangles = phaseOne(graph, lowDegreeVertices);
 		long stoptime = System.currentTimeMillis();
 		if(!p1Triangles.isEmpty())
 			triangles.addAll(p1Triangles);
@@ -54,7 +55,7 @@ public class DetectTriangle {
 		
 		//if(triangle==null){
 			starttime = System.currentTimeMillis();
-			List<UndirectedGraph<Integer, Integer>> p2Triangles = phaseTwo(graph, lowDegreeVertices);
+			List<Collection<Graph.Vertex<Integer>>> p2Triangles = phaseTwo(graph, lowDegreeVertices);
 			stoptime = System.currentTimeMillis();
 			
 			if(!p2Triangles.isEmpty())
@@ -72,9 +73,9 @@ public class DetectTriangle {
 		return triangles;
 	}
 	
-	public static List<UndirectedGraph<Integer,Integer>> phaseOne(UndirectedGraph<Integer, Integer> graph, List<Graph.Vertex<Integer>> lowDegreeVertices){
+	public static List<Collection<Graph.Vertex<Integer>>> phaseOne(UndirectedGraph<Integer, Integer> graph, List<Graph.Vertex<Integer>> lowDegreeVertices){
 		List<Set<Integer>> marked = new ArrayList<Set<Integer>>(); //to prevent creating the same triangle more than once
-		List<UndirectedGraph<Integer,Integer>> triangles = new ArrayList<UndirectedGraph<Integer, Integer>>();
+		List<Collection<Graph.Vertex<Integer>>> triangles = new ArrayList<Collection<Graph.Vertex<Integer>>>();
 		
 		for(Graph.Vertex<Integer> v: lowDegreeVertices){
 			//get connecting edges to v
@@ -113,8 +114,7 @@ public class DetectTriangle {
 						
 						//check if such triangle with those vertices has been created previously
 						if(!contains){						
-							UndirectedGraph<Integer,Integer> triangle = Utility.makeGraphFromVertexSet(graph,triList);
-							triangles.add(triangle);
+							triangles.add(triList);
 							marked.add(triListElem);
 						}
 					}
@@ -122,20 +122,20 @@ public class DetectTriangle {
 					
 			}
 		}
-
 		return triangles;
 	}
 	
-	public static List<UndirectedGraph<Integer,Integer>> phaseTwo(UndirectedGraph<Integer,Integer> graph, List<Graph.Vertex<Integer>> lowDegreeVertices){
+	public static List<Collection<Graph.Vertex<Integer>>> phaseTwo(UndirectedGraph<Integer,Integer> graph2, List<Graph.Vertex<Integer>> lowDegreeVertices){
 		List<Set<Integer>> marked = new ArrayList<Set<Integer>>(); //to prevent creating the same triangle more than once
 		//if no triangle was found
 		//remove all low degree vertices and get the adjacency matrix of resulting graph. 
 		//Then detect a triangle from the square of the adjacency matrix
+		UndirectedGraph<Integer,Integer> graph = graph2.clone();
 		for(Graph.Vertex<Integer> v: lowDegreeVertices){
 			graph.removeVertex(v);
 		}
 		
-		List<UndirectedGraph<Integer,Integer>> triangles = new ArrayList<UndirectedGraph<Integer,Integer>>();
+		List<Collection<Graph.Vertex<Integer>>> triangles = new ArrayList<Collection<Graph.Vertex<Integer>>>();
 		 
 		//get the adjacency matrix
 		double[][] A = graph.getAdjacencyMatrix();
@@ -186,8 +186,7 @@ public class DetectTriangle {
 							
 							//check if such triangle with those vertices has been created previously
 							if(!contains){						
-								UndirectedGraph<Integer, Integer> triangle = Utility.makeGraphFromVertexSet(graph, tVertices);
-								triangles.add(triangle);
+								triangles.add(tVertices);
 								marked.add(triListElem);
 							}
 						}
