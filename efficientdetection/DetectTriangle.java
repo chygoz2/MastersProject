@@ -14,7 +14,8 @@ public class DetectTriangle {
 //		for(int a=0;a<15;a++){
 //			String fileName = "matrix3.txt";
 //			String fileName = "generated_graphs\\size_7\\graph_7_0.2_2.txt";
-			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
+//			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
+			String fileName = "generated_graphs\\size_15\\graph_15_1.0_1.txt";
 			graph = Utility.makeGraphFromFile(fileName);
 //			int[][] A = {{0,1,0,1,1},{1,0,1,0,0},{0,1,0,1,1},{1,0,1,0,0},{1,0,1,0,0}};
 //			graph = Utility.makeGraphFromAdjacencyMatrix(A);
@@ -96,7 +97,7 @@ public class DetectTriangle {
 					//presence of an edge indicates a triangle
 					if(graph.containsEdge(v, next)){
 						List<Graph.Vertex<Integer>> triList = new ArrayList<Graph.Vertex<Integer>>(); //list to store triangle vertices
-						Set<Integer> triListElem = new HashSet<Integer>(); //list to store triangle vertices elements
+						Set<Integer> triListElem = new HashSet<Integer>(); //set to store triangle vertices elements
 						
 						triList.add(v); triList.add(other); triList.add(next);
 						triListElem.add(v.getElement()); triListElem.add(other.getElement());

@@ -146,7 +146,7 @@ public class GraphGenerator {
 					adjMatrix[j][i] = 1;
 					
 					UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(adjMatrix);
-					List<Graph.Vertex<Integer>> v = DetectSimplicialVertex.detect(graph);
+					List<Graph.Vertex<Integer>> v = ListSimplicialVertex.detect(graph);
 					if(!v.isEmpty()){
 						adjMatrix[i][j] = 0;
 						adjMatrix[j][i] = 0;

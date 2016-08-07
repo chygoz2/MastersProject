@@ -6,7 +6,7 @@ import general.UndirectedGraph;
 import general.Utility;
 import general.Graph.Vertex;
 
-public class DetectSimplicialVertex {
+public class ListSimplicialVertex {
 	
 	private static String time = "";
 	
@@ -74,7 +74,7 @@ public class DetectSimplicialVertex {
 		else
 			time+="0";
 //		System.out.println(time);
-		DetectSimplicialVertex.resetTime();
+		ListSimplicialVertex.resetTime();
 		
 		return simplicialVertices;
 		

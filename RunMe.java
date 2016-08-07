@@ -80,7 +80,7 @@ public class RunMe {
 						}
 						
 						else if (words[1].equals("simplicial")) {
-							List<Graph.Vertex<Integer>> simpVertex = DetectSimplicialVertex.detect(graph);
+							List<Graph.Vertex<Integer>> simpVertex = ListSimplicialVertex.detect(graph);
 							if(!simpVertex.isEmpty()){
 								String out = simpVertex.get(0).getElement()+"";
 								out = String.format("Simplicial vertex found %n%s", out);

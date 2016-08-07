@@ -1,11 +1,17 @@
 package efficientdetection;
 import java.util.*;
 
+import efficientdetection.ListTriangles.VertexComparator;
 import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
 import java.io.*;
 
+/**
+ * class that detects a diamond in a graph if any and returns it
+ * @author Chigozie Ekwonu
+ *
+ */
 public class DetectDiamond {
 	private static String time = "";
 	
@@ -30,33 +36,33 @@ public class DetectDiamond {
 		UndirectedGraph<Integer,Integer> graph;
 		for(int a=0;a<1;a++){
 //			String fileName = "matrix2.txt";
-			String fileName = "generated_graphs\\size_5\\graph_5_0.7_4.txt";
+//			String fileName = "generated_graphs\\size_5\\graph_5_0.7_4.txt";
 //			String fileName = "generated_graphs\\size_6\\graph_6_0.6_3.txt";
+			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
 //			String fileName = "test\\testdata\\diamondtestdata.txt";
 //			UndirectedGraph<Integer,Integer> graphs[a] = Utility.makeGraphFromFile(fileName);
 			graph = Utility.makeGraphFromFile(fileName);
 			UndirectedGraph<Integer,Integer> diamond = detect(graph);
-			if(diamond!=null)
+			
+			if(diamond!=null){
 				Utility.printGraph(diamond);
+			}
 			else{
 				System.out.println("Diamond not found");
-				//Utility.printGraph(graph);
 			}
 		}
-			//String input = (new BufferedReader(new InputStreamReader(System.in))).readLine();
-//		}
 	}
 	
+	/**
+	 * method to detect and return an induced subgraph isomorphic with a diamond
+	 * @param graph 		the graph to be checked
+	 * @return  			the diamond subgraph
+	 */
 	public static UndirectedGraph<Integer,Integer> detect(UndirectedGraph<Integer,Integer> graph){
-		
-//		UndirectedGraph graph = Utility.makeGraphFromFile("genmatrix.txt");
-//		String fileName = "generated_graphs\\size_5\\graph_5_0.7_4.txt";
 		time+="size_"+graph.size()+"_";
-//		Utility.printGraph(graph);
-//		UndirectedGraph graph = Utility.makeRandomGraph(10, 0.4);
 		
+		//partition graph vertices into low and high degree vertices
 		List[] verticesPartition = Utility.partitionVertices(graph);
-		
 		List<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
 		List<Graph.Vertex<Integer>> highDegreeVertices = verticesPartition[1];
 		
@@ -91,16 +97,23 @@ public class DetectDiamond {
 		return diamond;
 	}
 	
+	/**
+	 * method that checks a graph for a diamond by checking if the diamond has a low degree vertex in it
+	 * @param lowDegreeVertices 	a list of low degree vertices of the graph
+	 * @param graph 				the graph to be checked
+	 * @return 						a map object containing a diamond if found, as well as a collection of cliques mapped to each low degree
+	 * 								vertex
+	 */
 	public static Map phaseOne(Collection<Graph.Vertex<Integer>> lowDegreeVertices, UndirectedGraph<Integer,Integer> graph){
 		
-		Map phaseOneResults = new HashMap();
-		//boolean diamondFound = false;
+		Map phaseOneResults = new HashMap(); //map for storing the results of the phase
 		
 		//create a map for storing cliques and which vertex's neighbourhood they are in
 		Map<Integer, List<UndirectedGraph<Integer,Integer>>> vertexCliques = new HashMap<Integer, List<UndirectedGraph<Integer,Integer>>>();
 		
 		here:
 		for(Graph.Vertex<Integer> v: lowDegreeVertices){
+			//get the neighbourhood graph of vertex v
 			UndirectedGraph<Integer,Integer> graph2 = Utility.getNeighbourGraph(graph, v);
 			
 			//Create list for storing cliques in the neighbourhood of vertex v
@@ -119,11 +132,12 @@ public class DetectDiamond {
 					List<Graph.Vertex<Integer>> resultList = checkP3InComponent(graphC);
 					
 					if(resultList!=null){
-						//if has P3 is true, then the graph contains a diamond
+						//if a P3 is found, then the graph contains a diamond
 						
 						//produce one such diamond 
 						if(phaseOneResults.get("diamond") == null){ //check if a diamond was previously stored
 							resultList.add(v);
+							//get the subgraph induced by the vertex set comprising of the P3 vertices and the current low degree vertex
 							UndirectedGraph<Integer,Integer> result = Utility.makeGraphFromVertexSet(graph, resultList);
 							phaseOneResults.put("diamond", result);
 							break here;
@@ -132,7 +146,7 @@ public class DetectDiamond {
 				}
 			}
 			
-			vertexCliques.put(v.getElement(), cliques);
+			vertexCliques.put(v.getElement(), cliques); //map cliques found to the low degree vertex
 		}
 		
 		phaseOneResults.put("cliques", vertexCliques);
@@ -140,6 +154,14 @@ public class DetectDiamond {
 		
 	}
 	
+	/**
+	 * method that checks for the presence of a diamond subgraph in a graph.
+	 * Method works by checking each clique of each low degree vertex to see if the condition
+	 * described by Kloks et al. is satisfied.
+	 * @param cliques 		the mapping of cliques to low degree vertices
+	 * @param graph 		the graph to be checked
+	 * @return 				a diamond subgraph if found
+	 */
 	public static UndirectedGraph<Integer,Integer> phaseTwo(Map cliques, UndirectedGraph<Integer,Integer> graph){
 		UndirectedGraph<Integer,Integer> diamond = null;
 		
@@ -206,7 +228,13 @@ public class DetectDiamond {
 		return diamond;
 	}
 	
-	
+	/**
+	 * method that checks if a graph contains a diamond subgraph. It works by removing all low
+	 * degree vertices from the graph and then applying phaseOne method to the resulting graph
+	 * @param graph					the graph to be checked
+	 * @param lowDegreeVertices 	a list of low degree vertices
+	 * @return						a diamond subgraph if found
+	 */
 	public static UndirectedGraph<Integer,Integer> phaseThree(UndirectedGraph<Integer,Integer> graph, List<Graph.Vertex<Integer>> lowDegreeVertices){
 		//remove low degree vertices from graph G
 		
@@ -233,15 +261,27 @@ public class DetectDiamond {
 		return diamond;
 	}
 	
+	/**
+	 * method to return a report of the time taken to execute the detection
+	 * @return		the report string
+	 */
 	public static String getTime(){
 		return time;
 	}
 	
+	/**
+	 * method to reset the report string
+	 */
 	public static void resetTime(){
 		time = "";
 	}
 	
-	public static boolean checkIfClique(UndirectedGraph<Integer,Integer> graph){
+	/**
+	 * method that checks if a graph is a clique
+	 * @param graph 	the graph to be checked
+	 * @return 			the result of the check. 
+	 */
+	private static boolean checkIfClique(UndirectedGraph<Integer,Integer> graph){
 		double[][] A = graph.getAdjacencyMatrix();
 		
 		for(int i=0; i<A.length; i++){
@@ -286,6 +326,11 @@ public class DetectDiamond {
 //		return result;
 //	}
 	
+	/**
+	 * method that checks if a P3 is present in a graph and returns the vertices of the P3
+	 * @param graph 	the graph to be checked
+	 * @return 			the vertex list if found
+	 */
 	public static List<Graph.Vertex<Integer>> checkP3InComponent(UndirectedGraph<Integer,Integer> graph){
 		//if the no of vertices in graph is less than 3, then graph cannot have a p3
 		
@@ -326,5 +371,4 @@ public class DetectDiamond {
 	
 		return null;
 	}
-	
 }

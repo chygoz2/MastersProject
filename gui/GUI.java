@@ -16,8 +16,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import efficientdetection.DetectClaw;
 import efficientdetection.DetectDiamond;
 import efficientdetection.DetectK4;
-import efficientdetection.DetectSimplicialVertex;
 import efficientdetection.DetectTriangle;
+import efficientdetection.ListSimplicialVertex;
 import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
@@ -233,7 +233,7 @@ public class GUI extends JFrame implements ActionListener{
 						}else
 							outputArea.setText("K4 not found");
 					}else if(selectedButton.equals("Simplicial Vertex")){
-						List<Graph.Vertex<Integer>> simpVertex = DetectSimplicialVertex.detect(graph);
+						List<Graph.Vertex<Integer>> simpVertex = ListSimplicialVertex.detect(graph);
 						if(!simpVertex.isEmpty()){
 							String out = simpVertex.get(0).getElement()+"";
 							out = String.format("Simplicial vertex found %n%s", out);

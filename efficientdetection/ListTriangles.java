@@ -57,10 +57,8 @@ public class ListTriangles {
 			List<Graph.Vertex<Integer>> marked2 = new ArrayList<Graph.Vertex<Integer>>();
 			while(nv.hasNext()){
 				Graph.Vertex<Integer> vv = nv.next();
-				if(!vv.equals(v)){
-					marked.add(vv);
-					marked2.add(vv);
-				}
+				marked.add(vv);
+				marked2.add(vv);
 			}
 			
 			for(Graph.Vertex<Integer> u: marked){
@@ -71,13 +69,15 @@ public class ListTriangles {
 						List<Graph.Vertex<Integer>> triangle = new ArrayList<Graph.Vertex<Integer>>();
 						triangle.add(v); triangle.add(w); triangle.add(u);
 						triangles.add(triangle);
-					}	
+					}
+					marked2.remove(u);
 				}
 				
-				marked2.remove(u);
+				graph.removeVertex(v);
+//				marked2.remove(u);
 			}
 			
-			graph.removeVertex(v);
+//			graph.removeVertex(v);
 		}
 		
 		return triangles;

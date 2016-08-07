@@ -29,6 +29,7 @@ public class DetectTriangle {
 				for(UndirectedGraph<Integer, Integer> triangle: triangles)
 					Utility.printGraph(triangle);
 				System.out.println("Time taken in milliseconds: "+timetaken);
+				System.out.println(triangles.size());
 			}
 			else{
 				System.out.println("Triangle not found");

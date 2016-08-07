@@ -44,7 +44,7 @@ public class DetectKL3 {
 		UndirectedGraph graph = Utility.makeGraphFromFile(fileName);
 		
 		long starttime = System.currentTimeMillis();
-		List<Collection<Graph.Vertex<Integer>>> k4List = detect(graph,3);
+		List<Collection<Graph.Vertex<Integer>>> k4List = detect(graph,4);
 		long stoptime = System.currentTimeMillis();
 		
 		long timetaken = stoptime-starttime;
@@ -53,6 +53,7 @@ public class DetectKL3 {
 			Utility.printGraph(Utility.makeGraphFromVertexSet(graph, k4));
 		}
 		System.out.println("Time taken in milliseconds: "+timetaken);
+		System.out.println(k4List.size());
 	}
 	
 	/**
@@ -87,7 +88,8 @@ public class DetectKL3 {
 
 		else if(l==3){
 			//get all triangles in graph
-			List<Collection<Graph.Vertex<Integer>>> k3 = detectTriangle(graph);
+//			List<Collection<Graph.Vertex<Integer>>> k3 = detectTriangle(graph);
+			List<Collection<Graph.Vertex<Integer>>> k3 = ListTriangles.detect(graph);
 			klList.addAll(k3);
 		}
 		else if(l>3){
