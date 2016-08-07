@@ -1,7 +1,6 @@
 package efficientdetection;
 import java.util.*;
 
-import efficientdetection.ListTriangles.VertexComparator;
 import general.Graph;
 import general.Graph.Vertex;
 import general.UndirectedGraph;
@@ -39,7 +38,8 @@ public class ListDiamonds {
 //			String fileName = "matrix2.txt";
 //			String fileName = "generated_graphs\\size_5\\graph_5_0.7_4.txt";
 //			String fileName = "generated_graphs\\size_6\\graph_6_0.6_3.txt";
-			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
+			String fileName = "test\\testdata\\diamondtestdata.txt";
+//			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
 //			String fileName = "test\\testdata\\diamondtestdata.txt";
 //			UndirectedGraph<Integer,Integer> graphs[a] = Utility.makeGraphFromFile(fileName);
 			graph = Utility.makeGraphFromFile(fileName);
@@ -61,6 +61,10 @@ public class ListDiamonds {
 				time+="1";
 			else
 				time+="0";
+			
+			for(Collection<Graph.Vertex<Integer>> d: diamonds){
+				Utility.printGraph(Utility.makeGraphFromVertexSet(graph, d));
+			}
 			System.out.println(time);
 			System.out.println("No of diamonds found = "+diamonds.size());
 			resetTime();
@@ -193,7 +197,9 @@ public class ListDiamonds {
 	 * @return 				a diamond subgraph if found
 	 */
 	public static List<Collection<Graph.Vertex<Integer>>> phaseTwo(Map cliques, UndirectedGraph<Integer,Integer> graph){
-		List<Collection<Graph.Vertex<Integer>>> diamonds = new ArrayList<Collection<Graph.Vertex<Integer>>>();	
+		List<Collection<Graph.Vertex<Integer>>> diamonds = new ArrayList<Collection<Graph.Vertex<Integer>>>();
+		List<Set<Integer>> seen = new ArrayList<Set<Integer>>(); //to prevent creating the same diamond more than once
+		
 		//get adjacency matrix of graph
 		double[][] A = graph.getAdjacencyMatrix();
 		double[][] squareA;
@@ -243,13 +249,31 @@ public class ListDiamonds {
 							}
 						}
 						
+						Set<Integer> diamondListElem = new HashSet<Integer>(); //set to store diamond vertices elements
+						
 						//add diamond vertices from x,y,z and each vertex in the common neighbours list
 						for(Graph.Vertex<Integer> c: commNeigh){
 							List<Graph.Vertex<Integer>> diamond = new ArrayList<Graph.Vertex<Integer>>();
 							diamond.add(graph.getVertexWithElement(lowVertex));
+							diamondListElem.add(graph.getVertexWithElement(lowVertex).getElement());
 							diamond.add(y);	diamond.add(z); diamond.add(c);
+							diamondListElem.add(y.getElement()); diamondListElem.add(z.getElement());
+							diamondListElem.add(c.getElement());
 							
-							diamonds.add(diamond);
+							//check in the marked list for an entry that contains all 4 vertex elements
+							boolean contains = false;
+							
+							for(Set<Integer> s: seen){
+								if(s.containsAll(diamondListElem)){
+									contains = true;
+									break;
+								}
+							}
+							
+							if(!contains){
+								diamonds.add(diamond);
+								seen.add(diamondListElem);
+							}
 						}
 					}
 				}

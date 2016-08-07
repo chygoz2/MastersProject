@@ -304,20 +304,20 @@ public final class Utility {
 	}
 	
 	public static void printGraph(UndirectedGraph graph2){
-//		System.out.println("Graph size is "+graph2.size());
+		System.out.println("Graph size is "+graph2.size());
 		Iterator<Graph.Vertex> it = graph2.vertices();
 		
-//		System.out.println("Graph vertices");
+		System.out.println("Graph vertices");
 		while (it.hasNext()){
 			Graph.Vertex<Integer> v = it.next();
 			System.out.print(v.getElement()+", ");
 		}
-//		System.out.println("\nGraph edges:");
-//		Iterator<Graph.Edge> it2 = graph2.edges();
-//		while (it2.hasNext()){
-//			UndirectedGraph.UnEdge edge = (UndirectedGraph.UnEdge)it2.next();
-//			System.out.print("{"+edge.getSource().getElement()+", "+ edge.getDestination().getElement()+"},");
-//		}
+		System.out.println("\nGraph edges:");
+		Iterator<Graph.Edge> it2 = graph2.edges();
+		while (it2.hasNext()){
+			UndirectedGraph.UnEdge edge = (UndirectedGraph.UnEdge)it2.next();
+			System.out.print("{"+edge.getSource().getElement()+", "+ edge.getDestination().getElement()+"},");
+		}
 		System.out.println();
 	}
 	
