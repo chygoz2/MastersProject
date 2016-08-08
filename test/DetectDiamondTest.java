@@ -28,27 +28,20 @@ public class DetectDiamondTest {
 	}
 	
 	@Test
-	public void testPhaseOne() {
-		fail("Not yet implemented");
-	}
-	
-	@Test
 	public void testDetect(){
-		UndirectedGraph<Integer,Integer> d = DetectDiamond.detect(graph);
+		List<Graph.Vertex<Integer>> d = DetectDiamond.detect(graph);
 		
-		List<UndirectedGraph<Integer,Integer>> actualResult = new ArrayList<UndirectedGraph<Integer,Integer>>();
-		actualResult.add(d);
-		int[][] expectedResult = {{0,1,2,4}}; //expected result should have one diamond 
+		List<Integer> actualResult = new ArrayList<Integer>();
+		for(Graph.Vertex<Integer> v: d){
+			actualResult.add(v.getElement());
+		}
+		
+		int[] expectedResult = {0,1,2,4}; //expected result should have one diamond 
 															//with the specified vertex elements
 		
 		for(int i=0; i<expectedResult.length;i++){
-			List<Integer> vList = new ArrayList<Integer>();
-			Iterator<Graph.Vertex<Integer>> aRIt = actualResult.get(i).vertices();
-			while(aRIt.hasNext())
-				vList.add(aRIt.next().getElement());
-			for(int j=0; j<expectedResult[i].length; j++){
-				assertTrue(vList.contains(expectedResult[i][j]));
-			}
+			assertTrue(actualResult.contains(expectedResult[i]));
+			
 		}
 		assertEquals(actualResult.size(),expectedResult.length);
 	}

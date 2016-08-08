@@ -1,6 +1,7 @@
-package efficientdetection;
+package listing;
 import java.util.*;
 
+import efficientdetection.MatrixException;
 import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;

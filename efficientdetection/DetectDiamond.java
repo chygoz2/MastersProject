@@ -1,10 +1,11 @@
 package efficientdetection;
 import java.util.*;
 
-import efficientdetection.ListTriangles.VertexComparator;
 import general.Graph;
+import general.Graph.Vertex;
 import general.UndirectedGraph;
 import general.Utility;
+
 import java.io.*;
 
 /**
@@ -39,14 +40,14 @@ public class DetectDiamond {
 //			String fileName = "generated_graphs\\size_5\\graph_5_0.7_4.txt";
 //			String fileName = "generated_graphs\\size_6\\graph_6_0.6_3.txt";
 //			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
-//			String fileName = "test\\testdata\\diamondtestdata.txt";
-			String fileName = "generated_graphs\\size_300\\graph_300_0.9_1.txt";
+			String fileName = "test\\testdata\\diamondtestdata.txt";
+//			String fileName = "generated_graphs\\size_300\\graph_300_0.9_1.txt";
 //			UndirectedGraph<Integer,Integer> graphs[a] = Utility.makeGraphFromFile(fileName);
 			graph = Utility.makeGraphFromFile(fileName);
-			UndirectedGraph<Integer,Integer> diamond = detect(graph);
+			List<Graph.Vertex<Integer>> diamond = detect(graph);
 			
 			if(diamond!=null){
-				Utility.printGraph(diamond);
+				Utility.printGraph(Utility.makeGraphFromVertexSet(graph,diamond));
 			}
 			else{
 				System.out.println("Diamond not found");
@@ -59,22 +60,21 @@ public class DetectDiamond {
 	 * @param graph 		the graph to be checked
 	 * @return  			the diamond subgraph
 	 */
-	public static UndirectedGraph<Integer,Integer> detect(UndirectedGraph<Integer,Integer> graph){
+	public static List<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
 		time+="size_"+graph.size()+"_";
 		
 		//partition graph vertices into low and high degree vertices
-		List[] verticesPartition = Utility.partitionVertices(graph);
+		List<Graph.Vertex<Integer>>[] verticesPartition = Utility.partitionVertices(graph);
 		List<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
-		List<Graph.Vertex<Integer>> highDegreeVertices = verticesPartition[1];
 		
 		long starttime = System.currentTimeMillis();
-		Map phase1Results = DetectDiamond.phaseOne(lowDegreeVertices, graph);
+		Map<String,Object> phase1Results = DetectDiamond.phaseOne(lowDegreeVertices, graph);
 		long stoptime = System.currentTimeMillis();
 		time += "phase1("+(stoptime-starttime)+")_";
 		
-		Map cli = (HashMap)phase1Results.get("cliques");
+		Map<Integer,UndirectedGraph<Integer,Integer>> cli = (HashMap<Integer,UndirectedGraph<Integer,Integer>>)phase1Results.get("cliques");
 		
-		UndirectedGraph<Integer,Integer> diamond = (UndirectedGraph<Integer,Integer>)phase1Results.get("diamond");
+		List<Graph.Vertex<Integer>> diamond = (List<Vertex<Integer>>) phase1Results.get("diamond");
 		if(diamond==null){	
 			starttime = System.currentTimeMillis();
 			diamond = DetectDiamond.phaseTwo(cli, graph);
@@ -105,9 +105,9 @@ public class DetectDiamond {
 	 * @return 						a map object containing a diamond if found, as well as a collection of cliques mapped to each low degree
 	 * 								vertex
 	 */
-	public static Map phaseOne(Collection<Graph.Vertex<Integer>> lowDegreeVertices, UndirectedGraph<Integer,Integer> graph){
+	public static Map<String,Object> phaseOne(Collection<Graph.Vertex<Integer>> lowDegreeVertices, UndirectedGraph<Integer,Integer> graph){
 		
-		Map phaseOneResults = new HashMap(); //map for storing the results of the phase
+		Map<String,Object> phaseOneResults = new HashMap<String,Object>(); //map for storing the results of the phase
 		
 		//create a map for storing cliques and which vertex's neighbourhood they are in
 		Map<Integer, List<UndirectedGraph<Integer,Integer>>> vertexCliques = new HashMap<Integer, List<UndirectedGraph<Integer,Integer>>>();
@@ -139,8 +139,7 @@ public class DetectDiamond {
 						if(phaseOneResults.get("diamond") == null){ //check if a diamond was previously stored
 							resultList.add(v);
 							//get the subgraph induced by the vertex set comprising of the P3 vertices and the current low degree vertex
-							UndirectedGraph<Integer,Integer> result = Utility.makeGraphFromVertexSet(graph, resultList);
-							phaseOneResults.put("diamond", result);
+							phaseOneResults.put("diamond", resultList);
 							break here;
 						}
 					}
@@ -161,10 +160,10 @@ public class DetectDiamond {
 	 * described by Kloks et al. is satisfied.
 	 * @param cliques 		the mapping of cliques to low degree vertices
 	 * @param graph 		the graph to be checked
-	 * @return 				a diamond subgraph if found
+	 * @return 				a diamond subgraph vertices if found
 	 */
-	public static UndirectedGraph<Integer,Integer> phaseTwo(Map cliques, UndirectedGraph<Integer,Integer> graph){
-		UndirectedGraph<Integer,Integer> diamond = null;
+	public static List<Graph.Vertex<Integer>> phaseTwo(Map<Integer,UndirectedGraph<Integer,Integer>> cliques, UndirectedGraph<Integer,Integer> graph){
+		List<Graph.Vertex<Integer>> diamond = null;
 		
 		//get adjacency matrix of graph
 		int[][] A = graph.getAdjacencyMatrix();
@@ -218,9 +217,8 @@ public class DetectDiamond {
 						yNeigh.retainAll(zNeigh); //yNeigh now contains vertices common to both y and z 
 						
 						//create a diamond and return it
-						List<Graph.Vertex<Integer>> dList = new ArrayList<Graph.Vertex<Integer>>();
-						dList.add(graph.getVertexWithElement(lowVertex));dList.add(y);dList.add(z);dList.add((Graph.Vertex) yNeigh.get(0));
-						diamond = Utility.makeGraphFromVertexSet(graph, dList);
+						diamond = new ArrayList<Graph.Vertex<Integer>>();
+						diamond.add(graph.getVertexWithElement(lowVertex));diamond.add(y);diamond.add(z);diamond.add((Graph.Vertex<Integer>) yNeigh.get(0));
 						break here;
 					}
 				}
@@ -236,14 +234,14 @@ public class DetectDiamond {
 	 * @param lowDegreeVertices 	a list of low degree vertices
 	 * @return						a diamond subgraph if found
 	 */
-	public static UndirectedGraph<Integer,Integer> phaseThree(UndirectedGraph<Integer,Integer> graph, List<Graph.Vertex<Integer>> lowDegreeVertices){
+	public static List<Graph.Vertex<Integer>> phaseThree(UndirectedGraph<Integer,Integer> graph, List<Graph.Vertex<Integer>> lowDegreeVertices){
 		//remove low degree vertices from graph G
 		
 		for(Graph.Vertex<Integer> v: lowDegreeVertices){
 			graph.removeVertex(graph.getVertexWithElement(v.getElement()));
 		}
 		
-		UndirectedGraph<Integer,Integer> diamond = null;
+		List<Graph.Vertex<Integer>> diamond = null;
 		//look for a diamond in graph using the method listed in phase 1 applied on all vertices 
 		//of the graph
 		
@@ -254,10 +252,10 @@ public class DetectDiamond {
 			vSet.add(vIt.next());
 		
 		//create a map to store results of phase one
-		Map phase1Results = phaseOne(vSet, graph);
+		Map<String,Object> phase1Results = phaseOne(vSet, graph);
 		
 		if(phase1Results.get("diamond")!= null){
-			diamond =  (UndirectedGraph<Integer,Integer>)phase1Results.get("diamond");
+			diamond =  (List<Vertex<Integer>>) phase1Results.get("diamond");
 		}
 		return diamond;
 	}

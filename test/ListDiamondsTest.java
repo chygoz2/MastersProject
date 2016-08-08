@@ -13,6 +13,7 @@ import org.junit.Test;
 import efficientdetection.*;
 import general.*;
 import general.Graph.Vertex;
+import listing.ListDiamonds;
 
 /**
  * @author Chigozie Ekwonu

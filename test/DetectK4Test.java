@@ -9,8 +9,10 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import efficientdetection.DetectDiamond;
 import efficientdetection.DetectK4;
 import general.Graph;
+import general.Graph.Vertex;
 import general.UndirectedGraph;
 import general.Utility;
 
@@ -28,55 +30,20 @@ public class DetectK4Test {
 	}
 	
 	@Test
-	public void testDetect() {
-		List<UndirectedGraph<Integer,Integer>> actualResult = DetectK4.detect(graph);
-		int[][] expectedResult = {{0,1,2,3},{1,2,3,4},{0,2,3,5}}; //expected result should have 2 k4's 
-													//with the specified vertex elements
-	
-		for(int i=0; i<expectedResult.length;i++){
-			List<Integer> vList = new ArrayList<Integer>();
-			Iterator<Graph.Vertex<Integer>> aRIt = actualResult.get(i).vertices();
-			while(aRIt.hasNext())
-				vList.add(aRIt.next().getElement());
-			for(int j=0; j<expectedResult[i].length; j++){
-				assertTrue(vList.contains(expectedResult[i][j]));
-			}
+	public void testDetect(){
+		List<Graph.Vertex<Integer>> d = (List<Vertex<Integer>>) DetectK4.detect(graph);
+		
+		List<Integer> actualResult = new ArrayList<Integer>();
+		for(Graph.Vertex<Integer> v: d){
+			actualResult.add(v.getElement());
 		}
-		assertEquals(actualResult.size(),expectedResult.length);
-	}
-
-	@Test
-	public void testPhaseOne() {
-		List<UndirectedGraph<Integer,Integer>> actualResult = DetectK4.phaseOne(graph, highDegreeVertices);
-		int[][] expectedResult = {{0,1,2,3}}; //expected result should have 1 k4 
-													//with the specified vertex elements
-	
+		
+		int[] expectedResult = {0,1,2,3}; //expected result should have one diamond 
+															//with the specified vertex elements
+		
 		for(int i=0; i<expectedResult.length;i++){
-			List<Integer> vList = new ArrayList<Integer>();
-			Iterator<Graph.Vertex<Integer>> aRIt = actualResult.get(i).vertices();
-			while(aRIt.hasNext())
-				vList.add(aRIt.next().getElement());
-			for(int j=0; j<expectedResult[i].length; j++){
-				assertTrue(vList.contains(expectedResult[i][j]));
-			}
-		}
-		assertEquals(actualResult.size(),expectedResult.length);
-	}
-
-	@Test
-	public void testPhaseTwo() {
-		List<UndirectedGraph<Integer,Integer>> actualResult = DetectK4.phaseTwo(graph, lowDegreeVertices);
-		int[][] expectedResult = {{1,2,3,4},{0,2,3,5}}; //expected result should have 2 k4's 
-													//with the specified vertex elements
-	
-		for(int i=0; i<expectedResult.length;i++){
-			List<Integer> vList = new ArrayList<Integer>();
-			Iterator<Graph.Vertex<Integer>> aRIt = actualResult.get(i).vertices();
-			while(aRIt.hasNext())
-				vList.add(aRIt.next().getElement());
-			for(int j=0; j<expectedResult[i].length; j++){
-				assertTrue(vList.contains(expectedResult[i][j]));
-			}
+			assertTrue(actualResult.contains(expectedResult[i]));
+			
 		}
 		assertEquals(actualResult.size(),expectedResult.length);
 	}

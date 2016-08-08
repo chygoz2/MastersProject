@@ -17,11 +17,11 @@ import efficientdetection.DetectClaw;
 import efficientdetection.DetectDiamond;
 import efficientdetection.DetectK4;
 import efficientdetection.DetectTriangle;
-import efficientdetection.ListSimplicialVertex;
 import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
 import general.Graph.Vertex;
+import listing.ListSimplicialVertex;
 
 public class GUI extends JFrame implements ActionListener{
 
