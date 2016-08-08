@@ -334,8 +334,8 @@ public class DetectKL {
 		List<Set<Integer>> marked = new ArrayList<Set<Integer>>(); //to prevent creating the same triangle more than once
 		
 		//get the adjacency matrix
-		double[][] A = graph.getAdjacencyMatrix();
-		double[][] aSquared = null; 
+		int[][] A = graph.getAdjacencyMatrix();
+		int[][] aSquared = null; 
 		try{
 			aSquared = Utility.multiplyMatrix(A, A);
 		}catch(MatrixException e){

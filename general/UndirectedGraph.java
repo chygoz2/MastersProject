@@ -229,9 +229,9 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		}
 	}
 	
-	public double[][] getAdjacencyMatrix(){
+	public int[][] getAdjacencyMatrix(){
 		int size = vertexElementMap.size();
-		double[][] A = new double[size][size];
+		int[][] A = new int[size][size];
 		int i=0, j=0;
 		for(int a: vertexElementMap.keySet()){
 			for(int b: vertexElementMap.keySet()){
@@ -247,9 +247,9 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		return A;
 	}
 	
-	public double[][] getComplementMatrix(){
+	public int[][] getComplementMatrix(){
 		int size = vertexElementMap.size();
-		double[][] A = new double[size][size];
+		int[][] C = new int[size][size];
 		int i=0, j=0;
 		for(int a: vertexElementMap.keySet()){
 			for(int b: vertexElementMap.keySet()){
@@ -258,19 +258,19 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 					continue;
 				}
 				if(containsEdge(vertexElementMap.get(a),vertexElementMap.get(b))){
-					A[i][j] = 0;
+					C[i][j] = 0;
 				}else{
-					A[i][j] = 1;
+					C[i][j] = 1;
 				}
 				j++;
 			}
 			i++; j = 0;
 		}
-		return A;
+		return C;
 	}
 	
 	public void printAdjacencyMatrix(){
-		double[][] A = this.getAdjacencyMatrix();
+		int[][] A = this.getAdjacencyMatrix();
 		for(int i=0; i<A.length; i++){
 			for(int j=0; j<A[i].length; j++){
 				System.out.print((int)A[i][j]+" ");

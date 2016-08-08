@@ -106,10 +106,10 @@ public class DetectK4 {
 			
 			//make graph from new list of vertices
 			UndirectedGraph<Integer,Integer> graph2 = Utility.makeGraphFromVertexSet(graph, nXList);
-			double [][] adjMatrix = graph2.getAdjacencyMatrix();
+			int[][] adjMatrix = graph2.getAdjacencyMatrix();
 			
 			//get square of adjacency matrix
-			double[][] adjMatrixSquare;
+			int[][] adjMatrixSquare;
 			try {
 				adjMatrixSquare = Utility.multiplyMatrix(adjMatrix, adjMatrix);
 			} catch (MatrixException e) {
@@ -189,10 +189,10 @@ public class DetectK4 {
 				continue;
 			
 			UndirectedGraph<Integer,Integer> graph2 = Utility.makeGraphFromVertexSet(graph, nXList);
-			double [][] adjMatrix = graph2.getAdjacencyMatrix();
+			int[][] adjMatrix = graph2.getAdjacencyMatrix();
 			
 			//get square of adjacency matrix
-			double[][] adjMatrixSquare;
+			int[][] adjMatrixSquare;
 			try {
 				adjMatrixSquare = Utility.multiplyMatrix(adjMatrix, adjMatrix);
 			} catch (MatrixException e) {
@@ -280,7 +280,7 @@ public class DetectK4 {
 //			double [][] adjMatrix = graph2.getAdjacencyMatrix();
 //			
 //			//get square of adjacency matrix
-//			double[][] adjMatrixSquare;
+//			int[][] adjMatrixSquare;
 //			try {
 //				adjMatrixSquare = MatrixOperation.multiply(adjMatrix, adjMatrix);
 //			} catch (MatrixException e) {
@@ -367,7 +367,7 @@ public class DetectK4 {
 //			double [][] adjMatrix = graph2.getAdjacencyMatrix();
 //			
 //			//get square of adjacency matrix
-//			double[][] adjMatrixSquare;
+//			int[][] adjMatrixSquare;
 //			try {
 //				adjMatrixSquare = MatrixOperation.multiply(adjMatrix, adjMatrix);
 //			} catch (MatrixException e) {

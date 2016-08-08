@@ -358,14 +358,14 @@ public final class Utility {
 		return vertices;
 	}
 	
-	public static double[][] multiplyMatrix(double[][] a, double[][] b) throws MatrixException{
+	public static int[][] multiplyMatrix(int[][] a, int[][] b) throws MatrixException{
 		if (a.length==0 || b.length==0) 
 			throw new MatrixException(0);
 		
 		if (a[0].length != b.length) 
 			throw new MatrixException(1);
        
-        double[][] result = new double[a.length][b[0].length];
+        int[][] result = new int[a.length][b[0].length];
         for (int i = 0; i < a.length; i++)
             for (int j = 0; j < b[i].length; j++)
                 for (int k = 0; k < a[i].length; k++)
@@ -376,7 +376,7 @@ public final class Utility {
 	public static void main(String [] args){
 //		String fileName = "matrix.txt";
 //		Utility.makeGraphFromFile(fileName);
-		generateRandomGraphFile(15,1.0,1);
+		generateRandomGraphFile(300,0.9,1);
 		
 //		double[][] a = {{1,2,3},{4,5,6},{7,8,9}};
 //		double[][] res = matrixMultiply(a,a);

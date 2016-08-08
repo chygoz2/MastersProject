@@ -5,7 +5,7 @@ import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
 
-public class DetectTriangle {
+public class ListTriangles2 {
 	
 	private static String time = "";
 	
@@ -15,23 +15,25 @@ public class DetectTriangle {
 //			String fileName = "matrix3.txt";
 //			String fileName = "generated_graphs\\size_7\\graph_7_0.2_2.txt";
 //			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
-//			String fileName = "generated_graphs\\size_15\\graph_15_1.0_1.txt";
-			String fileName = "test\\testdata\\triangletestdata.txt";
+			String fileName = "generated_graphs\\size_15\\graph_15_1.0_1.txt";
 			graph = Utility.makeGraphFromFile(fileName);
 //			int[][] A = {{0,1,0,1,1},{1,0,1,0,0},{0,1,0,1,1},{1,0,1,0,0},{1,0,1,0,0}};
 //			graph = Utility.makeGraphFromAdjacencyMatrix(A);
 			
 			long starttime = System.currentTimeMillis();
-			Collection<Graph.Vertex<Integer>> triangle = detect(graph);
+			List<Collection<Graph.Vertex<Integer>>> triangles = detect(graph);
 //			List<UndirectedGraph<Integer,Integer>> triangles = DetectKL.detect(graph,3);
 			long stoptime = System.currentTimeMillis();
 			
 			long timetaken = stoptime-starttime;
 			
 			
-			if(triangle!=null){
-				Utility.printGraph(Utility.makeGraphFromVertexSet(graph, triangle));
+			if(!triangles.isEmpty()){
+				for(Collection<Graph.Vertex<Integer>> triangle: triangles){
+					Utility.printGraph(Utility.makeGraphFromVertexSet(graph, triangle));
+				}
 				System.out.println("Time taken in milliseconds: "+timetaken);
+				System.out.println(triangles.size());
 			}
 			else{
 				System.out.println("Triangle not found");
@@ -39,48 +41,42 @@ public class DetectTriangle {
 
 	}
 	
-	/**
-	 * method that detects the presence of a triangle in a graph via Alon et al.'s method.
-	 * Has complexity of O(m^1.41) where m is the number of edges in the graph
-	 * @param graph
-	 * @return
-	 */
-	public static Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
+	public static List<Collection<Graph.Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph){
+		List<Collection<Graph.Vertex<Integer>>> triangles = new ArrayList<Collection<Graph.Vertex<Integer>>>();
 		
 		List<Graph.Vertex<Integer>>[] verticesPartition = Utility.partitionVertices(graph);
 		List<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
 		
 		long starttime = System.currentTimeMillis();
-		Collection<Graph.Vertex<Integer>> triangle = null;
-		triangle = phaseOne(graph, lowDegreeVertices);
+		List<Collection<Graph.Vertex<Integer>>> p1Triangles = phaseOne(graph, lowDegreeVertices);
 		long stoptime = System.currentTimeMillis();
+		if(!p1Triangles.isEmpty())
+			triangles.addAll(p1Triangles);
 		time += "phase1("+(stoptime-starttime)+")_";
-		if(triangle == null){
-			starttime = System.currentTimeMillis();
-			triangle = phaseTwo(graph, lowDegreeVertices);
-			stoptime = System.currentTimeMillis();
-			time += "phase2("+(stoptime-starttime)+")_";
-		}
 		
-		if(triangle!=null)
+		//if(triangle==null){
+			starttime = System.currentTimeMillis();
+			List<Collection<Graph.Vertex<Integer>>> p2Triangles = phaseTwo(graph, lowDegreeVertices);
+			stoptime = System.currentTimeMillis();
+			
+			if(!p2Triangles.isEmpty())
+				triangles.addAll(p2Triangles);
+			time += "phase2("+(stoptime-starttime)+")_";
+		//}
+		
+		if(!triangles.isEmpty())
 			time+="1";
 		else
 			time+="0";
-//		System.out.println(time);
+		//System.out.println(time);
 		DetectTriangle.resetTime();
 		
-		return triangle;
+		return triangles;
 	}
 	
-	/**
-	 * phase one of Alon et al's algorithm. Works by looking for P3s whose intermediate vertex 
-	 * is of low degree and then checking if the endpoints of the P3 are adjacent
-	 * @param graph					the graph to be checked
-	 * @param lowDegreeVertices		the list of low degree vertices
-	 * @return						the triangle vertices if found
-	 */
-	public static Collection<Graph.Vertex<Integer>> phaseOne(UndirectedGraph<Integer, Integer> graph, List<Graph.Vertex<Integer>> lowDegreeVertices){
-		Collection<Graph.Vertex<Integer>> triangle = new ArrayList<Graph.Vertex<Integer>>();
+	public static List<Collection<Graph.Vertex<Integer>>> phaseOne(UndirectedGraph<Integer, Integer> graph, List<Graph.Vertex<Integer>> lowDegreeVertices){
+		List<Set<Integer>> marked = new ArrayList<Set<Integer>>(); //to prevent creating the same triangle more than once
+		List<Collection<Graph.Vertex<Integer>>> triangles = new ArrayList<Collection<Graph.Vertex<Integer>>>();
 		
 		for(Graph.Vertex<Integer> v: lowDegreeVertices){
 			//get connecting edges to v
@@ -100,24 +96,38 @@ public class DetectTriangle {
 					//check for presence of edge between v and next
 					//presence of an edge indicates a triangle
 					if(graph.containsEdge(v, next)){
-						triangle.add(v); triangle.add(other); triangle.add(next);
-						return triangle;
+						List<Graph.Vertex<Integer>> triList = new ArrayList<Graph.Vertex<Integer>>(); //list to store triangle vertices
+						Set<Integer> triListElem = new HashSet<Integer>(); //set to store triangle vertices elements
+						
+						triList.add(v); triList.add(other); triList.add(next);
+						triListElem.add(v.getElement()); triListElem.add(other.getElement());
+						triListElem.add(next.getElement());
+						
+						//check in the marked list for an entry that contains all 3 vertex elements
+						boolean contains = false;
+						
+						for(Set<Integer> s: marked){
+							if(s.containsAll(triListElem)){
+								contains = true;
+								break;
+							}
+						}
+						
+						//check if such triangle with those vertices has been created previously
+						if(!contains){						
+							triangles.add(triList);
+							marked.add(triListElem);
+						}
 					}
 				}
 					
 			}
 		}
-		return null;
+		return triangles;
 	}
 	
-	/**
-	 * according to Alon et al., this phase removes all low degree vertices and applies the 
-	 * matrix multiplication method to detect a triangle in a graph 
-	 * @param graph2				the graph to be checked
-	 * @param lowDegreeVertices		the list of low degree vertices
-	 * @return						the triangle vertices if found
-	 */
-	public static Collection<Graph.Vertex<Integer>> phaseTwo(UndirectedGraph<Integer,Integer> graph2, List<Graph.Vertex<Integer>> lowDegreeVertices){
+	public static List<Collection<Graph.Vertex<Integer>>> phaseTwo(UndirectedGraph<Integer,Integer> graph2, List<Graph.Vertex<Integer>> lowDegreeVertices){
+		List<Set<Integer>> marked = new ArrayList<Set<Integer>>(); //to prevent creating the same triangle more than once
 		//if no triangle was found
 		//remove all low degree vertices and get the adjacency matrix of resulting graph. 
 		//Then detect a triangle from the square of the adjacency matrix
@@ -126,19 +136,8 @@ public class DetectTriangle {
 			graph.removeVertex(v);
 		}
 		
-		Collection<Graph.Vertex<Integer>> triangle = detect2(graph);
-		
-		return triangle;
-	}
-	
-	/**
-	 * method that detects triangle via the matrix multiplication method
-	 * Has a time complexity of O(n^a) where 2<a<=3 depending on which matrix multiplication
-	 * algorithm is used. a is currently 3 as standard matrix multiplication was used 
-	 * @param graph 		the graph to be checked
-	 * @return				the triangle vertices found if any
-	 */
-	public static Collection<Graph.Vertex<Integer>> detect2(UndirectedGraph<Integer,Integer> graph){
+		List<Collection<Graph.Vertex<Integer>>> triangles = new ArrayList<Collection<Graph.Vertex<Integer>>>();
+		 
 		//get the adjacency matrix
 		int[][] A = graph.getAdjacencyMatrix();
 		int[][] aSquared = null; 
@@ -147,7 +146,7 @@ public class DetectTriangle {
 		}catch(MatrixException e){
 			if(e.getStatus()==1)
 				System.out.println("Invalid matrix dimensions found");
-			return null;
+			return triangles;
 		}
 		
 		//create mapping of matrix index to graph vertex
@@ -167,22 +166,37 @@ public class DetectTriangle {
 							//at this point, i, j and k represent matrix indices of the vertices which form the triangle
 							//get the actual vertices and create a list of them
 							List<Graph.Vertex<Integer>> tVertices = new ArrayList<Graph.Vertex<Integer>>();
+							Set<Integer> triListElem = new HashSet<Integer>(); //list to store triangle vertices elements
 							
 							Graph.Vertex<Integer> v1 = vertexIndexMap.get(i);
 							Graph.Vertex<Integer> v2 = vertexIndexMap.get(j);
 							Graph.Vertex<Integer> v3 = vertexIndexMap.get(k);
-							tVertices.add(v1);	
-							tVertices.add(v2);	
-							tVertices.add(v3);	
+							tVertices.add(v1);	triListElem.add(v1.getElement());
+							tVertices.add(v2);	triListElem.add(v2.getElement());
+							tVertices.add(v3);	triListElem.add(v3.getElement());
 							
-							return tVertices;
+							//check in the marked list for an entry that contains all 3 vertex elements
+							boolean contains = false;
+							
+							for(Set<Integer> s: marked){
+								if(s.containsAll(triListElem)){
+									contains = true;
+									break;
+								}
+							}
+							
+							//check if such triangle with those vertices has been created previously
+							if(!contains){						
+								triangles.add(tVertices);
+								marked.add(triListElem);
+							}
 						}
 					}
 				}
 			}
 		}
-
-		return null;
+		
+		return triangles;
 	}
 	
 	public static String getTime(){

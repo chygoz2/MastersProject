@@ -38,7 +38,8 @@ public class ListDiamonds {
 //			String fileName = "matrix2.txt";
 //			String fileName = "generated_graphs\\size_5\\graph_5_0.7_4.txt";
 //			String fileName = "generated_graphs\\size_6\\graph_6_0.6_3.txt";
-			String fileName = "test\\testdata\\diamondtestdata.txt";
+//			String fileName = "test\\testdata\\diamondtestdata.txt";
+			String fileName = "generated_graphs\\size_300\\graph_300_0.9_1.txt";
 //			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
 //			String fileName = "test\\testdata\\diamondtestdata.txt";
 //			UndirectedGraph<Integer,Integer> graphs[a] = Utility.makeGraphFromFile(fileName);
@@ -158,7 +159,7 @@ public class ListDiamonds {
 								diamondListElem.add(vv.getElement());
 							}
 							
-							//check in the marked list for an entry that contains all 4 vertex elements
+							//check in the seen list for an entry that contains all 4 vertex elements
 							boolean contains = false;
 							
 							for(Set<Integer> s: seen){
@@ -201,8 +202,8 @@ public class ListDiamonds {
 		List<Set<Integer>> seen = new ArrayList<Set<Integer>>(); //to prevent creating the same diamond more than once
 		
 		//get adjacency matrix of graph
-		double[][] A = graph.getAdjacencyMatrix();
-		double[][] squareA;
+		int[][] A = graph.getAdjacencyMatrix();
+		int[][] squareA;
 		try {
 			squareA = Utility.multiplyMatrix(A, A);
 		} catch (MatrixException e) {
@@ -339,7 +340,7 @@ public class ListDiamonds {
 	 * @return 			the result of the check. 
 	 */
 	private static boolean checkIfClique(UndirectedGraph<Integer,Integer> graph){
-		double[][] A = graph.getAdjacencyMatrix();
+		int[][] A = graph.getAdjacencyMatrix();
 		
 		for(int i=0; i<A.length; i++){
 			for(int j=i+1; j<A.length; j++){

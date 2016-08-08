@@ -39,8 +39,8 @@ public class DetectDiamond {
 //			String fileName = "generated_graphs\\size_5\\graph_5_0.7_4.txt";
 //			String fileName = "generated_graphs\\size_6\\graph_6_0.6_3.txt";
 //			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
-			String fileName = "test\\testdata\\diamondtestdata.txt";
 //			String fileName = "test\\testdata\\diamondtestdata.txt";
+			String fileName = "generated_graphs\\size_300\\graph_300_0.9_1.txt";
 //			UndirectedGraph<Integer,Integer> graphs[a] = Utility.makeGraphFromFile(fileName);
 			graph = Utility.makeGraphFromFile(fileName);
 			UndirectedGraph<Integer,Integer> diamond = detect(graph);
@@ -167,8 +167,8 @@ public class DetectDiamond {
 		UndirectedGraph<Integer,Integer> diamond = null;
 		
 		//get adjacency matrix of graph
-		double[][] A = graph.getAdjacencyMatrix();
-		double[][] squareA;
+		int[][] A = graph.getAdjacencyMatrix();
+		int[][] squareA;
 		try {
 			squareA = Utility.multiplyMatrix(A, A);
 		} catch (MatrixException e) {
@@ -283,7 +283,7 @@ public class DetectDiamond {
 	 * @return 			the result of the check. 
 	 */
 	private static boolean checkIfClique(UndirectedGraph<Integer,Integer> graph){
-		double[][] A = graph.getAdjacencyMatrix();
+		int[][] A = graph.getAdjacencyMatrix();
 		
 		for(int i=0; i<A.length; i++){
 			for(int j=i+1; j<A.length; j++){
@@ -346,8 +346,8 @@ public class DetectDiamond {
 			vertexIndexMap.add(vIt.next());
 		}
 		
-		double[][] A = graph.getAdjacencyMatrix();
-		double[][] A2;
+		int[][] A = graph.getAdjacencyMatrix();
+		int[][] A2;
 		try {
 			A2 = Utility.multiplyMatrix(A, A);
 		} catch (MatrixException e) {

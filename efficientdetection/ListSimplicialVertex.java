@@ -146,15 +146,15 @@ public class ListSimplicialVertex {
 			a++;
 		}
 		
-		double[][] A = graph.getAdjacencyMatrix();
+		int[][] A = graph.getAdjacencyMatrix();
 		
 		//put 1's on the diagonal
 		for(int i=0;i<A.length;i++){
-			A[i][i] = 1.0;
+			A[i][i] = 1;
 		}
 		
 		//square the resulting adjacency matrix
-		double[][] aSquared;
+		int[][] aSquared;
 		try {
 			aSquared = Utility.multiplyMatrix(A, A);
 		} catch (MatrixException e) {
