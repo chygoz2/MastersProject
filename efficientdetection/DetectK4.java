@@ -48,7 +48,7 @@ public class DetectK4 {
 	public static Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
 		time+="size_"+graph.size()+"_";
 		
-		List<Graph.Vertex<Integer>>[] verticesPartition = Utility.partitionVertices(graph);
+		List<Graph.Vertex<Integer>>[] verticesPartition = partitionVertices(graph);
 		
 		List<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
 		List<Graph.Vertex<Integer>> highDegreeVertices = verticesPartition[1];
@@ -98,7 +98,7 @@ public class DetectK4 {
 			UndirectedGraph<Integer,Integer> graph2 = Utility.makeGraphFromVertexSet(graph, nXList);
 
 			//get the triangles in the neighbourhood
-			Collection<Graph.Vertex<Integer>> triangle = DetectTriangle.detect2(graph2);
+			Collection<Graph.Vertex<Integer>> triangle = DetectTriangle.detect(graph2);
 			
 			List<Graph.Vertex<Integer>> k4Vertices = new ArrayList<Graph.Vertex<Integer>>(); //list to store k4 vertices
 			k4Vertices.addAll(triangle);
@@ -127,7 +127,7 @@ public class DetectK4 {
 			UndirectedGraph<Integer,Integer> graph2 = Utility.makeGraphFromVertexSet(graph, nXList);
 
 			//get the triangles in the neighbourhood
-			Collection<Graph.Vertex<Integer>> triangle = DetectTriangle.detect2(graph2);
+			Collection<Graph.Vertex<Integer>> triangle = DetectTriangle.detect(graph2);
 			
 			List<Graph.Vertex<Integer>> k4Vertices = new ArrayList<Graph.Vertex<Integer>>(); //list to store k4 vertices
 			k4Vertices.addAll(triangle);
@@ -139,6 +139,40 @@ public class DetectK4 {
 		return null;
 	}
 
+	//method to partition the vertices into low degree vertices and high degree vertices
+	public static List<Graph.Vertex<Integer>>[] partitionVertices(UndirectedGraph<Integer,Integer> graph){
+		List<Graph.Vertex<Integer>>[] vertices = new List[2];
+		vertices[0] = new ArrayList<Graph.Vertex<Integer>>();
+		vertices[1] = new ArrayList<Graph.Vertex<Integer>>();
+		
+		//get vertices
+		Iterator<Graph.Vertex<Integer>> vertexIterator = graph.vertices();
+		
+		//get edges
+		Iterator<Graph.Edge<Integer>> edgeIterator = graph.edges();
+		
+		//get number of edges
+		int noOfEdges = 0;
+		while(edgeIterator.hasNext()){
+			edgeIterator.next();
+			noOfEdges++;
+		}
+		
+
+		//calculate D for Graph.Vertex partitioning
+		double D = Math.sqrt(noOfEdges);
+		
+		while(vertexIterator.hasNext()){
+			Graph.Vertex<Integer> v = vertexIterator.next();
+			if(graph.degree(v)>D)
+				vertices[1].add(v);
+			else
+				vertices[0].add(v);
+		}
+		
+		return vertices;
+	}
+	
 	public static String getTime(){
 		return time;
 	}

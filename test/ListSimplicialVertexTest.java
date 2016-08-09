@@ -13,7 +13,7 @@ import general.UndirectedGraph;
 import general.Utility;
 import listing.ListSimplicialVertex;
 
-public class DetectSimplicialVertexTest {
+public class ListSimplicialVertexTest {
 	UndirectedGraph<Integer,Integer> graph;
 	List<Graph.Vertex<Integer>> lowDegreeVertices, highDegreeVertices;
 	
@@ -21,8 +21,8 @@ public class DetectSimplicialVertexTest {
 	public void before(){
 		String fileName = "test\\testdata\\simplicialtestdata.txt";
 		graph = Utility.makeGraphFromFile(fileName);
-		lowDegreeVertices = Utility.partitionVertices(graph)[0];
-		highDegreeVertices = Utility.partitionVertices(graph)[1];
+		lowDegreeVertices = ListSimplicialVertex.partitionVertices(graph)[0];
+		highDegreeVertices = ListSimplicialVertex.partitionVertices(graph)[1];
 	}
 	
 	@Test

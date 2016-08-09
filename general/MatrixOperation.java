@@ -1,7 +1,5 @@
 package general;
 
-import efficientdetection.MatrixException;
-
 public class MatrixOperation {
 	
 	public static double[][] multiply(double[][] a, double[][] b) throws MatrixException{

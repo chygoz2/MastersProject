@@ -1,8 +1,8 @@
 package listing;
 import java.util.*;
 
-import efficientdetection.MatrixException;
 import general.Graph;
+import general.MatrixException;
 import general.UndirectedGraph;
 import general.Utility;
 import general.Graph.Vertex;
@@ -54,7 +54,7 @@ public class ListSimplicialVertex {
 	}
 	
 	public static List<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
-		List[] verticesPartition = Utility.partitionVertices(graph);
+		List[] verticesPartition = partitionVertices(graph);
 		List<Graph.Vertex<Integer>> simplicialVertices = new ArrayList<Graph.Vertex<Integer>>();
 		
 		List<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
@@ -193,6 +193,43 @@ public class ListSimplicialVertex {
 		
 		//get simplicial vertices
 		return simplicialVertices;
+	}
+	
+	//method to partition the vertices into low degree vertices and high degree vertices
+	public static List<Graph.Vertex<Integer>>[] partitionVertices(UndirectedGraph<Integer,Integer> graph){
+		List<Graph.Vertex<Integer>>[] vertices = new List[2];
+		vertices[0] = new ArrayList<Graph.Vertex<Integer>>();
+		vertices[1] = new ArrayList<Graph.Vertex<Integer>>();
+		
+		//get vertices
+		Iterator<Graph.Vertex<Integer>> vertexIterator = graph.vertices();
+		
+		//get edges
+		Iterator<Graph.Edge<Integer>> edgeIterator = graph.edges();
+		
+		//get number of edges
+		int noOfEdges = 0;
+		while(edgeIterator.hasNext()){
+			edgeIterator.next();
+			noOfEdges++;
+		}
+		
+
+		//calculate D for Graph.Vertex partitioning
+		//double alpha = 2.376; //constant from Coppersmith-Winograd matrix multiplication algorithm
+		double alpha = 3;
+		double pow = (alpha-1)/(alpha+1);
+		double D = Math.pow(noOfEdges, pow);
+		
+		while(vertexIterator.hasNext()){
+			Graph.Vertex<Integer> v = vertexIterator.next();
+			if(graph.degree(v)>D)
+				vertices[1].add(v);
+			else
+				vertices[0].add(v);
+		}
+		
+		return vertices;
 	}
 	
 	public static String getTime(){

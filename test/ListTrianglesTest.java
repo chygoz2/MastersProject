@@ -20,13 +20,13 @@ import listing.ListTriangles;
  */
 public class ListTrianglesTest {
 	UndirectedGraph<Integer,Integer> graph;
-	List<Graph.Vertex<Integer>> lowDegreeVertices;
+//	List<Graph.Vertex<Integer>> lowDegreeVertices;
 
 	@Before
 	public void before(){
 		String fileName = "test\\testdata\\triangletestdata.txt";
 		graph = Utility.makeGraphFromFile(fileName);
-		lowDegreeVertices = Utility.partitionVertices(graph)[0];
+//		lowDegreeVertices = Utility.partitionVertices(graph)[0];
 	}
 	
 	/**

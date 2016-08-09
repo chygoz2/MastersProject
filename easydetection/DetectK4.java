@@ -76,6 +76,7 @@ public class DetectK4 {
 						UndirectedGraph<Integer,Integer> k4 = Utility.makeGraphFromVertexSet(graph, k4VertexList);
 						k4List.add(k4);
 						marked.add(k4VerticesElem);
+//						return k4List;
 					}
 				}
 			}

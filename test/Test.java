@@ -1,7 +1,7 @@
 package test;
 import java.util.Iterator;
 
-import efficientdetection.MatrixException;
+import general.MatrixException;
 import general.Utility;
 
 //import Jama.Matrix;

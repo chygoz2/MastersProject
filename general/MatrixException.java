@@ -1,4 +1,4 @@
-package efficientdetection;
+package general;
 
 
 public class MatrixException extends Exception{

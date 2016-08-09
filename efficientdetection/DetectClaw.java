@@ -163,7 +163,7 @@ public class DetectClaw {
 		
 		//look for a triangle in the complement graph. Such a triangle forms the remaining vertices
 		//of the claw
-		List<Graph.Vertex<Integer>> tri = (List<Vertex<Integer>>) DetectTriangle.detect2(vncompgraph);
+		List<Graph.Vertex<Integer>> tri = (List<Vertex<Integer>>) DetectTriangle.detect(vncompgraph);
 		if(tri!=null){
 			//get the vertices of the main graph that correspond to the vertices of the triangle found
 			Collection<Graph.Vertex<Integer>> claw = new ArrayList<Graph.Vertex<Integer>>();

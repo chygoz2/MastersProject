@@ -2,6 +2,7 @@ package efficientdetection;
 import java.util.*;
 
 import general.Graph;
+import general.MatrixException;
 import general.UndirectedGraph;
 import general.Utility;
 
@@ -39,97 +40,96 @@ public class DetectTriangle {
 
 	}
 	
-	/**
-	 * method that detects the presence of a triangle in a graph via Alon et al.'s method.
-	 * Has complexity of O(m^1.41) where m is the number of edges in the graph
-	 * @param graph
-	 * @return
-	 */
-	public static Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
-		
-		List<Graph.Vertex<Integer>>[] verticesPartition = Utility.partitionVertices(graph);
-		List<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
-		
-		long starttime = System.currentTimeMillis();
-		Collection<Graph.Vertex<Integer>> triangle = null;
-		triangle = phaseOne(graph, lowDegreeVertices);
-		long stoptime = System.currentTimeMillis();
-		time += "phase1("+(stoptime-starttime)+")_";
-		if(triangle == null){
-			starttime = System.currentTimeMillis();
-			triangle = phaseTwo(graph, lowDegreeVertices);
-			stoptime = System.currentTimeMillis();
-			time += "phase2("+(stoptime-starttime)+")_";
-		}
-		
-		if(triangle!=null)
-			time+="1";
-		else
-			time+="0";
-//		System.out.println(time);
-		DetectTriangle.resetTime();
-		
-		return triangle;
-	}
+//	/**
+//	 * method that detects the presence of a triangle in a graph via Alon et al.'s method.
+//	 * Has complexity of O(m^1.41) where m is the number of edges in the graph
+//	 * @param graph
+//	 * @return
+//	 */
+//	public static Collection<Graph.Vertex<Integer>> detect3(UndirectedGraph<Integer,Integer> graph){
+//		
+//		List<Graph.Vertex<Integer>>[] verticesPartition = Utility.partitionVertices(graph);
+//		List<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
+//		
+//		long starttime = System.currentTimeMillis();
+//		Collection<Graph.Vertex<Integer>> triangle = null;
+//		triangle = phaseOne(graph, lowDegreeVertices);
+//		long stoptime = System.currentTimeMillis();
+//		time += "phase1("+(stoptime-starttime)+")_";
+//		if(triangle == null){
+//			starttime = System.currentTimeMillis();
+//			triangle = phaseTwo(graph, lowDegreeVertices);
+//			stoptime = System.currentTimeMillis();
+//			time += "phase2("+(stoptime-starttime)+")_";
+//		}
+//		
+//		if(triangle!=null)
+//			time+="1";
+//		else
+//			time+="0";
+////		System.out.println(time);
+//		DetectTriangle.resetTime();
+//		
+//		return triangle;
+//	}
 	
-	/**
-	 * phase one of Alon et al's algorithm. Works by looking for P3s whose intermediate vertex 
-	 * is of low degree and then checking if the endpoints of the P3 are adjacent
-	 * @param graph					the graph to be checked
-	 * @param lowDegreeVertices		the list of low degree vertices
-	 * @return						the triangle vertices if found
-	 */
-	public static Collection<Graph.Vertex<Integer>> phaseOne(UndirectedGraph<Integer, Integer> graph, List<Graph.Vertex<Integer>> lowDegreeVertices){
-		Collection<Graph.Vertex<Integer>> triangle = new ArrayList<Graph.Vertex<Integer>>();
-		
-		for(Graph.Vertex<Integer> v: lowDegreeVertices){
-			//get connecting edges to v
-			Iterator<Graph.Edge<Integer>> eIt = graph.connectingEdges(v);
-			while(eIt.hasNext()){
-				UndirectedGraph.UnEdge e = (UndirectedGraph.UnEdge)eIt.next();
-				//get the other vertex of the edge
-				Graph.Vertex<Integer> other;
-				if(e.getSource().equals(v))
-					other = e.getDestination();
-				else
-					other = e.getSource();
-				//get other vertices neighbours
-				Iterator<Graph.Vertex<Integer>> otherIt = graph.neighbours(other);
-				while(otherIt.hasNext()){
-					Graph.Vertex<Integer> next = otherIt.next();
-					//check for presence of edge between v and next
-					//presence of an edge indicates a triangle
-					if(graph.containsEdge(v, next)){
-						triangle.add(v); triangle.add(other); triangle.add(next);
-						return triangle;
-					}
-				}
-					
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * according to Alon et al., this phase removes all low degree vertices and applies the 
-	 * matrix multiplication method to detect a triangle in a graph 
-	 * @param graph2				the graph to be checked
-	 * @param lowDegreeVertices		the list of low degree vertices
-	 * @return						the triangle vertices if found
-	 */
-	public static Collection<Graph.Vertex<Integer>> phaseTwo(UndirectedGraph<Integer,Integer> graph2, List<Graph.Vertex<Integer>> lowDegreeVertices){
-		//if no triangle was found
-		//remove all low degree vertices and get the adjacency matrix of resulting graph. 
-		//Then detect a triangle from the square of the adjacency matrix
-		UndirectedGraph<Integer,Integer> graph = graph2.clone();
-		for(Graph.Vertex<Integer> v: lowDegreeVertices){
-			graph.removeVertex(v);
-		}
-		
-		Collection<Graph.Vertex<Integer>> triangle = detect2(graph);
-		
-		return triangle;
-	}
+//	/**
+//	 * phase one of Alon et al's algorithm. Works by looking for P3s whose intermediate vertex 
+//	 * is of low degree and then checking if the endpoints of the P3 are adjacent
+//	 * @param graph					the graph to be checked
+//	 * @param lowDegreeVertices		the list of low degree vertices
+//	 * @return						the triangle vertices if found
+//	 */
+//	public static Collection<Graph.Vertex<Integer>> phaseOne(UndirectedGraph<Integer, Integer> graph, List<Graph.Vertex<Integer>> lowDegreeVertices){
+//		Collection<Graph.Vertex<Integer>> triangle = new ArrayList<Graph.Vertex<Integer>>();
+//		
+//		for(Graph.Vertex<Integer> v: lowDegreeVertices){
+//			//get connecting edges to v
+//			Iterator<Graph.Edge<Integer>> eIt = graph.connectingEdges(v);
+//			while(eIt.hasNext()){
+//				UndirectedGraph.UnEdge e = (UndirectedGraph.UnEdge)eIt.next();
+//				//get the other vertex of the edge
+//				Graph.Vertex<Integer> other;
+//				if(e.getSource().equals(v))
+//					other = e.getDestination();
+//				else
+//					other = e.getSource();
+//				//get other vertices neighbours
+//				Iterator<Graph.Vertex<Integer>> otherIt = graph.neighbours(other);
+//				while(otherIt.hasNext()){
+//					Graph.Vertex<Integer> next = otherIt.next();
+//					//check for presence of edge between v and next
+//					//presence of an edge indicates a triangle
+//					if(graph.containsEdge(v, next)){
+//						triangle.add(v); triangle.add(other); triangle.add(next);
+//						return triangle;
+//					}
+//				}
+//			}
+//		}
+//		return null;
+//	}
+//	
+//	/**
+//	 * according to Alon et al., this phase removes all low degree vertices and applies the 
+//	 * matrix multiplication method to detect a triangle in a graph 
+//	 * @param graph2				the graph to be checked
+//	 * @param lowDegreeVertices		the list of low degree vertices
+//	 * @return						the triangle vertices if found
+//	 */
+//	public static Collection<Graph.Vertex<Integer>> phaseTwo(UndirectedGraph<Integer,Integer> graph2, List<Graph.Vertex<Integer>> lowDegreeVertices){
+//		//if no triangle was found
+//		//remove all low degree vertices and get the adjacency matrix of resulting graph. 
+//		//Then detect a triangle from the square of the adjacency matrix
+//		UndirectedGraph<Integer,Integer> graph = graph2.clone();
+//		for(Graph.Vertex<Integer> v: lowDegreeVertices){
+//			graph.removeVertex(v);
+//		}
+//		
+//		Collection<Graph.Vertex<Integer>> triangle = detect2(graph);
+//		
+//		return triangle;
+//	}
 	
 	/**
 	 * method that detects triangle via the matrix multiplication method
@@ -138,7 +138,7 @@ public class DetectTriangle {
 	 * @param graph 		the graph to be checked
 	 * @return				the triangle vertices found if any
 	 */
-	public static Collection<Graph.Vertex<Integer>> detect2(UndirectedGraph<Integer,Integer> graph){
+	public static Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
 		//get the adjacency matrix
 		int[][] A = graph.getAdjacencyMatrix();
 		int[][] aSquared = null; 

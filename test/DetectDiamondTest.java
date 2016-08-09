@@ -24,7 +24,7 @@ public class DetectDiamondTest {
 	public void before(){
 		String fileName = "test\\testdata\\diamondtestdata.txt";
 		graph = Utility.makeGraphFromFile(fileName);
-		lowDegreeVertices = Utility.partitionVertices(graph)[0];
+		lowDegreeVertices = DetectDiamond.partitionVertices(graph)[0];
 	}
 	
 	@Test

@@ -1,8 +1,8 @@
 package listing;
 import java.util.*;
 
-import efficientdetection.MatrixException;
 import general.Graph;
+import general.MatrixException;
 import general.Graph.Vertex;
 import general.UndirectedGraph;
 import general.Utility;
@@ -39,13 +39,16 @@ public class ListDiamonds {
 //			String fileName = "matrix2.txt";
 //			String fileName = "generated_graphs\\size_5\\graph_5_0.7_4.txt";
 //			String fileName = "generated_graphs\\size_6\\graph_6_0.6_3.txt";
-			String fileName = "test\\testdata\\diamondtestdata.txt";
+//			String fileName = "test\\testdata\\diamondtestdata.txt";
 //			String fileName = "generated_graphs\\size_300\\graph_300_0.9_1.txt";
-//			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
+			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
 //			String fileName = "test\\testdata\\diamondtestdata.txt";
 //			UndirectedGraph<Integer,Integer> graphs[a] = Utility.makeGraphFromFile(fileName);
 			graph = Utility.makeGraphFromFile(fileName);
+			
+			long sta = System.currentTimeMillis();
 			List<Collection<Graph.Vertex<Integer>>> diamonds = detect(graph);
+			long sto = System.currentTimeMillis();
 //			
 //			if(diamond!=null){
 //				Utility.printGraph(diamond);
@@ -67,8 +70,9 @@ public class ListDiamonds {
 			for(Collection<Graph.Vertex<Integer>> d: diamonds){
 				Utility.printGraph(Utility.makeGraphFromVertexSet(graph, d));
 			}
-			System.out.println(time);
+//			System.out.println(time);
 			System.out.println("No of diamonds found = "+diamonds.size());
+			System.out.println("Time taken in milliseconds: "+(sto-sta));
 			resetTime();
 		}
 		
@@ -85,7 +89,7 @@ public class ListDiamonds {
 		List<Collection<Graph.Vertex<Integer>>> diamonds = new ArrayList<Collection<Graph.Vertex<Integer>>>(); 
 		
 		//partition graph vertices into low and high degree vertices
-		List[] verticesPartition = Utility.partitionVertices(graph);
+		List[] verticesPartition = partitionVertices(graph);
 		List<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
 		List<Graph.Vertex<Integer>> highDegreeVertices = verticesPartition[1];
 		
@@ -435,4 +439,37 @@ public class ListDiamonds {
 		}
 	}
 	
+	//method to partition the vertices into low degree vertices and high degree vertices
+	public static List<Graph.Vertex<Integer>>[] partitionVertices(UndirectedGraph<Integer,Integer> graph){
+		List<Graph.Vertex<Integer>>[] vertices = new List[2];
+		vertices[0] = new ArrayList<Graph.Vertex<Integer>>();
+		vertices[1] = new ArrayList<Graph.Vertex<Integer>>();
+		
+		//get vertices
+		Iterator<Graph.Vertex<Integer>> vertexIterator = graph.vertices();
+		
+		//get edges
+		Iterator<Graph.Edge<Integer>> edgeIterator = graph.edges();
+		
+		//get number of edges
+		int noOfEdges = 0;
+		while(edgeIterator.hasNext()){
+			edgeIterator.next();
+			noOfEdges++;
+		}
+		
+
+		//calculate D for Graph.Vertex partitioning
+		double D = Math.sqrt(noOfEdges);
+		
+		while(vertexIterator.hasNext()){
+			Graph.Vertex<Integer> v = vertexIterator.next();
+			if(graph.degree(v)>D)
+				vertices[1].add(v);
+			else
+				vertices[0].add(v);
+		}
+		
+		return vertices;
+	}
 }

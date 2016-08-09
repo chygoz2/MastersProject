@@ -25,8 +25,8 @@ public class ListK4Test {
 	public void before(){
 		String fileName = "test\\testdata\\k4testdata.txt";
 		graph = Utility.makeGraphFromFile(fileName);
-		lowDegreeVertices = Utility.partitionVertices(graph)[0];
-		highDegreeVertices = Utility.partitionVertices(graph)[1];
+		lowDegreeVertices = ListK4.partitionVertices(graph)[0];
+		highDegreeVertices = ListK4.partitionVertices(graph)[1];
 	}
 	
 	@Test

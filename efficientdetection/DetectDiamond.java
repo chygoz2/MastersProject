@@ -2,6 +2,7 @@ package efficientdetection;
 import java.util.*;
 
 import general.Graph;
+import general.MatrixException;
 import general.Graph.Vertex;
 import general.UndirectedGraph;
 import general.Utility;
@@ -40,11 +41,14 @@ public class DetectDiamond {
 //			String fileName = "generated_graphs\\size_5\\graph_5_0.7_4.txt";
 //			String fileName = "generated_graphs\\size_6\\graph_6_0.6_3.txt";
 //			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
-			String fileName = "test\\testdata\\diamondtestdata.txt";
+//			String fileName = "test\\testdata\\diamondtestdata.txt";
 //			String fileName = "generated_graphs\\size_300\\graph_300_0.9_1.txt";
+			String fileName = "generated_graphs\\size_150\\graph_150_1.0_1.txt";
 //			UndirectedGraph<Integer,Integer> graphs[a] = Utility.makeGraphFromFile(fileName);
 			graph = Utility.makeGraphFromFile(fileName);
+			long sta = System.currentTimeMillis();
 			List<Graph.Vertex<Integer>> diamond = detect(graph);
+			long sto = System.currentTimeMillis();
 			
 			if(diamond!=null){
 				Utility.printGraph(Utility.makeGraphFromVertexSet(graph,diamond));
@@ -52,6 +56,7 @@ public class DetectDiamond {
 			else{
 				System.out.println("Diamond not found");
 			}
+			System.out.println("Time taken in milliseconds: " + (sto-sta));
 		}
 	}
 	
@@ -64,7 +69,7 @@ public class DetectDiamond {
 		time+="size_"+graph.size()+"_";
 		
 		//partition graph vertices into low and high degree vertices
-		List<Graph.Vertex<Integer>>[] verticesPartition = Utility.partitionVertices(graph);
+		List<Graph.Vertex<Integer>>[] verticesPartition = partitionVertices(graph);
 		List<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
 		
 		long starttime = System.currentTimeMillis();
@@ -136,12 +141,10 @@ public class DetectDiamond {
 						//if a P3 is found, then the graph contains a diamond
 						
 						//produce one such diamond 
-						if(phaseOneResults.get("diamond") == null){ //check if a diamond was previously stored
-							resultList.add(v);
-							//get the subgraph induced by the vertex set comprising of the P3 vertices and the current low degree vertex
-							phaseOneResults.put("diamond", resultList);
-							break here;
-						}
+						resultList.add(v);
+						//get the subgraph induced by the vertex set comprising of the P3 vertices and the current low degree vertex
+						phaseOneResults.put("diamond", resultList);
+						break here;
 					}
 				}
 			}
@@ -369,5 +372,39 @@ public class DetectDiamond {
 		}
 	
 		return null;
+	}
+	
+	//method to partition the vertices into low degree vertices and high degree vertices
+	public static List<Graph.Vertex<Integer>>[] partitionVertices(UndirectedGraph<Integer,Integer> graph){
+		List<Graph.Vertex<Integer>>[] vertices = new List[2];
+		vertices[0] = new ArrayList<Graph.Vertex<Integer>>();
+		vertices[1] = new ArrayList<Graph.Vertex<Integer>>();
+		
+		//get vertices
+		Iterator<Graph.Vertex<Integer>> vertexIterator = graph.vertices();
+		
+		//get edges
+		Iterator<Graph.Edge<Integer>> edgeIterator = graph.edges();
+		
+		//get number of edges
+		int noOfEdges = 0;
+		while(edgeIterator.hasNext()){
+			edgeIterator.next();
+			noOfEdges++;
+		}
+		
+
+		//calculate D for Vertex partitioning
+		double D = Math.sqrt(noOfEdges);
+		
+		while(vertexIterator.hasNext()){
+			Graph.Vertex<Integer> v = vertexIterator.next();
+			if(graph.degree(v)>D)
+				vertices[1].add(v);
+			else
+				vertices[0].add(v);
+		}
+		
+		return vertices;
 	}
 }

@@ -9,8 +9,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import javax.swing.JOptionPane;
 
-import efficientdetection.MatrixException;
-
 public final class Utility {
 	
 	public static UndirectedGraph<Integer,Integer> makeGraphFromFile(String fileName){
@@ -319,43 +317,6 @@ public final class Utility {
 			System.out.print("{"+edge.getSource().getElement()+", "+ edge.getDestination().getElement()+"},");
 		}
 		System.out.println();
-	}
-	
-	//method to partition the vertices into low degree vertices and high degree vertices
-	public static List<Graph.Vertex<Integer>>[] partitionVertices(UndirectedGraph<Integer,Integer> graph){
-		List<Graph.Vertex<Integer>>[] vertices = new List[2];
-		vertices[0] = new ArrayList<Graph.Vertex<Integer>>();
-		vertices[1] = new ArrayList<Graph.Vertex<Integer>>();
-		
-		//get vertices
-		Iterator<Graph.Vertex<Integer>> vertexIterator = graph.vertices();
-		
-		//get edges
-		Iterator<Graph.Edge<Integer>> edgeIterator = graph.edges();
-		
-		//get number of edges
-		int noOfEdges = 0;
-		while(edgeIterator.hasNext()){
-			edgeIterator.next();
-			noOfEdges++;
-		}
-		
-
-		//calculate D for Graph.Vertex partitioning
-		//double alpha = 2.376; //constant from Coppersmith-Winograd matrix multiplication algorithm
-		double alpha = 3;
-		double pow = (alpha-1)/(alpha+1);
-		double D = Math.pow(noOfEdges, pow);
-		
-		while(vertexIterator.hasNext()){
-			Graph.Vertex<Integer> v = vertexIterator.next();
-			if(graph.degree(v)>D)
-				vertices[1].add(v);
-			else
-				vertices[0].add(v);
-		}
-		
-		return vertices;
 	}
 	
 	public static int[][] multiplyMatrix(int[][] a, int[][] b) throws MatrixException{
