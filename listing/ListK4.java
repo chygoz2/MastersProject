@@ -41,7 +41,7 @@ public class ListK4 {
 	}
 	
 	public static List<Collection<Graph.Vertex<Integer>>> phaseOne(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> highDegreeVertices){
-		List<Set<Integer>> marked = new ArrayList<Set<Integer>>(); //to prevent creating the same k4 more than once
+		Hashtable<Integer,List<Set<Integer>>> marked = new Hashtable<Integer,List<Set<Integer>>>(); //to prevent creating the same k4 more than once
 		List<Collection<Graph.Vertex<Integer>>> k4List = new ArrayList<Collection<Graph.Vertex<Integer>>>();
 			
 		for(Graph.Vertex<Integer> x: highDegreeVertices){
@@ -77,18 +77,33 @@ public class ListK4 {
 				}
 				
 				//check in the marked list for an entry that contains all 4 vertex elements
-				boolean contains = false;
+				boolean contains = false;		
 				
-				for(Set<Integer> s: marked){
-					if(s.containsAll(k4VerticesElem)){
-						contains = true;
-						break;
+				Integer key = null;
+				for(Integer k:k4VerticesElem){
+					key = k;
+					break;
+				}
+				
+				List<Set<Integer>> list = marked.get(key);
+				if(list!=null){
+					for(Set<Integer> s: list){
+						if(s.containsAll(k4VerticesElem)){
+							contains = true;
+							break;
+						}
 					}
 				}
 				
+				
 				if(!contains){
 					k4List.add(k4Vertices);
-					marked.add(k4VerticesElem);
+					
+					if(list==null){
+						list = new ArrayList<Set<Integer>>();
+						marked.put(key,list);
+					}
+					list.add(k4VerticesElem);
 				}
 				
 			}
@@ -98,7 +113,7 @@ public class ListK4 {
 	}
 	
 	public static List<Collection<Graph.Vertex<Integer>>> phaseTwo(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> lowDegreeVertices){
-		List<Set<Integer>> marked = new ArrayList<Set<Integer>>(); //to prevent creating the same k4 more than once
+		Hashtable<Integer,List<Set<Integer>>> marked = new Hashtable<Integer,List<Set<Integer>>>(); //to prevent creating the same k4 more than once
 		List<Collection<Graph.Vertex<Integer>>> k4List = new ArrayList<Collection<Graph.Vertex<Integer>>>();
 			
 		for(Graph.Vertex<Integer> x: lowDegreeVertices){
@@ -130,16 +145,29 @@ public class ListK4 {
 				//check in the marked list for an entry that contains all 4 vertex elements
 				boolean contains = false;
 				
-				for(Set<Integer> s: marked){
-					if(s.containsAll(k4VerticesElem)){
-						contains = true;
-						break;
+				Integer key = null;
+				for(Integer k:k4VerticesElem){
+					key = k;
+					break;
+				}
+				
+				List<Set<Integer>> list = marked.get(key);
+				if(list!=null){
+					for(Set<Integer> s: list){
+						if(s.containsAll(k4VerticesElem)){
+							contains = true;
+							break;
+						}
 					}
 				}
 				
 				if(!contains){
 					k4List.add(k4Vertices);
-					marked.add(k4VerticesElem);
+					if(list==null){
+						list = new ArrayList<Set<Integer>>();
+						marked.put(key,list);
+					}
+					list.add(k4VerticesElem);
 				}
 				
 			}
