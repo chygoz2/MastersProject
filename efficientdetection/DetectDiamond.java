@@ -15,7 +15,10 @@ import java.io.*;
  *
  */
 public class DetectDiamond {
-	private static String time = "";
+	private static String p1time = "-";
+	private static String p2time = "-";
+	private static String p3time = "-";
+	private static String found = "found";
 	
 	public static void main(String [] args) throws IOException{
 //		String fileName = "generated_graphs\\size_150\\graph_150_0.7_4.txt";
@@ -66,7 +69,6 @@ public class DetectDiamond {
 	 * @return  			the diamond subgraph
 	 */
 	public static List<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
-		time+="size_"+graph.size()+"_";
 		
 		//partition graph vertices into low and high degree vertices
 		List<Graph.Vertex<Integer>>[] verticesPartition = partitionVertices(graph);
@@ -75,7 +77,7 @@ public class DetectDiamond {
 		long starttime = System.currentTimeMillis();
 		Map<String,Object> phase1Results = DetectDiamond.phaseOne(lowDegreeVertices, graph);
 		long stoptime = System.currentTimeMillis();
-		time += "phase1("+(stoptime-starttime)+")_";
+		p1time = ""+(stoptime-starttime);
 		
 		Map<Integer,UndirectedGraph<Integer,Integer>> cli = (HashMap<Integer,UndirectedGraph<Integer,Integer>>)phase1Results.get("cliques");
 		
@@ -84,22 +86,20 @@ public class DetectDiamond {
 			starttime = System.currentTimeMillis();
 			diamond = DetectDiamond.phaseTwo(cli, graph);
 			stoptime = System.currentTimeMillis();
-			time += "phase2("+(stoptime-starttime)+")_";
+			p2time = ""+(stoptime-starttime);
 			
 			if(diamond==null){
 				starttime = System.currentTimeMillis();
 				diamond = DetectDiamond.phaseThree(graph, lowDegreeVertices);
 				stoptime = System.currentTimeMillis();
-				time += "phase3("+(stoptime-starttime)+")_";
+				p3time = ""+(stoptime-starttime);
 				
 			}
 		}
-		if(diamond!=null)
-			time+="1";
-		else
-			time+="0";
-		System.out.println(time);
-		DetectDiamond.resetTime();
+		if(diamond==null)
+			found = "not found";
+		System.out.println(getResult());
+		resetResult();
 		return diamond;
 	}
 	
@@ -264,21 +264,6 @@ public class DetectDiamond {
 	}
 	
 	/**
-	 * method to return a report of the time taken to execute the detection
-	 * @return		the report string
-	 */
-	public static String getTime(){
-		return time;
-	}
-	
-	/**
-	 * method to reset the report string
-	 */
-	public static void resetTime(){
-		time = "";
-	}
-	
-	/**
 	 * method that checks if a graph is a clique
 	 * @param graph 	the graph to be checked
 	 * @return 			the result of the check. 
@@ -406,5 +391,16 @@ public class DetectDiamond {
 		}
 		
 		return vertices;
+	}
+	
+	public static String getResult(){
+		String result = String.format("%-10s%-10s%-10s%-10s", p1time,p2time,p3time,found);
+		return result;
+	}
+	
+	public static void resetResult(){
+		p1time = "-";
+		p2time = "-";
+		found = "found";
 	}
 }

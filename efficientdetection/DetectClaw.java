@@ -8,7 +8,9 @@ import general.Utility;
 
 public class DetectClaw {
 	
-	private static String time = "";
+	private static String p1time = "-";
+	private static String p2time = "-";
+	private static String found = "found";
 	
 	public static void main(String [] args){
 //		UndirectedGraph graph = new UndirectedGraph();
@@ -67,21 +69,19 @@ public class DetectClaw {
 		long starttime = System.currentTimeMillis();
 		claw = phaseOne(graph);
 		long stoptime = System.currentTimeMillis();
-		time += "phase1("+(stoptime-starttime)+")_";
+		p1time = ""+(stoptime-starttime);
 		
 		if(claw==null){
 			starttime = System.currentTimeMillis();
 			claw = phaseTwo(graph);
 			stoptime = System.currentTimeMillis();
-			time += "phase2("+(stoptime-starttime)+")_";
+			p2time = ""+(stoptime-starttime);
 		}
 		
-		if(claw!=null)
-			time+="1";
-		else
-			time+="0";
-		System.out.println(time);
-		DetectClaw.resetTime();
+		if(claw==null)
+			found = "not found";
+		System.out.println(getResult());
+		resetResult();
 		return claw;
 	}
 	
@@ -178,11 +178,14 @@ public class DetectClaw {
 		return null;
 	}
 	
-	public static String getTime(){
-		return time;
+	public static String getResult(){
+		String result = String.format("%-10s%-10s%-10s", p1time,p2time,found);
+		return result;
 	}
 	
-	public static void resetTime(){
-		time = "";
+	public static void resetResult(){
+		p1time = "-";
+		p2time = "-";
+		found = "found";
 	}
 }

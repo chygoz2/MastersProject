@@ -7,7 +7,9 @@ import general.Utility;
 
 public class DetectK4 {
 	
-	private static String time = "";
+	private static String p1time = "-";
+	private static String p2time = "-";
+	private static String found = "found";
 	
 	public static void main(String [] args){
 //		UndirectedGraph<Integer, Integer> graph = new UndirectedGraph<Integer,Integer>();
@@ -45,9 +47,7 @@ public class DetectK4 {
 					
 	}
 	
-	public static Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
-		time+="size_"+graph.size()+"_";
-		
+	public static Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){		
 		List<Graph.Vertex<Integer>>[] verticesPartition = partitionVertices(graph);
 		
 		List<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
@@ -58,21 +58,19 @@ public class DetectK4 {
 		long starttime = System.currentTimeMillis();
 		k4 = phaseOne(graph, highDegreeVertices);
 		long stoptime = System.currentTimeMillis();
-		time += "phase1("+(stoptime-starttime)+")_";
+		p1time = ""+(stoptime-starttime);
 		
 		if(k4==null){
 			starttime = System.currentTimeMillis();
 			k4 = phaseTwo(graph, lowDegreeVertices);
 			stoptime = System.currentTimeMillis();
-			time += "phase2("+(stoptime-starttime)+")_";
+			p2time = ""+(stoptime-starttime);
 		}
 		
-		if(k4 != null)
-			time+="1";
-		else
-			time+="0";
-		//System.out.println(time);
-		DetectK4.resetTime();
+		if(k4==null)
+			found = "not found";
+		System.out.println(getResult());
+		resetResult();
 		return k4;
 	}
 	
@@ -173,11 +171,14 @@ public class DetectK4 {
 		return vertices;
 	}
 	
-	public static String getTime(){
-		return time;
+	public static String getResult(){
+		String result = String.format("%-10s%-10s%-10s", p1time,p2time,found);
+		return result;
 	}
 	
-	public static void resetTime(){
-		time = "";
+	public static void resetResult(){
+		p1time = "-";
+		p2time = "-";
+		found = "found";
 	}
 }

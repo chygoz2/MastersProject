@@ -3,7 +3,7 @@ import java.util.*;
 
 import general.*;
 
-public class ListKL {
+public class ListKL2 {
 	
 	private static String time = "-";
 	private static String found = "found";
@@ -117,7 +117,7 @@ public class ListKL {
 			int r = l%3;
 			
 			if(r==1){
-				List<Set<Integer>> marked = new ArrayList<Set<Integer>>(); //to prevent creating the same K(l-1) more than once
+				Hashtable<Integer,List<Set<Integer>>> marked = new Hashtable<Integer,List<Set<Integer>>>(); //to prevent creating the same K(l-1) more than once
 				//get the vertices in graph
 				Iterator<Graph.Vertex<Integer>> vertices = graph.vertices();
 				while(vertices.hasNext()){
@@ -143,23 +143,39 @@ public class ListKL {
 						//check in the marked list for an entry that contains all 3 vertex elements
 						boolean contains = false;
 						
-						for(Set<Integer> s: marked){
-							if(s.containsAll(hh)){
-								contains = true;
-								break;
+						Integer key = null;
+						for(Integer k:hh){
+							key = k;
+							break;
+						}
+						
+						List<Set<Integer>> list = marked.get(key);
+						if(list!=null){
+							for(Set<Integer> s: list){
+								if(s.containsAll(hh)){
+									contains = true;
+									break;
+								}
 							}
 						}
+					
 						
 						if(!contains){
 							//create Kl from kqPlusVertices list
 							klList.add(kqPlusVertices);
-							marked.add(hh);
+							
+							if(list==null){
+								list = new ArrayList<Set<Integer>>();
+								marked.put(key,list);
+							}
+							list.add(hh);
+							
 						}
 					}
 				}
 			}
 			else if(r==2){
-				List<Set<Integer>> marked = new ArrayList<Set<Integer>>(); //to prevent creating the same K(l-2) more than once
+				Hashtable<Integer,List<Set<Integer>>> marked = new Hashtable<Integer,List<Set<Integer>>>(); //to prevent creating the same K(l-2) more than once
 				//get edges
 				Iterator<Graph.Edge<Integer>> edges = graph.edges();
 				while(edges.hasNext()){
@@ -210,17 +226,30 @@ public class ListKL {
 						//check in the marked list for an entry that contains all 3 vertex elements
 						boolean contains = false;
 						
-						for(Set<Integer> s: marked){
-							if(s.containsAll(hh)){
-								contains = true;
-								break;
+						Integer key = null;
+						for(Integer k:hh){
+							key = k;
+							break;
+						}
+						
+						List<Set<Integer>> list = marked.get(key);
+						if(list!=null){
+							for(Set<Integer> s: list){
+								if(s.containsAll(hh)){
+									contains = true;
+									break;
+								}
 							}
 						}
 						
 						if(!contains){
 							//create Kl from kqPlusVertices list
 							klList.add(kqPlusVertices);
-							marked.add(hh);
+							if(list==null){
+								list = new ArrayList<Set<Integer>>();
+								marked.put(key,list);
+							}
+							list.add(hh);
 						}
 					}
 				}
@@ -293,7 +322,7 @@ public class ListKL {
 				//look for triangles in H
 				List<Collection<Graph.Vertex<Integer>>> triangles = find(H, 3);
 				
-				List<Set<Integer>> marked = new ArrayList<Set<Integer>>(); //to prevent creating the same Kl more than once
+				Hashtable<Integer,List<Set<Integer>>> marked = new Hashtable<Integer,List<Set<Integer>>>();//to prevent creating the same Kl more than once
 				
 				//get a triangle and get its corresponding vertices in G
 				for(Collection<Graph.Vertex<Integer>> triangle:triangles){
@@ -309,10 +338,19 @@ public class ListKL {
 					//check in the marked list for an entry that contains all kl vertex elements
 					boolean contains = false;
 					
-					for(Set<Integer> s: marked){
-						if(s.containsAll(hh)){
-							contains = true;
-							break;
+					Integer key = null;
+					for(Integer k:hh){
+						key = k;
+						break;
+					}
+					
+					List<Set<Integer>> list = marked.get(key);
+					if(list!=null){
+						for(Set<Integer> s: list){
+							if(s.containsAll(hh)){
+								contains = true;
+								break;
+							}
 						}
 					}
 					
@@ -323,7 +361,12 @@ public class ListKL {
 							klVertices.add(graph.getVertexWithElement(i));
 						
 						klList.add(klVertices);
-						marked.add(hh);
+						
+						if(list==null){
+							list = new ArrayList<Set<Integer>>();
+							marked.put(key,list);
+						}
+						list.add(hh);
 					}
 				}
 			}
