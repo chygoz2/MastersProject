@@ -53,7 +53,7 @@ public class ListClaws {
 	public static List<Collection<Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph){		
 		//for each vertex, check if the complement of its neighbour contains a triangle
 		List<Collection<Graph.Vertex<Integer>>> claws = new ArrayList<Collection<Graph.Vertex<Integer>>>();
-		List<Set<Integer>> seen = new ArrayList<Set<Integer>>(); //to prevent creating the same diamond more than once
+		Hashtable<Integer,List<Set<Integer>>> marked = new Hashtable<Integer,List<Set<Integer>>>(); //to prevent creating the same diamond more than once
 		
 		Iterator<Graph.Vertex<Integer>> vertices = graph.vertices();
 		
@@ -80,16 +80,29 @@ public class ListClaws {
 					//check in the seen list for an entry that contains all 4 vertex elements
 					boolean contains = false;
 					
-					for(Set<Integer> s: seen){
-						if(s.containsAll(clawListElem)){
-							contains = true;
-							break;
+					Integer key = null;
+					for(Integer k:clawListElem){
+						key = k;
+						break;
+					}
+					
+					List<Set<Integer>> list = marked.get(key);
+					if(list!=null){
+						for(Set<Integer> s: list){
+							if(s.containsAll(clawListElem)){
+								contains = true;
+								break;
+							}
 						}
 					}
 					
 					if(!contains){
 						claws.add((List<Vertex<Integer>>) claw);
-						seen.add(clawListElem);
+						if(list==null){
+							list = new ArrayList<Set<Integer>>();
+							marked.put(key,list);
+						}
+						list.add(clawListElem);
 					}
 				}
 			}

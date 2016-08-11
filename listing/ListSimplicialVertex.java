@@ -113,8 +113,10 @@ public class ListSimplicialVertex {
 		return simplicialVertices;
 	}
 	
-	public static List<Graph.Vertex<Integer>> phaseTwo(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> lowDegreeVertices, Collection<Graph.Vertex<Integer>> highDegreeVertices){
+	public static List<Graph.Vertex<Integer>> phaseTwo(UndirectedGraph<Integer,Integer> graph2, Collection<Graph.Vertex<Integer>> lowDegreeVertices, Collection<Graph.Vertex<Integer>> highDegreeVertices){
+		UndirectedGraph<Integer,Integer> graph = graph2.clone();
 		
+		//marked high degree vertices that have a low degree neighbour
 		List<Graph.Vertex<Integer>> markedVertices = new ArrayList<Graph.Vertex<Integer>>();
 		
 		for(Graph.Vertex<Integer> v: highDegreeVertices){
@@ -130,7 +132,7 @@ public class ListSimplicialVertex {
 		
 		//remove all low degree vertices from graph
 		for(Graph.Vertex<Integer> v: lowDegreeVertices){
-			graph.removeVertex(v);
+			graph.removeVertex(graph.getVertexWithElement(v.getElement()));
 		}	
 		
 		List<Graph.Vertex<Integer>> simplicialVertices = new ArrayList<Graph.Vertex<Integer>>();
@@ -166,7 +168,7 @@ public class ListSimplicialVertex {
 			//get v's neighbours
 
 			Graph.Vertex<Integer> x = vIt1.next();
-			if(!markedVertices.contains(graph.getVertexWithElement(x.getElement()))) //do check only on unmarked vertices from phase 2
+			if(!markedVertices.contains(graph.getVertexWithElement(x.getElement()))) //do check only on unmarked vertices 
 			{
 				Iterator<Graph.Vertex<Integer>> vNeigh = graph.neighbours(x);
 				

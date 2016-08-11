@@ -98,8 +98,8 @@ public class DetectDiamond {
 		}
 		if(diamond==null)
 			found = "not found";
-		System.out.println(getResult());
-		resetResult();
+//		System.out.println(getResult());
+//		resetResult();
 		return diamond;
 	}
 	
@@ -237,9 +237,10 @@ public class DetectDiamond {
 	 * @param lowDegreeVertices 	a list of low degree vertices
 	 * @return						a diamond subgraph if found
 	 */
-	public static List<Graph.Vertex<Integer>> phaseThree(UndirectedGraph<Integer,Integer> graph, List<Graph.Vertex<Integer>> lowDegreeVertices){
+	public static List<Graph.Vertex<Integer>> phaseThree(UndirectedGraph<Integer,Integer> graph2, List<Graph.Vertex<Integer>> lowDegreeVertices){
 		//remove low degree vertices from graph G
 		
+		UndirectedGraph<Integer,Integer> graph = graph2.clone();
 		for(Graph.Vertex<Integer> v: lowDegreeVertices){
 			graph.removeVertex(graph.getVertexWithElement(v.getElement()));
 		}
@@ -401,6 +402,7 @@ public class DetectDiamond {
 	public static void resetResult(){
 		p1time = "-";
 		p2time = "-";
+		p3time = "-";
 		found = "found";
 	}
 }

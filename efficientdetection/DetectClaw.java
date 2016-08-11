@@ -80,8 +80,6 @@ public class DetectClaw {
 		
 		if(claw==null)
 			found = "not found";
-		System.out.println(getResult());
-		resetResult();
 		return claw;
 	}
 	

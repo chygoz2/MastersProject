@@ -49,8 +49,8 @@ public class DetectTriangle {
 		
 		if(triangle==null)
 			found = "not found";
-		System.out.println(getResult());
-		resetResult();
+//		System.out.println(getResult());
+//		resetResult();
 		
 		return triangle;
 	}

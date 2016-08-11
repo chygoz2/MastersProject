@@ -39,11 +39,12 @@ public class DetectKL {
 //			System.out.println("Not found");
 //		}
 		
-		String fileName = "matrix5.txt";
+//		String fileName = "matrix5.txt";
+		String fileName = "generated_graphs\\size_20\\graph_20_1.0_9.txt";
 		UndirectedGraph graph = Utility.makeGraphFromFile(fileName);
 		
 		long starttime = System.currentTimeMillis();
-		List<UndirectedGraph<Integer,Integer>> k4List = detect(graph,4);
+		List<UndirectedGraph<Integer,Integer>> k4List = detect(graph,5);
 		long stoptime = System.currentTimeMillis();
 		
 		long timetaken = stoptime-starttime;
@@ -52,6 +53,7 @@ public class DetectKL {
 			Utility.printGraph(k4);
 		}
 		System.out.println("Time taken in milliseconds: "+timetaken);
+		System.out.println(k4List.size());
 	}
 	
 	/**

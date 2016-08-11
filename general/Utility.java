@@ -168,6 +168,7 @@ public final class Utility {
 			saveGraphToFile(g,p,i);
 		}
 	}
+	
 	public static void saveGraphToFile(UndirectedGraph<Integer,Integer> graph, double p, int no){
 		String out = "";
 		Iterator<Graph.Vertex<Integer>> vertices = graph.vertices();
@@ -195,7 +196,6 @@ public final class Utility {
 		String ggFolder = "generated_graphs";
 		File dir = new File(path+File.separator+ggFolder);
 		dir.mkdir();
-		
 		
 		//create folder for that size if not existing
 		File dir2 = new File(path+File.separator+ggFolder+File.separator+"size_"+size);
@@ -337,7 +337,7 @@ public final class Utility {
 	public static void main(String [] args){
 //		String fileName = "matrix.txt";
 //		Utility.makeGraphFromFile(fileName);
-		generateRandomGraphFile(300,0.9,1);
+		generateRandomGraphFile(1500,0.9,1);
 		
 //		double[][] a = {{1,2,3},{4,5,6},{7,8,9}};
 //		double[][] res = matrixMultiply(a,a);

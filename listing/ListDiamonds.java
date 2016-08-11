@@ -131,7 +131,7 @@ public class ListDiamonds {
 		
 		Map phaseOneResults = new HashMap(); //map for storing the results of the phase
 		List<Collection<Graph.Vertex<Integer>>> diamonds = new ArrayList<Collection<Graph.Vertex<Integer>>>();
-		List<Set<Integer>> seen = new ArrayList<Set<Integer>>(); //to prevent creating the same diamond more than once
+		Hashtable<Integer,List<Set<Integer>>> marked = new Hashtable<Integer,List<Set<Integer>>>(); //to prevent creating the same diamond more than once
 		
 		//create a map for storing cliques and which vertex's neighbourhood they are in
 		Map<Integer, List<UndirectedGraph<Integer,Integer>>> vertexCliques = new HashMap<Integer, List<UndirectedGraph<Integer,Integer>>>();
@@ -167,10 +167,19 @@ public class ListDiamonds {
 							//check in the seen list for an entry that contains all 4 vertex elements
 							boolean contains = false;
 							
-							for(Set<Integer> s: seen){
-								if(s.containsAll(diamondListElem)){
-									contains = true;
-									break;
+							Integer key = null;
+							for(Integer k:diamondListElem){
+								key = k;
+								break;
+							}
+							
+							List<Set<Integer>> list = marked.get(key);
+							if(list!=null){
+								for(Set<Integer> s: list){
+									if(s.containsAll(diamondListElem)){
+										contains = true;
+										break;
+									}
 								}
 							}
 							
@@ -178,7 +187,11 @@ public class ListDiamonds {
 							if(!contains){
 								UndirectedGraph<Integer,Integer> diamond = Utility.makeGraphFromVertexSet(graph, p3);
 								diamonds.add(p3);
-								seen.add(diamondListElem);
+								if(list==null){
+									list = new ArrayList<Set<Integer>>();
+									marked.put(key,list);
+								}
+								list.add(diamondListElem);
 							}
 						}
 					}
@@ -204,7 +217,7 @@ public class ListDiamonds {
 	 */
 	public static List<Collection<Graph.Vertex<Integer>>> phaseTwo(Map cliques, UndirectedGraph<Integer,Integer> graph){
 		List<Collection<Graph.Vertex<Integer>>> diamonds = new ArrayList<Collection<Graph.Vertex<Integer>>>();
-		List<Set<Integer>> seen = new ArrayList<Set<Integer>>(); //to prevent creating the same diamond more than once
+		Hashtable<Integer,List<Set<Integer>>> marked = new Hashtable<Integer,List<Set<Integer>>>(); //to prevent creating the same diamond more than once
 		
 		//get adjacency matrix of graph
 		int[][] A = graph.getAdjacencyMatrix();
@@ -269,16 +282,29 @@ public class ListDiamonds {
 							//check in the marked list for an entry that contains all 4 vertex elements
 							boolean contains = false;
 							
-							for(Set<Integer> s: seen){
-								if(s.containsAll(diamondListElem)){
-									contains = true;
-									break;
+							Integer key = null;
+							for(Integer k:diamondListElem){
+								key = k;
+								break;
+							}
+							
+							List<Set<Integer>> list = marked.get(key);
+							if(list!=null){
+								for(Set<Integer> s: list){
+									if(s.containsAll(diamondListElem)){
+										contains = true;
+										break;
+									}
 								}
 							}
 							
 							if(!contains){
 								diamonds.add(diamond);
-								seen.add(diamondListElem);
+								if(list==null){
+									list = new ArrayList<Set<Integer>>();
+									marked.put(key,list);
+								}
+								list.add(diamondListElem);
 							}
 						}
 					}

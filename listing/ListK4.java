@@ -118,16 +118,7 @@ public class ListK4 {
 			
 		for(Graph.Vertex<Integer> x: lowDegreeVertices){
 			//get x's neighbourhood graph
-			Iterator<Graph.Vertex<Integer>> nXIter = graph.neighbours(x);
-			List<Graph.Vertex<Integer>> nXList = new ArrayList<Graph.Vertex<Integer>>();
-
-			while(nXIter.hasNext()){
-				Graph.Vertex<Integer> v = nXIter.next();
-				nXList.add(v);
-			}
-			
-			//make graph from new list of vertices
-			UndirectedGraph<Integer,Integer> graph2 = Utility.makeGraphFromVertexSet(graph, nXList);
+			UndirectedGraph<Integer,Integer> graph2 = Utility.getNeighbourGraph(graph, x);
 
 			//get the triangles in the neighbourhood
 			List<Collection<Graph.Vertex<Integer>>> triangles = ListTriangles.detect(graph2);

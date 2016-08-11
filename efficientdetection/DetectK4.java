@@ -31,7 +31,7 @@ public class DetectK4 {
 //		graph.addEdge(v0, v3);
 //		
 ////		Utility.saveGraphToFile(graph, 1.0, 1);
-		String fileName = "matrix4.txt";
+		String fileName = "generated_graphs\\size_10\\graph_10_0.9_6.txt ";
 		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(fileName);
 		
 		long starttime = System.currentTimeMillis();
@@ -69,8 +69,7 @@ public class DetectK4 {
 		
 		if(k4==null)
 			found = "not found";
-		System.out.println(getResult());
-		resetResult();
+//		System.out.println(getResult());
 		return k4;
 	}
 	
@@ -95,15 +94,15 @@ public class DetectK4 {
 			//make graph from new list of vertices
 			UndirectedGraph<Integer,Integer> graph2 = Utility.makeGraphFromVertexSet(graph, nXList);
 
-			//get the triangles in the neighbourhood
+			//get a triangle in the neighbourhood
 			Collection<Graph.Vertex<Integer>> triangle = DetectTriangle.detect(graph2);
-			
-			List<Graph.Vertex<Integer>> k4Vertices = new ArrayList<Graph.Vertex<Integer>>(); //list to store k4 vertices
-			k4Vertices.addAll(triangle);
-			k4Vertices.add(x);
-			
-			return k4Vertices;
+			if(triangle!=null){
+				List<Graph.Vertex<Integer>> k4Vertices = new ArrayList<Graph.Vertex<Integer>>(); //list to store k4 vertices
+				k4Vertices.addAll(triangle);
+				k4Vertices.add(x);
 				
+				return k4Vertices;
+			}	
 		}
 		
 		return null;
@@ -113,25 +112,17 @@ public class DetectK4 {
 			
 		for(Graph.Vertex<Integer> x: lowDegreeVertices){
 			//get x's neighbourhood graph
-			Iterator<Graph.Vertex<Integer>> nXIter = graph.neighbours(x);
-			List<Graph.Vertex<Integer>> nXList = new ArrayList<Graph.Vertex<Integer>>();
+			UndirectedGraph<Integer,Integer> graph2 = Utility.getNeighbourGraph(graph, x);
 
-			while(nXIter.hasNext()){
-				Graph.Vertex<Integer> v = nXIter.next();
-				nXList.add(v);
-			}
-			
-			//make graph from new list of vertices
-			UndirectedGraph<Integer,Integer> graph2 = Utility.makeGraphFromVertexSet(graph, nXList);
-
-			//get the triangles in the neighbourhood
+			//check for triangle in the neighbourhood
 			Collection<Graph.Vertex<Integer>> triangle = DetectTriangle.detect(graph2);
-			
-			List<Graph.Vertex<Integer>> k4Vertices = new ArrayList<Graph.Vertex<Integer>>(); //list to store k4 vertices
-			k4Vertices.addAll(triangle);
-			k4Vertices.add(x);
-			
-			return k4Vertices;
+			if(triangle!=null){
+				List<Graph.Vertex<Integer>> k4Vertices = new ArrayList<Graph.Vertex<Integer>>(); //list to store k4 vertices
+				k4Vertices.addAll(triangle);
+				k4Vertices.add(x);
+				
+				return k4Vertices;
+			}
 			
 		}
 		return null;

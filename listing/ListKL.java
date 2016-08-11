@@ -43,7 +43,7 @@ public class ListKL {
 //		}
 		
 //		String fileName = "matrix5.txt";
-		String fileName = "generated_graphs\\size_15\\graph_15_1.0_1.txt";
+		String fileName = "generated_graphs\\size_20\\graph_20_1.0_9.txt";
 		UndirectedGraph<Integer, Integer> graph = Utility.makeGraphFromFile(fileName);
 		
 //		int[][] A = {{0,1,1,1,1,0,1},{1,0,1,1,1,1,1},{1,1,0,1,1,1,0},{1,1,1,0,1,0,0},{1,1,1,1,0,0,0},
@@ -55,9 +55,9 @@ public class ListKL {
 		
 		long timetaken = stoptime-starttime;
 		
-		for(Collection<Graph.Vertex<Integer>> k4: k4List){
-			Utility.printGraph(Utility.makeGraphFromVertexSet(graph, k4));
-		}
+//		for(Collection<Graph.Vertex<Integer>> k4: k4List){
+//			Utility.printGraph(Utility.makeGraphFromVertexSet(graph, k4));
+//		}
 		System.out.println("Time taken in milliseconds: "+timetaken);
 		System.out.println(k4List.size());
 	}
@@ -71,9 +71,6 @@ public class ListKL {
 		
 		if(kls.isEmpty())
 			found = "not found";
-		System.out.println(getResult());
-		resetResult();
-		
 		return kls;
 	}
 	
