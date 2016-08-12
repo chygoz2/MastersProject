@@ -24,10 +24,10 @@ public class Evaluator2 {
 	static boolean done;
 	
 	 public static void main(String[] args) {
-        BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<Runnable>(3);
+        BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<Runnable>(20);
  
-        ThreadPoolExecutor executor = new ThreadPoolExecutor(3,
-                                            3, 60000, TimeUnit.MILLISECONDS, blockingQueue);
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(20,
+                                            20, 60000, TimeUnit.MILLISECONDS, blockingQueue);
  
         executor.setRejectedExecutionHandler(new RejectedExecutionHandler() {
             @Override
@@ -50,35 +50,39 @@ public class Evaluator2 {
         executor.prestartAllCoreThreads();
         
         int i = 1;
+        int start = Integer.parseInt(args[0]);
+        int end = Integer.parseInt(args[1]);
+        int no = Integer.parseInt(args[2]); 
+        String generateGraphs = args[3];
+        
         
 //        //generate random graphs
-//        int start = Integer.parseInt(args[0]);
-//        int end = Integer.parseInt(args[1]);
-//        int no = Integer.parseInt(args[2]); 
-////        for(int j=start; j<=end; j+=100){
-////        	Runnable r = new GraphGenerator(j,i,no);
-////        	executor.execute(r);
-////        }
-//        
-//        done = false;
-//		new Thread(new Runnable(){
-//
-//			@Override
-//			public void run() {
-//				generateRandomGraphs(start, end, no);
-//			}
-//			
-//		}).start();
-//		System.out.print("Generating graphs");
-//		while(!done){
-//			System.out.print(".");
-//			try {
-//				Thread.sleep(1000);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//		System.out.println("Done");
+//        for(int j=start; j<=end; j+=100){
+//        	Runnable r = new GraphGenerator(j,i,no);
+//        	executor.execute(r);
+//        }
+        
+        if(generateGraphs.equals("gg")){
+	        done = false;
+			new Thread(new Runnable(){
+	
+				@Override
+				public void run() {
+					generateRandomGraphs(start, end, no);
+				}
+				
+			}).start();
+			System.out.print("Generating graphs");
+			while(!done){
+				System.out.print(".");
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			System.out.println("Done");
+        }
         
         long star = System.currentTimeMillis();
         System.out.println("Reading graphs");
@@ -116,11 +120,11 @@ public class Evaluator2 {
         	executor.execute(r);
         }
         
-//        //run detect Kl tests
-//        for(String graph: graphs){
-//        	Runnable r = new DetectKLRunner(graph,i++);
-//        	executor.execute(r);
-//        }
+        //run detect Kl tests
+        for(String graph: graphs){
+        	Runnable r = new DetectKLRunner(graph,i++);
+        	executor.execute(r);
+        }
         
         i = 1;
         System.out.println("Running simplicial detection");
