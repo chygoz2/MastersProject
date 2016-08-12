@@ -22,6 +22,7 @@ import listing.ListKL;
 
 public class Evaluator2 {
 	static boolean done;
+	static int start=0, end=0, no=0;
 	
 	 public static void main(String[] args) {
         BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<Runnable>(20);
@@ -50,10 +51,13 @@ public class Evaluator2 {
         executor.prestartAllCoreThreads();
         
         int i = 1;
-        int start = Integer.parseInt(args[0]);
-        int end = Integer.parseInt(args[1]);
-        int no = Integer.parseInt(args[2]); 
-        String generateGraphs = args[3];
+        String generateGraphs = "";
+        if(args.length>0){
+        	start = Integer.parseInt(args[0]);
+	        end = Integer.parseInt(args[1]);
+	        no = Integer.parseInt(args[2]); 
+	        generateGraphs = args[3];
+        }
         
         
 //        //generate random graphs
