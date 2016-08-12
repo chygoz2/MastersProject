@@ -1,2 +1,2 @@
 File name                     Graph size  Result
-graph_16_0.3_2.txt            16          0         0         found     
+graph_16_0.3_2.txt            16          0         1         found     

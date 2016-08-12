@@ -1,2 +1,2 @@
 File name                     Graph size  Result
-graph_19_0.2_4.txt            19          6         -         -         found     
+graph_19_0.2_4.txt            19          0         -         -         found     

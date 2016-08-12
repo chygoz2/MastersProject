@@ -51,35 +51,36 @@ public class Evaluator2 {
         
         int i = 1;
         
-        //generate random graphs
-        int start = Integer.parseInt(args[0]);
-        int end = Integer.parseInt(args[1]);
-        int no = Integer.parseInt(args[2]); 
-//        for(int j=start; j<=end; j+=100){
-//        	Runnable r = new GraphGenerator(j,i,no);
-//        	executor.execute(r);
-//        }
+//        //generate random graphs
+//        int start = Integer.parseInt(args[0]);
+//        int end = Integer.parseInt(args[1]);
+//        int no = Integer.parseInt(args[2]); 
+////        for(int j=start; j<=end; j+=100){
+////        	Runnable r = new GraphGenerator(j,i,no);
+////        	executor.execute(r);
+////        }
+//        
+//        done = false;
+//		new Thread(new Runnable(){
+//
+//			@Override
+//			public void run() {
+//				generateRandomGraphs(start, end, no);
+//			}
+//			
+//		}).start();
+//		System.out.print("Generating graphs");
+//		while(!done){
+//			System.out.print(".");
+//			try {
+//				Thread.sleep(1000);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		System.out.println("Done");
         
-        done = false;
-		new Thread(new Runnable(){
-
-			@Override
-			public void run() {
-				generateRandomGraphs(start, end, no);
-			}
-			
-		}).start();
-		System.out.print("Generating graphs");
-		while(!done){
-			System.out.print(".");
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		System.out.println("Done");
-        
+        long star = System.currentTimeMillis();
         System.out.println("Reading graphs");
         List<String> graphs = getGeneratedFiles();
         System.out.println("Done");
@@ -129,6 +130,8 @@ public class Evaluator2 {
         	executor.execute(r);
         }
         executor.shutdown();
+        long stop = System.currentTimeMillis();
+        System.out.println("Time taken: "+(stop-star));
     }
 	 
 	public static class DetectTriangleRunner implements Runnable{

@@ -5,8 +5,14 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.*;
 
+import efficientdetection.DetectClaw;
+import efficientdetection.DetectDiamond;
+import efficientdetection.DetectK4;
+import efficientdetection.DetectSimplicialVertex;
+import efficientdetection.DetectTriangle;
 import general.UndirectedGraph;
 import general.Utility;
+import listing.ListKL;
 
 public class Evaluator {
 
@@ -15,16 +21,16 @@ public class Evaluator {
 	
 	public static void main(String[] args) throws InterruptedException {
 		//generate graphs
-		done = false;
-		new Thread(new Runnable(){
-
-			@Override
-			public void run() {
-				generateRandomGraphs(20, 15);
-			}
-			
-		}).start();
-		System.out.print("Generating graphs");
+//		done = false;
+//		new Thread(new Runnable(){
+//
+//			@Override
+//			public void run() {
+//				generateRandomGraphs(20, 15);
+//			}
+//			
+//		}).start();
+//		System.out.print("Generating graphs");
 //		while(!done){
 //			System.out.print(".");
 //			try {
@@ -35,6 +41,7 @@ public class Evaluator {
 //		}
 //		System.out.println("Done");
 		
+		long start = System.currentTimeMillis();
 		//get graphs
 		done = false;
 		new Thread(new Runnable(){
@@ -145,6 +152,9 @@ public class Evaluator {
 			Thread.sleep(1000);
 		}
 		System.out.println("Done");
+		long stop = System.currentTimeMillis();
+		
+		System.out.println("Time taken: "+(stop-start));
 		
 		//run Kl listing
 //		done = false;
@@ -208,12 +218,13 @@ public class Evaluator {
 		String output = String.format("%-30s%-12s%s%n", "File name","Graph size","Result");
 		for(String gname: graphs){
 			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(gname);
-			efficientdetection.DetectTriangle.detect(graph);
-			String result = efficientdetection.DetectTriangle.getResult();
+			DetectTriangle d = new DetectTriangle();
+			d.detect(graph);
+			String result = d.getResult();
 			int index = gname.lastIndexOf("graph");
 			String name = gname.substring(index);
 			output += String.format("%-30s%-12s%s%n", name,graph.size(),result);
-			efficientdetection.DetectTriangle.resetResult();
+			d.resetResult();
 		}
 		saveResultToFile(output, "efficient_triangle_detection_result");
 		done = true;
@@ -223,12 +234,13 @@ public class Evaluator {
 		String output = String.format("%-30s%-12s%s%n", "File name","Graph size","Result");
 		for(String gname: graphs){
 			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(gname);
-			efficientdetection.DetectDiamond.detect(graph);
-			String result = efficientdetection.DetectDiamond.getResult();
+			DetectDiamond d = new DetectDiamond();
+			d.detect(graph);
+			String result = d.getResult();
 			int index = gname.lastIndexOf("graph");
 			String name = gname.substring(index);
 			output += String.format("%-30s%-12s%s%n", name,graph.size(),result);
-			efficientdetection.DetectDiamond.resetResult();
+			d.resetResult();
 		}
 		saveResultToFile(output, "efficient_diamond_detection_result");
 		done = true;
@@ -238,12 +250,12 @@ public class Evaluator {
 		String output = String.format("%-30s%-12s%s%n", "File name","Graph size","Result");
 		for(String gname: graphs){
 			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(gname);
-			efficientdetection.DetectK4.detect(graph);
-			String result = efficientdetection.DetectK4.getResult();
+			DetectK4 d = new DetectK4();
+			String result = d.getResult();
 			int index = gname.lastIndexOf("graph");
 			String name = gname.substring(index);
 			output += String.format("%-30s%-12s%s%n", name,graph.size(),result);
-			efficientdetection.DetectK4.resetResult();
+			d.resetResult();
 		}
 		saveResultToFile(output, "efficient_K4_detection_result");
 		done = true;
@@ -253,12 +265,13 @@ public class Evaluator {
 		String output = String.format("%-30s%-12s%s%n", "File name","Graph size","Result");
 		for(String gname: graphs){
 			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(gname);
-			efficientdetection.DetectClaw.detect(graph);
-			String result = efficientdetection.DetectClaw.getResult();
+			DetectClaw d = new DetectClaw();
+			d.detect(graph);
+			String result = d.getResult();
 			int index = gname.lastIndexOf("graph");
 			String name = gname.substring(index);
 			output += String.format("%-30s%-12s%s%n", name,graph.size(),result);
-			efficientdetection.DetectClaw.resetResult();
+			d.resetResult();
 		}
 		saveResultToFile(output, "efficient_Claw_detection_result");
 		done = true;
@@ -268,12 +281,13 @@ public class Evaluator {
 		String output = String.format("%-30s%-12s%s%n", "File name","Graph size","Result");
 		for(String gname: graphs){
 			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(gname);
-			efficientdetection.DetectSimplicialVertex.detect(graph);
-			String result = efficientdetection.DetectSimplicialVertex.getResult();
+			DetectSimplicialVertex d = new DetectSimplicialVertex();
+			d.detect(graph);
+			String result = d.getResult();
 			int index = gname.lastIndexOf("graph");
 			String name = gname.substring(index);
 			output += String.format("%-30s%-12s%s%n", name,graph.size(),result);
-			efficientdetection.DetectSimplicialVertex.resetResult();
+			d.resetResult();
 		}
 		saveResultToFile(output, "efficient_Simplicial_vertex_detection_result");
 		done = true;
@@ -283,12 +297,13 @@ public class Evaluator {
 		String output = String.format("%-30s%-12s%s%n", "File name","Graph size","Result");
 		for(String gname: graphs){
 			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(gname);
-			listing.ListKL.detect(graph,l);
-			String result = listing.ListKL.getResult();
+			ListKL d = new ListKL();
+			d.detect(graph,l);
+			String result = d.getResult();
 			int index = gname.lastIndexOf("graph");
 			String name = gname.substring(index);
 			output += String.format("%-30s%-12s%s%n", name,graph.size(),result);
-			listing.ListKL.resetResult();
+			d.resetResult();
 		}
 		saveResultToFile(output, "efficient_KL_listing_result");
 		done = true;

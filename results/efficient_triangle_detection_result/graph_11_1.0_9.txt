@@ -1,2 +1,2 @@
 File name                     Graph size  Result
-graph_11_1.0_9.txt            11          1         found     
+graph_11_1.0_9.txt            11          0         found     

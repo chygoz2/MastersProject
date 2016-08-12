@@ -1,2 +1,2 @@
 File name                     Graph size  Result
-graph_19_0.9_1.txt            19          0         0         0         found     
+graph_19_0.9_1.txt            19          0         0         1         found     
