@@ -11,7 +11,8 @@ public class ListK4 {
 	
 	public static void main(String [] args){
 		
-		String fileName = "matrix4.txt";
+//		String fileName = "matrix4.txt";
+		String fileName = "generated_graphs\\size_20\\graph_20_1.0_9.txt";
 		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(fileName);
 		
 		long starttime = System.currentTimeMillis();
@@ -24,6 +25,7 @@ public class ListK4 {
 			Utility.printGraph(Utility.makeGraphFromVertexSet(graph, k4));
 		}
 		System.out.println("Time taken in milliseconds: "+timetaken);
+		System.out.println(k4List.size());
 					
 	}
 	
@@ -41,7 +43,7 @@ public class ListK4 {
 	}
 	
 	public static List<Collection<Graph.Vertex<Integer>>> phaseOne(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> highDegreeVertices){
-		Hashtable<Integer,List<Set<Integer>>> marked = new Hashtable<Integer,List<Set<Integer>>>(); //to prevent creating the same k4 more than once
+		Set<Set<Integer>> marked = new HashSet<Set<Integer>>(); //to prevent creating the same k4 more than once
 		List<Collection<Graph.Vertex<Integer>>> k4List = new ArrayList<Collection<Graph.Vertex<Integer>>>();
 			
 		for(Graph.Vertex<Integer> x: highDegreeVertices){
@@ -77,35 +79,11 @@ public class ListK4 {
 				}
 				
 				//check in the marked list for an entry that contains all 4 vertex elements
-				boolean contains = false;		
+				boolean contains = marked.add(k4VerticesElem);						
 				
-				Integer key = null;
-				for(Integer k:k4VerticesElem){
-					key = k;
-					break;
-				}
-				
-				List<Set<Integer>> list = marked.get(key);
-				if(list!=null){
-					for(Set<Integer> s: list){
-						if(s.containsAll(k4VerticesElem)){
-							contains = true;
-							break;
-						}
-					}
-				}
-				
-				
-				if(!contains){
+				if(contains){
 					k4List.add(k4Vertices);
-					
-					if(list==null){
-						list = new ArrayList<Set<Integer>>();
-						marked.put(key,list);
-					}
-					list.add(k4VerticesElem);
 				}
-				
 			}
 		}
 		
@@ -113,7 +91,7 @@ public class ListK4 {
 	}
 	
 	public static List<Collection<Graph.Vertex<Integer>>> phaseTwo(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> lowDegreeVertices){
-		Hashtable<Integer,List<Set<Integer>>> marked = new Hashtable<Integer,List<Set<Integer>>>(); //to prevent creating the same k4 more than once
+		Set<Set<Integer>> marked = new HashSet<Set<Integer>>(); //to prevent creating the same k4 more than once
 		List<Collection<Graph.Vertex<Integer>>> k4List = new ArrayList<Collection<Graph.Vertex<Integer>>>();
 			
 		for(Graph.Vertex<Integer> x: lowDegreeVertices){
@@ -134,33 +112,11 @@ public class ListK4 {
 				}
 				
 				//check in the marked list for an entry that contains all 4 vertex elements
-				boolean contains = false;
+				boolean contains = marked.add(k4VerticesElem);
 				
-				Integer key = null;
-				for(Integer k:k4VerticesElem){
-					key = k;
-					break;
-				}
-				
-				List<Set<Integer>> list = marked.get(key);
-				if(list!=null){
-					for(Set<Integer> s: list){
-						if(s.containsAll(k4VerticesElem)){
-							contains = true;
-							break;
-						}
-					}
-				}
-				
-				if(!contains){
+				if(contains){
 					k4List.add(k4Vertices);
-					if(list==null){
-						list = new ArrayList<Set<Integer>>();
-						marked.put(key,list);
-					}
-					list.add(k4VerticesElem);
 				}
-				
 			}
 		}
 		

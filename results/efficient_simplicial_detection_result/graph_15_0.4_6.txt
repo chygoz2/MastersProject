@@ -1,0 +1,2 @@
+File name                     Graph size  Result
+graph_15_0.4_6.txt            15          1         0         found     

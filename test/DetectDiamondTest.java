@@ -24,12 +24,12 @@ public class DetectDiamondTest {
 	public void before(){
 		String fileName = "test\\testdata\\diamondtestdata.txt";
 		graph = Utility.makeGraphFromFile(fileName);
-		lowDegreeVertices = DetectDiamond.partitionVertices(graph)[0];
+		lowDegreeVertices = new DetectDiamond().partitionVertices(graph)[0];
 	}
 	
 	@Test
 	public void testDetect(){
-		List<Graph.Vertex<Integer>> d = DetectDiamond.detect(graph);
+		List<Graph.Vertex<Integer>> d = new DetectDiamond().detect(graph);
 		
 		List<Integer> actualResult = new ArrayList<Integer>();
 		for(Graph.Vertex<Integer> v: d){

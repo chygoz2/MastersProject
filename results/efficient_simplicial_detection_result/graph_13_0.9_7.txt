@@ -1,0 +1,2 @@
+File name                     Graph size  Result
+graph_13_0.9_7.txt            13          0         0         not found 

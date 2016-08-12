@@ -283,12 +283,12 @@ public class Evaluator {
 		String output = String.format("%-30s%-12s%s%n", "File name","Graph size","Result");
 		for(String gname: graphs){
 			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(gname);
-			listing.ListKL3.detect(graph,l);
-			String result = listing.ListKL3.getResult();
+			listing.ListKL.detect(graph,l);
+			String result = listing.ListKL.getResult();
 			int index = gname.lastIndexOf("graph");
 			String name = gname.substring(index);
 			output += String.format("%-30s%-12s%s%n", name,graph.size(),result);
-			listing.ListKL3.resetResult();
+			listing.ListKL.resetResult();
 		}
 		saveResultToFile(output, "efficient_KL_listing_result");
 		done = true;

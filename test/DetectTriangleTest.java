@@ -34,7 +34,7 @@ public class DetectTriangleTest {
 	 */
 	@Test
 	public void testDetect() {
-		List<Graph.Vertex<Integer>> actualResult = (List<Vertex<Integer>>) DetectTriangle.detect(graph);
+		List<Graph.Vertex<Integer>> actualResult = (List<Vertex<Integer>>) new DetectTriangle().detect(graph);
 		int[] expectedResult = {1,2,0}; //expected result should have 1 triangle 
 													//with the specified vertex elements
 		List<Integer> vList = new ArrayList<Integer>();

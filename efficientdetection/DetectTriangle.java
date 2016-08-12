@@ -8,8 +8,8 @@ import general.Utility;
 
 public class DetectTriangle {
 	
-	private static String time = "-";
-	private static String found = "found";
+	private String time = "-";
+	private String found = "found";
 	
 	public static void main(String[] args) {
 		UndirectedGraph<Integer,Integer> graph;
@@ -24,7 +24,8 @@ public class DetectTriangle {
 //			graph = Utility.makeGraphFromAdjacencyMatrix(A);
 			
 			long starttime = System.currentTimeMillis();
-			Collection<Graph.Vertex<Integer>> triangle = detect(graph);
+			DetectTriangle d = new DetectTriangle();
+			Collection<Graph.Vertex<Integer>> triangle = d.detect(graph);
 //			List<UndirectedGraph<Integer,Integer>> triangles = DetectKL.detect(graph,3);
 			long stoptime = System.currentTimeMillis();
 			
@@ -41,7 +42,7 @@ public class DetectTriangle {
 
 	}
 	
-	public static Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
+	public Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
 		long starttime = System.currentTimeMillis();
 		Collection<Graph.Vertex<Integer>> triangle= find(graph);
 		long stoptime = System.currentTimeMillis();
@@ -153,7 +154,7 @@ public class DetectTriangle {
 	 * @param graph 		the graph to be checked
 	 * @return				the triangle vertices found if any
 	 */
-	public static Collection<Graph.Vertex<Integer>> find(UndirectedGraph<Integer,Integer> graph){
+	public Collection<Graph.Vertex<Integer>> find(UndirectedGraph<Integer,Integer> graph){
 		//get the adjacency matrix
 		int[][] A = graph.getAdjacencyMatrix();
 		int[][] aSquared = null; 
@@ -200,12 +201,12 @@ public class DetectTriangle {
 		return null;
 	}
 	
-	public static String getResult(){
+	public String getResult(){
 		String result = String.format("%-10s%-10s", time,found);
 		return result;
 	}
 	
-	public static void resetResult(){
+	public void resetResult(){
 		time = "-";
 		found = "found";
 	}

@@ -25,13 +25,13 @@ public class DetectK4Test {
 	public void before(){
 		String fileName = "test\\testdata\\k4testdata.txt";
 		graph = Utility.makeGraphFromFile(fileName);
-		lowDegreeVertices = DetectK4.partitionVertices(graph)[0];
-		highDegreeVertices = DetectK4.partitionVertices(graph)[1];
+		lowDegreeVertices = new DetectK4().partitionVertices(graph)[0];
+		highDegreeVertices = new DetectK4().partitionVertices(graph)[1];
 	}
 	
 	@Test
 	public void testDetect(){
-		List<Graph.Vertex<Integer>> d = (List<Vertex<Integer>>) DetectK4.detect(graph);
+		List<Graph.Vertex<Integer>> d = (List<Vertex<Integer>>) new DetectK4().detect(graph);
 		
 		List<Integer> actualResult = new ArrayList<Integer>();
 		for(Graph.Vertex<Integer> v: d){

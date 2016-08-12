@@ -1,0 +1,2 @@
+File name                     Graph size  Result
+graph_17_0.3_5.txt            17          1         0         found     

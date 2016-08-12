@@ -1,0 +1,2 @@
+File name                     Graph size  Result
+graph_20_0.2_2.txt            20          0         0         found     

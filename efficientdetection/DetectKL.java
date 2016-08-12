@@ -44,7 +44,7 @@ public class DetectKL {
 		UndirectedGraph graph = Utility.makeGraphFromFile(fileName);
 		
 		long starttime = System.currentTimeMillis();
-		List<UndirectedGraph<Integer,Integer>> k4List = detect(graph,5);
+		List<UndirectedGraph<Integer,Integer>> k4List = new DetectKL().detect(graph,5);
 		long stoptime = System.currentTimeMillis();
 		
 		long timetaken = stoptime-starttime;
@@ -62,7 +62,7 @@ public class DetectKL {
 	 * @param l	size of the complete subgraph to be found
 	 * @return	the list of complete subgraphs
 	 */
-	public static List<UndirectedGraph<Integer,Integer>> detect(UndirectedGraph<Integer,Integer> graph, int l){
+	public  List<UndirectedGraph<Integer,Integer>> detect(UndirectedGraph<Integer,Integer> graph, int l){
 		List<UndirectedGraph<Integer,Integer>> klList = new ArrayList<UndirectedGraph<Integer,Integer>>();
 		if(l<1){
 			return klList; 
@@ -331,7 +331,7 @@ public class DetectKL {
 		return klList;
 	}
 	
-	private static List<UndirectedGraph<Integer,Integer>> detectTriangle(UndirectedGraph<Integer,Integer> graph){
+	private  List<UndirectedGraph<Integer,Integer>> detectTriangle(UndirectedGraph<Integer,Integer> graph){
 		List<UndirectedGraph<Integer,Integer>> triangles = new ArrayList<UndirectedGraph<Integer,Integer>>();
 		List<Set<Integer>> marked = new ArrayList<Set<Integer>>(); //to prevent creating the same triangle more than once
 		

@@ -15,11 +15,11 @@ import general.Graph.Vertex;
 public class UndirectedGraph<E,A> implements Graph<E,A>{
 
 	private UnEdge firstEdge;
-	private Map<Integer,Vertex<E>> vertexElementMap;
+	private Map<E,Vertex<E>> vertexElementMap;
 	
 	public UndirectedGraph(){
 		firstEdge = null;
-		vertexElementMap = new HashMap<Integer,Vertex<E>>();
+		vertexElementMap = new HashMap<E,Vertex<E>>();
 	}
 	
 	@Override
@@ -68,7 +68,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 	@Override
 	public Vertex<E> addVertex(E elem) {
 		UnVertex vertex = new UnVertex(elem);		
-		vertexElementMap.put((Integer) vertex.getElement(), vertex);
+		vertexElementMap.put( vertex.getElement(), vertex);
 		return vertex;
 	}
 
@@ -110,8 +110,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		}
 		
 		//then remove v
-		vertexElementMap.remove((int)v.getElement());
-
+		vertexElementMap.remove(v.getElement());
 	}
 
 	@Override
@@ -223,7 +222,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 	}
 	
 	public void resetVisited(){
-		for(Integer i: vertexElementMap.keySet()){
+		for(E i: vertexElementMap.keySet()){
 			UnVertex v = (UnVertex)vertexElementMap.get(i);
 			v.visited = false;
 		}
@@ -233,8 +232,8 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		int size = vertexElementMap.size();
 		int[][] A = new int[size][size];
 		int i=0, j=0;
-		for(int a: vertexElementMap.keySet()){
-			for(int b: vertexElementMap.keySet()){
+		for(E a: vertexElementMap.keySet()){
+			for(E b: vertexElementMap.keySet()){
 				if(containsEdge(vertexElementMap.get(a),vertexElementMap.get(b))){
 					A[i][j] = 1;
 				}else{
@@ -251,8 +250,8 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		int size = vertexElementMap.size();
 		int[][] C = new int[size][size];
 		int i=0, j=0;
-		for(int a: vertexElementMap.keySet()){
-			for(int b: vertexElementMap.keySet()){
+		for(E a: vertexElementMap.keySet()){
+			for(E b: vertexElementMap.keySet()){
 				if(i==j){
 					j++;
 					continue;

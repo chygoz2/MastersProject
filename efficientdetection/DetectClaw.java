@@ -8,9 +8,9 @@ import general.Utility;
 
 public class DetectClaw {
 	
-	private static String p1time = "-";
-	private static String p2time = "-";
-	private static String found = "found";
+	private  String p1time = "-";
+	private  String p2time = "-";
+	private  String found = "found";
 	
 	public static void main(String [] args){
 //		UndirectedGraph graph = new UndirectedGraph();
@@ -55,7 +55,8 @@ public class DetectClaw {
 		graph = Utility.makeGraphFromFile(fileName);
 		
 		long starttime = System.currentTimeMillis();
-		Collection<Graph.Vertex<Integer>> claw = detect(graph);
+		DetectClaw d = new DetectClaw();
+		Collection<Graph.Vertex<Integer>> claw = d.detect(graph);
 		long stoptime = System.currentTimeMillis();
 		if(claw!=null){
 			Utility.printGraph(Utility.makeGraphFromVertexSet(graph,claw));
@@ -64,7 +65,7 @@ public class DetectClaw {
 		System.out.println("Time taken in milliseconds: " + (stoptime-starttime));
 	}
 	
-	public static Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
+	public  Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
 		Collection<Graph.Vertex<Integer>> claw = null;
 		long starttime = System.currentTimeMillis();
 		claw = phaseOne(graph);
@@ -83,7 +84,7 @@ public class DetectClaw {
 		return claw;
 	}
 	
-	public static Collection<Graph.Vertex<Integer>> phaseOne(UndirectedGraph<Integer,Integer> graph){
+	public  Collection<Graph.Vertex<Integer>> phaseOne(UndirectedGraph<Integer,Integer> graph){
 		
 		int edgeCount = 0;
 		Iterator<Graph.Edge<Integer>> edgeIt = graph.edges();
@@ -114,7 +115,7 @@ public class DetectClaw {
 		return null;
 	}
 	
-	public static Collection<Graph.Vertex<Integer>> phaseTwo(UndirectedGraph<Integer,Integer> graph){		
+	public  Collection<Graph.Vertex<Integer>> phaseTwo(UndirectedGraph<Integer,Integer> graph){		
 		//for each vertex, check if the complement of its neighbour contains a triangle
 		
 		Iterator<Graph.Vertex<Integer>> vertices = graph.vertices();
@@ -145,7 +146,7 @@ public class DetectClaw {
 	 * @param vNeighGraph		the neighbourhood graph to be checked
 	 * @return					the vertices if found
 	 */
-	private static Collection<Graph.Vertex<Integer>> getClawVerticesFromNeighbourGraph(UndirectedGraph<Integer,Integer> vNeighGraph){
+	private  Collection<Graph.Vertex<Integer>> getClawVerticesFromNeighbourGraph(UndirectedGraph<Integer,Integer> vNeighGraph){
 		//get the complement matrix of the neighbour graph
 		int[][] vncomp = vNeighGraph.getComplementMatrix();
 		
@@ -161,7 +162,8 @@ public class DetectClaw {
 		
 		//look for a triangle in the complement graph. Such a triangle forms the remaining vertices
 		//of the claw
-		List<Graph.Vertex<Integer>> tri = (List<Vertex<Integer>>) DetectTriangle.detect(vncompgraph);
+		DetectTriangle d = new DetectTriangle();
+		List<Graph.Vertex<Integer>> tri = (List<Vertex<Integer>>) d.detect(vncompgraph);
 		if(tri!=null){
 			//get the vertices of the main graph that correspond to the vertices of the triangle found
 			Collection<Graph.Vertex<Integer>> claw = new ArrayList<Graph.Vertex<Integer>>();
@@ -176,12 +178,12 @@ public class DetectClaw {
 		return null;
 	}
 	
-	public static String getResult(){
+	public  String getResult(){
 		String result = String.format("%-10s%-10s%-10s", p1time,p2time,found);
 		return result;
 	}
 	
-	public static void resetResult(){
+	public  void resetResult(){
 		p1time = "-";
 		p2time = "-";
 		found = "found";

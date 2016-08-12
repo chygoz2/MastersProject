@@ -5,8 +5,8 @@ import general.*;
 
 public class ListKL {
 	
-	private static String time = "-";
-	private static String found = "found";
+	private  String time = "-";
+	private  String found = "found";
 	
 	public static void main(String [] args){
 //		UndirectedGraph<Integer, Integer> graph = new UndirectedGraph<Integer,Integer>();
@@ -50,7 +50,7 @@ public class ListKL {
 //				{0,1,1,0,0,0,1},{1,1,0,0,0,1,0}};
 //		graph = Utility.makeGraphFromAdjacencyMatrix(A);
 		long starttime = System.currentTimeMillis();
-		List<Collection<Graph.Vertex<Integer>>> k4List = detect(graph,5);
+		List<Collection<Graph.Vertex<Integer>>> k4List = new ListKL().detect(graph,6);
 		long stoptime = System.currentTimeMillis();
 		
 		long timetaken = stoptime-starttime;
@@ -62,7 +62,7 @@ public class ListKL {
 		System.out.println(k4List.size());
 	}
 	
-	public static List<Collection<Graph.Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph, int l){
+	public  List<Collection<Graph.Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph, int l){
 		
 		long starttime = System.currentTimeMillis();
 		List<Collection<Graph.Vertex<Integer>>> kls = find(graph, l);
@@ -80,7 +80,7 @@ public class ListKL {
 	 * @param l	size of the complete subgraph to be found
 	 * @return	the list of complete subgraphs
 	 */
-	public static List<Collection<Graph.Vertex<Integer>>> find(UndirectedGraph<Integer,Integer> graph, int l){
+	public  List<Collection<Graph.Vertex<Integer>>> find(UndirectedGraph<Integer,Integer> graph, int l){
 		List<Collection<Graph.Vertex<Integer>>> klList = new ArrayList<Collection<Graph.Vertex<Integer>>>();
 		
 		if(l == 1){
@@ -114,7 +114,7 @@ public class ListKL {
 			int r = l%3;
 			
 			if(r==1){
-				Hashtable<Integer,List<Set<Integer>>> marked = new Hashtable<Integer,List<Set<Integer>>>(); //to prevent creating the same K(l-1) more than once
+				Set<Set<Integer>> marked = new HashSet<Set<Integer>>(); //to prevent creating the same K(l-1) more than once
 				//get the vertices in graph
 				Iterator<Graph.Vertex<Integer>> vertices = graph.vertices();
 				while(vertices.hasNext()){
@@ -126,7 +126,6 @@ public class ListKL {
 					for(Collection<Graph.Vertex<Integer>> kq: kqList){
 						List<Graph.Vertex<Integer>> kqPlusVertices = new ArrayList<Graph.Vertex<Integer>>();
 						kqPlusVertices.add(x); //add x
-						//Iterator<Graph.Vertex<Integer>> kqVertices = kq.vertices();
 						
 						Set<Integer> hh = new HashSet<Integer>(); //to store elements of the K(l-1) vertices
 						//add k(l-1) vertices
@@ -138,41 +137,17 @@ public class ListKL {
 						hh.add(x.getElement());
 						
 						//check in the marked list for an entry that contains all 3 vertex elements
-						boolean contains = false;
+						boolean contains = marked.add(hh);					
 						
-						Integer key = null;
-						for(Integer k:hh){
-							key = k;
-							break;
-						}
-						
-						List<Set<Integer>> list = marked.get(key);
-						if(list!=null){
-							for(Set<Integer> s: list){
-								if(s.containsAll(hh)){
-									contains = true;
-									break;
-								}
-							}
-						}
-					
-						
-						if(!contains){
+						if(contains){
 							//create Kl from kqPlusVertices list
-							klList.add(kqPlusVertices);
-							
-							if(list==null){
-								list = new ArrayList<Set<Integer>>();
-								marked.put(key,list);
-							}
-							list.add(hh);
-							
+							klList.add(kqPlusVertices);						
 						}
 					}
 				}
 			}
 			else if(r==2){
-				Hashtable<Integer,List<Set<Integer>>> marked = new Hashtable<Integer,List<Set<Integer>>>(); //to prevent creating the same K(l-2) more than once
+				Set<Set<Integer>> marked = new HashSet<Set<Integer>>(); //to prevent creating the same K(l-2) more than once
 				//get edges
 				Iterator<Graph.Edge<Integer>> edges = graph.edges();
 				while(edges.hasNext()){
@@ -221,32 +196,11 @@ public class ListKL {
 						}
 						
 						//check in the marked list for an entry that contains all 3 vertex elements
-						boolean contains = false;
+						boolean contains = marked.add(hh);
 						
-						Integer key = null;
-						for(Integer k:hh){
-							key = k;
-							break;
-						}
-						
-						List<Set<Integer>> list = marked.get(key);
-						if(list!=null){
-							for(Set<Integer> s: list){
-								if(s.containsAll(hh)){
-									contains = true;
-									break;
-								}
-							}
-						}
-						
-						if(!contains){
+						if(contains){
 							//create Kl from kqPlusVertices list
 							klList.add(kqPlusVertices);
-							if(list==null){
-								list = new ArrayList<Set<Integer>>();
-								marked.put(key,list);
-							}
-							list.add(hh);
 						}
 					}
 				}
@@ -319,7 +273,7 @@ public class ListKL {
 				//look for triangles in H
 				List<Collection<Graph.Vertex<Integer>>> triangles = find(H, 3);
 				
-				Hashtable<Integer,List<Set<Integer>>> marked = new Hashtable<Integer,List<Set<Integer>>>();//to prevent creating the same Kl more than once
+				Set<Set<Integer>> marked = new HashSet<Set<Integer>>(); //to prevent creating the same Kl more than once
 				
 				//get a triangle and get its corresponding vertices in G
 				for(Collection<Graph.Vertex<Integer>> triangle:triangles){
@@ -333,37 +287,15 @@ public class ListKL {
 					}
 					
 					//check in the marked list for an entry that contains all kl vertex elements
-					boolean contains = false;
-					
-					Integer key = null;
-					for(Integer k:hh){
-						key = k;
-						break;
-					}
-					
-					List<Set<Integer>> list = marked.get(key);
-					if(list!=null){
-						for(Set<Integer> s: list){
-							if(s.containsAll(hh)){
-								contains = true;
-								break;
-							}
-						}
-					}
-					
+					boolean contains = marked.add(hh);
+										
 					//check if such kl with those vertices has been created previously
-					if(!contains){						
+					if(contains){						
 						List<Graph.Vertex<Integer>> klVertices = new ArrayList<Graph.Vertex<Integer>>();
 						for(Integer i: hh)
 							klVertices.add(graph.getVertexWithElement(i));
 						
 						klList.add(klVertices);
-						
-						if(list==null){
-							list = new ArrayList<Set<Integer>>();
-							marked.put(key,list);
-						}
-						list.add(hh);
 					}
 				}
 			}
@@ -372,12 +304,12 @@ public class ListKL {
 		return klList;
 	}
 	
-	public static String getResult(){
+	public  String getResult(){
 		String result = String.format("%-10s%-10s", time,found);
 		return result;
 	}
 	
-	public static void resetResult(){
+	public  void resetResult(){
 		time = "-";
 		found = "found";
 	}

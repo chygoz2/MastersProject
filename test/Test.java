@@ -1,5 +1,7 @@
 package test;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import general.MatrixException;
 import general.Utility;
@@ -123,5 +125,19 @@ public class Test {
 //			}
 //			System.out.println();
 //		}
+		
+		
+		Set<Integer> s1 = new HashSet<Integer>();
+		s1.add(1); s1.add(2); s1.add(3);
+		
+		Set<Integer> s2 = new HashSet<Integer>();
+		s2.add(2); s2.add(1); s2.add(3);
+		
+		System.out.println(s1.hashCode());
+		System.out.println(s2.hashCode());
+		
+		Set<Set<Integer>> st = new HashSet<Set<Integer>>();
+		st.add(s1); st.add(s2);
+		System.out.println(st.size());
 	}
 }

@@ -32,7 +32,7 @@ public class DetectClawTest {
 	 */
 	@Test
 	public void testDetect() {
-		List<Graph.Vertex<Integer>> actualResult = (List<Vertex<Integer>>) DetectClaw.detect(graph);
+		List<Graph.Vertex<Integer>> actualResult = (List<Vertex<Integer>>) new DetectClaw().detect(graph);
 		int[] expectedResult = {0,1,2,3}; //expected result should have 1 claw 
 													//with the specified vertex elements
 		List<Integer> vList = new ArrayList<Integer>();
@@ -49,7 +49,7 @@ public class DetectClawTest {
 	 */
 	@Test
 	public void testPhaseOne() {
-		List<Graph.Vertex<Integer>> actualResult = (List<Vertex<Integer>>) DetectClaw.phaseOne(graph);
+		List<Graph.Vertex<Integer>> actualResult = (List<Vertex<Integer>>) new DetectClaw().phaseOne(graph);
 		assertTrue(actualResult==null);			
 	}
 
@@ -58,7 +58,7 @@ public class DetectClawTest {
 	 */
 	@Test
 	public void testPhaseTwo() {
-		List<Graph.Vertex<Integer>> actualResult = (List<Vertex<Integer>>) DetectClaw.phaseTwo(graph);
+		List<Graph.Vertex<Integer>> actualResult = (List<Vertex<Integer>>) new DetectClaw().phaseTwo(graph);
 		int[] expectedResult = {0,1,2,3}; //expected result should have 1 claw 
 													//with the specified vertex elements
 		List<Integer> vList = new ArrayList<Integer>();

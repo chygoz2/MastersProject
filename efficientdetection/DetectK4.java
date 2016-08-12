@@ -7,9 +7,9 @@ import general.Utility;
 
 public class DetectK4 {
 	
-	private static String p1time = "-";
-	private static String p2time = "-";
-	private static String found = "found";
+	private  String p1time = "-";
+	private  String p2time = "-";
+	private  String found = "found";
 	
 	public static void main(String [] args){
 //		UndirectedGraph<Integer, Integer> graph = new UndirectedGraph<Integer,Integer>();
@@ -35,7 +35,8 @@ public class DetectK4 {
 		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(fileName);
 		
 		long starttime = System.currentTimeMillis();
-		Collection<Graph.Vertex<Integer>> k4 = detect(graph);
+		DetectK4 d = new DetectK4();
+		Collection<Graph.Vertex<Integer>> k4 = d.detect(graph);
 		long stoptime = System.currentTimeMillis();
 		
 		long timetaken = stoptime-starttime;
@@ -47,7 +48,7 @@ public class DetectK4 {
 					
 	}
 	
-	public static Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){		
+	public  Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){		
 		List<Graph.Vertex<Integer>>[] verticesPartition = partitionVertices(graph);
 		
 		List<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
@@ -73,7 +74,7 @@ public class DetectK4 {
 		return k4;
 	}
 	
-	public static Collection<Graph.Vertex<Integer>> phaseOne(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> highDegreeVertices){
+	public  Collection<Graph.Vertex<Integer>> phaseOne(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> highDegreeVertices){
 			
 		for(Graph.Vertex<Integer> x: highDegreeVertices){
 			//get x's neighbourhood graph
@@ -95,7 +96,8 @@ public class DetectK4 {
 			UndirectedGraph<Integer,Integer> graph2 = Utility.makeGraphFromVertexSet(graph, nXList);
 
 			//get a triangle in the neighbourhood
-			Collection<Graph.Vertex<Integer>> triangle = DetectTriangle.detect(graph2);
+			DetectTriangle d = new DetectTriangle();
+			Collection<Graph.Vertex<Integer>> triangle = d.detect(graph2);
 			if(triangle!=null){
 				List<Graph.Vertex<Integer>> k4Vertices = new ArrayList<Graph.Vertex<Integer>>(); //list to store k4 vertices
 				k4Vertices.addAll(triangle);
@@ -108,14 +110,15 @@ public class DetectK4 {
 		return null;
 	}
 	
-	public static Collection<Graph.Vertex<Integer>> phaseTwo(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> lowDegreeVertices){
+	public  Collection<Graph.Vertex<Integer>> phaseTwo(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> lowDegreeVertices){
 			
 		for(Graph.Vertex<Integer> x: lowDegreeVertices){
 			//get x's neighbourhood graph
 			UndirectedGraph<Integer,Integer> graph2 = Utility.getNeighbourGraph(graph, x);
 
 			//check for triangle in the neighbourhood
-			Collection<Graph.Vertex<Integer>> triangle = DetectTriangle.detect(graph2);
+			DetectTriangle d = new DetectTriangle();
+			Collection<Graph.Vertex<Integer>> triangle = d.detect(graph2);
 			if(triangle!=null){
 				List<Graph.Vertex<Integer>> k4Vertices = new ArrayList<Graph.Vertex<Integer>>(); //list to store k4 vertices
 				k4Vertices.addAll(triangle);
@@ -129,7 +132,7 @@ public class DetectK4 {
 	}
 
 	//method to partition the vertices into low degree vertices and high degree vertices
-	public static List<Graph.Vertex<Integer>>[] partitionVertices(UndirectedGraph<Integer,Integer> graph){
+	public  List<Graph.Vertex<Integer>>[] partitionVertices(UndirectedGraph<Integer,Integer> graph){
 		List<Graph.Vertex<Integer>>[] vertices = new List[2];
 		vertices[0] = new ArrayList<Graph.Vertex<Integer>>();
 		vertices[1] = new ArrayList<Graph.Vertex<Integer>>();
@@ -162,12 +165,12 @@ public class DetectK4 {
 		return vertices;
 	}
 	
-	public static String getResult(){
+	public  String getResult(){
 		String result = String.format("%-10s%-10s%-10s", p1time,p2time,found);
 		return result;
 	}
 	
-	public static void resetResult(){
+	public  void resetResult(){
 		p1time = "-";
 		p2time = "-";
 		found = "found";

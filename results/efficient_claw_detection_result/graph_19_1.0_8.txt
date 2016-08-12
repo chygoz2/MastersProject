@@ -1,0 +1,2 @@
+File name                     Graph size  Result
+graph_19_1.0_8.txt            19          0         3         not found 

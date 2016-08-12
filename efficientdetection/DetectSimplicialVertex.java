@@ -8,9 +8,9 @@ import general.Utility;
 
 public class DetectSimplicialVertex {
 	
-	private static String p1time = "-";
-	private static String p2time = "-";
-	private static String found = "found";
+	private  String p1time = "-";
+	private  String p2time = "-";
+	private  String found = "found";
 	
 	public static void main(String [] args){
 //		UndirectedGraph<Integer, Integer> graph = new UndirectedGraph<Integer,Integer>();
@@ -39,7 +39,8 @@ public class DetectSimplicialVertex {
 		for(int i=0; i<1; i++){
 			UndirectedGraph<Integer, Integer> graph = Utility.makeGraphFromFile(fileName);
 			long starttime = System.currentTimeMillis();
-			Graph.Vertex<Integer> simpVertex = detect(graph);
+			
+			Graph.Vertex<Integer> simpVertex = new DetectSimplicialVertex().detect(graph);
 			long stoptime = System.currentTimeMillis();
 			
 			long timetaken = stoptime-starttime;
@@ -53,7 +54,7 @@ public class DetectSimplicialVertex {
 		}
 	}
 	
-	public static Graph.Vertex<Integer> detect(UndirectedGraph<Integer,Integer> graph){
+	public  Graph.Vertex<Integer> detect(UndirectedGraph<Integer,Integer> graph){
 		List[] verticesPartition = partitionVertices(graph);
 		Graph.Vertex<Integer> simplicialVertex = null;
 		
@@ -80,7 +81,7 @@ public class DetectSimplicialVertex {
 		
 	}
 	
-	public static Graph.Vertex<Integer> phaseOne(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> lowDegreeVertices){
+	public  Graph.Vertex<Integer> phaseOne(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> lowDegreeVertices){
 		for(Graph.Vertex<Integer> v: lowDegreeVertices){
 			if(graph.degree(v) > 0){
 				//get the neighbours of v
@@ -112,7 +113,7 @@ public class DetectSimplicialVertex {
 		return null;
 	}
 	
-	public static Graph.Vertex<Integer> phaseTwo(UndirectedGraph<Integer,Integer> graph2, Collection<Graph.Vertex<Integer>> lowDegreeVertices, Collection<Graph.Vertex<Integer>> highDegreeVertices){
+	public  Graph.Vertex<Integer> phaseTwo(UndirectedGraph<Integer,Integer> graph2, Collection<Graph.Vertex<Integer>> lowDegreeVertices, Collection<Graph.Vertex<Integer>> highDegreeVertices){
 		UndirectedGraph<Integer,Integer> graph = graph2.clone();
 		
 		//marked high degree vertices that have a low degree neighbour
@@ -196,7 +197,7 @@ public class DetectSimplicialVertex {
 	}
 	
 	//method to partition the vertices into low degree vertices and high degree vertices
-	public static List<Graph.Vertex<Integer>>[] partitionVertices(UndirectedGraph<Integer,Integer> graph){
+	public  List<Graph.Vertex<Integer>>[] partitionVertices(UndirectedGraph<Integer,Integer> graph){
 		List<Graph.Vertex<Integer>>[] vertices = new List[2];
 		vertices[0] = new ArrayList<Graph.Vertex<Integer>>();
 		vertices[1] = new ArrayList<Graph.Vertex<Integer>>();
@@ -232,12 +233,12 @@ public class DetectSimplicialVertex {
 		return vertices;
 	}
 	
-	public static String getResult(){
+	public  String getResult(){
 		String result = String.format("%-10s%-10s%-10s", p1time,p2time,found);
 		return result;
 	}
 	
-	public static void resetResult(){
+	public  void resetResult(){
 		p1time = "-";
 		p2time = "-";
 		found = "found";
