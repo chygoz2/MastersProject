@@ -400,7 +400,10 @@ public class Evaluator2 {
 	public static void generateRandomGraphs(int vmin, int vmax, int no){
 		for(int v=vmin; v<=vmax; v++){
 			for(double p=0.1; p<=1; p+=0.1){
-				Utility.generateRandomGraphFile(v, Math.round(p*10)/10.0, no);
+				if(p<=0.9)
+					Utility.generateRandomGraphFile(v, Math.round(p*10)/10.0, no);
+				else
+					Utility.generateRandomGraphFile(v, Math.round(p*10)/10.0, 1);
 			}
 		}
 		done = true;
