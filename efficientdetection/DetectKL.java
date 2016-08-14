@@ -45,14 +45,14 @@ public class DetectKL {
 //		}
 		
 //		String fileName = "matrix5.txt";
-		String fileName = "generated_graphs\\size_20\\graph_20_1.0_9.txt";
+		String fileName = "generated_graphs\\size_20\\graph_20_0.5_5.txt";
 		UndirectedGraph<Integer, Integer> graph = Utility.makeGraphFromFile(fileName);
 		
 //		int[][] A = {{0,1,1,1,1,0,1},{1,0,1,1,1,1,1},{1,1,0,1,1,1,0},{1,1,1,0,1,0,0},{1,1,1,1,0,0,0},
 //				{0,1,1,0,0,0,1},{1,1,0,0,0,1,0}};
 //		graph = Utility.makeGraphFromAdjacencyMatrix(A);
 		long starttime = System.currentTimeMillis();
-		List<Collection<Graph.Vertex<Integer>>> k4List = new DetectKL().detect(graph,6);
+		Collection<Graph.Vertex<Integer>> kl = new DetectKL().detect(graph,6);
 		long stoptime = System.currentTimeMillis();
 		
 		long timetaken = stoptime-starttime;
@@ -61,50 +61,53 @@ public class DetectKL {
 //			Utility.printGraph(Utility.makeGraphFromVertexSet(graph, k4));
 //		}
 		System.out.println("Time taken in milliseconds: "+timetaken);
-		System.out.println(k4List.size());
+		if(kl!=null)
+			Utility.printGraph(Utility.makeGraphFromVertexSet(graph, kl));
 	}
 	
-	public  List<Collection<Graph.Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph, int l){
+	public  Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph, int l){
 		
 		List<Graph.Vertex<Integer>>[] verticesPartition = partitionVertices(graph, l);
 		List<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
 		List<Graph.Vertex<Integer>> highDegreeVertices = verticesPartition[1];
 		
 		long starttime = System.currentTimeMillis();
-		List<Collection<Graph.Vertex<Integer>>> kls = phaseOne(graph, l, lowDegreeVertices);
+		Collection<Graph.Vertex<Integer>> kl = phaseOne(graph, l, lowDegreeVertices);
 		long stoptime = System.currentTimeMillis();
 		p1Time = ""+(stoptime-starttime);
 		
-		if(kls==null){
+		if(kl==null){
 			starttime = System.currentTimeMillis();
-			kls = phaseTwo(graph, l, highDegreeVertices);
+			kl = phaseTwo(graph, l, highDegreeVertices);
 			stoptime = System.currentTimeMillis();
 			p2Time = ""+(stoptime-starttime);
 		}
 		
-		if(kls==null)
+		if(kl==null)
 			found = "not found";
 		
-//		System.out.println(getResult());
-//		resetResult();
-		return kls;
+		System.out.println(getResult());
+		resetResult();
+		return kl;
 	}
 	
-	public List<Collection<Graph.Vertex<Integer>>> phaseOne(UndirectedGraph<Integer,Integer> graph, int l, Collection<Graph.Vertex<Integer>> lowDegreeVertices){
-		List<Collection<Graph.Vertex<Integer>>> kls = null;
+	public Collection<Graph.Vertex<Integer>> phaseOne(UndirectedGraph<Integer,Integer> graph, int l, Collection<Graph.Vertex<Integer>> lowDegreeVertices){
+		Collection<Graph.Vertex<Integer>> kl = null;
 		for(Graph.Vertex<Integer> v: lowDegreeVertices){
 			//get the neighbour graph of V and check if it contains a K(l-1)
 			UndirectedGraph<Integer,Integer> vn = Utility.getNeighbourGraph(graph, v);
 			
-			kls = find(vn, (l-1));
+			List<Collection<Graph.Vertex<Integer>>> kls = find(vn, (l-1));
 			if(!kls.isEmpty()){
+				kl = kls.get(0);
+				kl.add(v);
 				break;
 			}
 		}
-		return kls;
+		return kl;
 	}
 	
-	public List<Collection<Graph.Vertex<Integer>>> phaseTwo(UndirectedGraph<Integer,Integer> graph, int l, Collection<Graph.Vertex<Integer>> highDegreeVertices){
+	public Collection<Graph.Vertex<Integer>> phaseTwo(UndirectedGraph<Integer,Integer> graph, int l, Collection<Graph.Vertex<Integer>> highDegreeVertices){
 		//make a graph from all high degree vertices
 		UndirectedGraph<Integer,Integer> graph2 = Utility.makeGraphFromVertexSet(graph, highDegreeVertices);
 		
@@ -112,7 +115,7 @@ public class DetectKL {
 		List<Collection<Graph.Vertex<Integer>>> kls = find(graph2, l);
 		
 		if(!kls.isEmpty())
-			return kls;
+			return kls.get(0);
 		
 		return null;
 	}

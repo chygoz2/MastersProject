@@ -43,14 +43,15 @@ public class ListKL {
 //		}
 		
 //		String fileName = "matrix5.txt";
-		String fileName = "generated_graphs\\size_20\\graph_20_1.0_9.txt";
+//		String fileName = "generated_graphs\\size_20\\graph_20_1.0_9.txt";
+		String fileName = "generated_graphs\\size_20\\graph_20_0.5_5.txt";
 		UndirectedGraph<Integer, Integer> graph = Utility.makeGraphFromFile(fileName);
 		
 //		int[][] A = {{0,1,1,1,1,0,1},{1,0,1,1,1,1,1},{1,1,0,1,1,1,0},{1,1,1,0,1,0,0},{1,1,1,1,0,0,0},
 //				{0,1,1,0,0,0,1},{1,1,0,0,0,1,0}};
 //		graph = Utility.makeGraphFromAdjacencyMatrix(A);
 		long starttime = System.currentTimeMillis();
-		List<Collection<Graph.Vertex<Integer>>> k4List = new ListKL().detect(graph,9);
+		List<Collection<Graph.Vertex<Integer>>> k4List = new ListKL().detect(graph,6);
 		long stoptime = System.currentTimeMillis();
 		
 		long timetaken = stoptime-starttime;
