@@ -1,2 +1,2 @@
 File name                     Graph size  Result
-graph_18_1.0_2.txt            18          0         0         5         not found 
+graph_18_1.0_2.txt            18          0         1         4         not found 

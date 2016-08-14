@@ -50,7 +50,7 @@ public class ListKL {
 //				{0,1,1,0,0,0,1},{1,1,0,0,0,1,0}};
 //		graph = Utility.makeGraphFromAdjacencyMatrix(A);
 		long starttime = System.currentTimeMillis();
-		List<Collection<Graph.Vertex<Integer>>> k4List = new ListKL().detect(graph,6);
+		List<Collection<Graph.Vertex<Integer>>> k4List = new ListKL().detect(graph,9);
 		long stoptime = System.currentTimeMillis();
 		
 		long timetaken = stoptime-starttime;
@@ -243,6 +243,9 @@ public class ListKL {
 				
 				//for any two pairs of vertices in H, 
 				//check if there exists a k2q made up of their corresponding vertices in G 
+				Set<Set<Integer>> ssfound = new HashSet<Set<Integer>>();//since a k2q can have different permutations
+				//of its vertices, which would then result in many edges in H, this set will be used to ensure
+				//that only one edge is added to H for each K2q found in G.
 				Iterator<Graph.Vertex<Integer>> vIt1 = H.vertices();
 				while(vIt1.hasNext()){
 					Graph.Vertex<Integer> vOne = vIt1.next();
@@ -259,10 +262,12 @@ public class ListKL {
 							corrGVertices.addAll(vOneCorrVertices);
 							corrGVertices.addAll(vTwoCorrVertices);
 							
-							for(Set<Integer> innerSet: k2qvertexset){
-								if(innerSet.size()==corrGVertices.size() && innerSet.containsAll(corrGVertices)){
-									if(!H.containsEdge(H.getVertexWithElement(vOneElement), H.getVertexWithElement(vTwoElement))){
-										H.addEdge(H.getVertexWithElement(vOneElement), H.getVertexWithElement(vTwoElement));
+							if(ssfound.add(corrGVertices)){
+								for(Set<Integer> innerSet: k2qvertexset){
+									if(innerSet.size()==corrGVertices.size() && innerSet.containsAll(corrGVertices)){
+										if(!H.containsEdge(H.getVertexWithElement(vOneElement), H.getVertexWithElement(vTwoElement))){
+											H.addEdge(H.getVertexWithElement(vOneElement), H.getVertexWithElement(vTwoElement));
+										}
 									}
 								}
 							}

@@ -1,2 +1,2 @@
 File name                     Graph size  Result
-graph_14_0.2_7.txt            14          0         0         0         not found 
+graph_14_0.2_7.txt            14          0         -         -         found     

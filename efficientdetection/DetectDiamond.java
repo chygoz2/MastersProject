@@ -40,10 +40,10 @@ public class DetectDiamond {
 //		while(true){
 		UndirectedGraph<Integer,Integer> graph;
 		for(int a=0;a<1;a++){
-//			String fileName = "matrix2.txt";
+			String fileName = "graph_91_0.3_3.txt";
 //			String fileName = "generated_graphs\\size_5\\graph_5_0.7_4.txt";
 //			String fileName = "generated_graphs\\size_6\\graph_6_0.6_3.txt";
-			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
+//			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
 //			String fileName = "test\\testdata\\diamondtestdata.txt";
 //			String fileName = "generated_graphs\\size_300\\graph_300_0.9_1.txt";
 //			String fileName = "generated_graphs\\size_150\\graph_150_1.0_1.txt";

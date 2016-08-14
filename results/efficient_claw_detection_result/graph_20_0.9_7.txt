@@ -1,2 +1,2 @@
 File name                     Graph size  Result
-graph_20_0.9_7.txt            20          0         6         not found 
+graph_20_0.9_7.txt            20          0         4         not found 
