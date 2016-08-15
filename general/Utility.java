@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
-import javax.swing.JOptionPane;
+//import javax.swing.JOptionPane;
 
 public final class Utility {
 	
@@ -16,7 +16,8 @@ public final class Utility {
 		try {
 			reader = new FileReader(fileName);
 		} catch (FileNotFoundException e1) {
-			JOptionPane.showMessageDialog(null, "Input file not found");
+//			JOptionPane.showMessageDialog(null, "Input file not found");
+			System.out.println("Input file not found");
 			return null;
 		}
 		Scanner scanner;
@@ -24,7 +25,8 @@ public final class Utility {
 		scanner = new Scanner(reader);
 		//get number of vertices
 		if(!scanner.hasNextLine()){
-			JOptionPane.showMessageDialog(null, "Input file is empty");
+//			JOptionPane.showMessageDialog(null, "Input file is empty");
+			System.out.println("Input file is empty");
 			scanner.close();
 			return null;
 		}
@@ -43,7 +45,8 @@ public final class Utility {
 		for(int i=0; i<vertexCount; i++){
 			String[] stringI = lines.get(i).split("[ ]+");
 			if(stringI.length != vertexCount){
-				JOptionPane.showMessageDialog(null, "The number of columns in file do not match the required Vertex count");
+//				JOptionPane.showMessageDialog(null, "The number of columns in file do not match the required Vertex count");
+				System.out.println("The number of columns in file do not match the required Vertex count");
 				scanner.close();
 				return null;
 			}
@@ -67,7 +70,8 @@ public final class Utility {
 	
 	public static UndirectedGraph<Integer,Integer> makeRandomGraph(int v, double p){
 		if(p<0.0 || p>1.0){
-			JOptionPane.showMessageDialog(null, "Edge probability should be between 0 and 1");
+//			JOptionPane.showMessageDialog(null, "Edge probability should be between 0 and 1");
+			System.out.println("Edge probability should be between 0 and 1");
 			System.exit(0);
 		}
 		
