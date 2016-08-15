@@ -7,6 +7,8 @@ import general.UndirectedGraph;
 import general.Utility;
 
 public class DetectTriangle {
+	private String time = "-";
+	private String found = "found";
 	
 	public static void main(String[] args) {
 		UndirectedGraph<Integer,Integer> graph;
@@ -19,17 +21,16 @@ public class DetectTriangle {
 //			graph = Utility.makeGraphFromAdjacencyMatrix(A);
 			
 			long starttime = System.currentTimeMillis();
-			List<UndirectedGraph<Integer,Integer>> triangles = detect(graph);
+			DetectTriangle d = new DetectTriangle();
+			
+			Collection<Graph.Vertex<Integer>> triangle = d.detect(graph);
 			long stoptime = System.currentTimeMillis();
 			
 			long timetaken = stoptime-starttime;
 			
 			
-			if(!triangles.isEmpty()){
-				for(UndirectedGraph<Integer, Integer> triangle: triangles)
-					Utility.printGraph(triangle);
-				System.out.println("Time taken in milliseconds: "+timetaken);
-				System.out.println(triangles.size());
+			if(triangle!=null){
+				Utility.printGraph(Utility.makeGraphFromVertexSet(graph,triangle));
 			}
 			else{
 				System.out.println("Triangle not found");
@@ -37,9 +38,20 @@ public class DetectTriangle {
 
 	}
 	
-	public static List<UndirectedGraph<Integer,Integer>> detect(UndirectedGraph<Integer,Integer> graph){
-		List<UndirectedGraph<Integer,Integer>> triangles = new ArrayList<UndirectedGraph<Integer,Integer>>();
-		List<Set<Integer>> marked = new ArrayList<Set<Integer>>(); //to prevent creating the same triangle more than once
+	public Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
+		long starttime = System.currentTimeMillis();
+		Collection<Graph.Vertex<Integer>> triangle= find(graph);
+		long stoptime = System.currentTimeMillis();
+		time = ""+(stoptime-starttime);
+		
+		if(triangle==null)
+			found = "not found";
+		System.out.println(getResult());
+		
+		return triangle;
+	}
+	
+	public static Collection<Graph.Vertex<Integer>> find(UndirectedGraph<Integer,Integer> graph){
 		
 		//for each edge in graph, check if each vertex has an edge between it and the 
 		//vertices at the edge
@@ -62,32 +74,19 @@ public class DetectTriangle {
 					List<Graph.Vertex<Integer>> triangleVertices = new ArrayList<Graph.Vertex<Integer>>();
 					triangleVertices.add(source);
 					triangleVertices.add(destination);
-					triangleVertices.add(vertex);
+					triangleVertices.add(vertex);				
 					
-					Set<Integer> triListElem = new HashSet<Integer>(); //list to store triangle vertices elements
-					
-					triListElem.add(source.getElement()); triListElem.add(destination.getElement());
-					triListElem.add(vertex.getElement());
-					
-					//check in the marked list for an entry that contains all 3 vertex elements
-					boolean contains = false;
-					
-					for(Set<Integer> s: marked){
-						if(s.containsAll(triListElem)){
-							contains = true;
-							break;
-						}
-					}
-					if(!contains){
-						UndirectedGraph<Integer,Integer> triangle = Utility.makeGraphFromVertexSet(graph, triangleVertices);
-						triangles.add(triangle);
-						marked.add(triListElem);
-					}
+					return triangleVertices;					
 				}
 			}
 			
 		}
 		
-		return triangles;
+		return null;
+	}
+	
+	public String getResult(){
+		String result = String.format("%-10s%-10s", time,found);
+		return result;
 	}
 }

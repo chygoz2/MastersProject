@@ -1,2 +1,0 @@
-File name                     Graph size  Result
-graph_20_0.7_3.txt            20          0         found     

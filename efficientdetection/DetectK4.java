@@ -12,40 +12,12 @@ public class DetectK4 {
 	private  String found = "found";
 	
 	public static void main(String [] args){
-//		UndirectedGraph<Integer, Integer> graph = new UndirectedGraph<Integer,Integer>();
-//		
-//		Graph.Vertex<Integer> v0 = graph.addVertex(0);
-//		Graph.Vertex<Integer> v1 = graph.addVertex(1);
-//		Graph.Vertex<Integer> v2 = graph.addVertex(2);
-//		Graph.Vertex<Integer> v3 = graph.addVertex(3);
-//		Graph.Vertex<Integer> v4 = graph.addVertex(4);
-//		graph.addEdge(v0, v1);
-//		graph.addEdge(v2, v1);
-//		graph.addEdge(v2, v3);
-//		graph.addEdge(v0, v2);
-//		graph.addEdge(v0, v4);
-////		graph.addEdge(v2, v4);
-//		graph.addEdge(v1, v4);
-//		graph.addEdge(v3, v4);
-//		graph.addEdge(v1, v3);
-//		graph.addEdge(v0, v3);
-//		
-////		Utility.saveGraphToFile(graph, 1.0, 1);
-		String fileName = "generated_graphs\\size_10\\graph_10_0.9_6.txt ";
-		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(fileName);
+		UndirectedGraph<Integer,Integer> graph = null;
+		graph = Utility.makeGraphFromFile(args[0]);
 		
-		long starttime = System.currentTimeMillis();
 		DetectK4 d = new DetectK4();
 		Collection<Graph.Vertex<Integer>> k4 = d.detect(graph);
-		long stoptime = System.currentTimeMillis();
-		
-		long timetaken = stoptime-starttime;
-		
-		if(k4!=null){
-			Utility.printGraph(Utility.makeGraphFromVertexSet(graph, k4));
-		}
-		System.out.println("Time taken in milliseconds: "+timetaken);
-					
+		System.out.print(d.getResult());
 	}
 	
 	public  Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){		
@@ -70,7 +42,6 @@ public class DetectK4 {
 		
 		if(k4==null)
 			found = "not found";
-//		System.out.println(getResult());
 		return k4;
 	}
 	
@@ -170,9 +141,4 @@ public class DetectK4 {
 		return result;
 	}
 	
-	public  void resetResult(){
-		p1time = "-";
-		p2time = "-";
-		found = "found";
-	}
 }

@@ -1,14 +1,15 @@
 package easydetection;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
 
 public class DetectSimplicialVertex {
+	
+	private  String p1time = "-";
+	private  String found = "found";
 	
 	public static void main(String [] args){
 //		UndirectedGraph<Integer, Integer> graph = new UndirectedGraph<Integer,Integer>();
@@ -36,25 +37,32 @@ public class DetectSimplicialVertex {
 
 		for(int i=0; i<1; i++){
 			UndirectedGraph<Integer, Integer> graph = Utility.makeGraphFromFile(fileName);
-			long starttime = System.currentTimeMillis();
-			List<Graph.Vertex<Integer>> simpVertex = detect(graph);
-			long stoptime = System.currentTimeMillis();
+			DetectSimplicialVertex d = new DetectSimplicialVertex();
 			
-			long timetaken = stoptime-starttime;
+			Graph.Vertex<Integer> simpVertex = d.detect(graph);
 			
-			if(!simpVertex.isEmpty()){
-				for(Graph.Vertex<Integer> s: simpVertex)
-					System.out.print(s.getElement()+", ");
+			if(simpVertex!=null){
+				System.out.print(simpVertex.getElement()+", ");
 			}else{
 				System.out.println("Simplicial vertex not found");
 			}
-			System.out.println("\nTime taken in milliseconds: "+timetaken);
 		}
 	}
 	
-
-	public static List<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
-		List<Graph.Vertex<Integer>> simplicialVertices = new ArrayList<Graph.Vertex<Integer>>();
+	public Graph.Vertex<Integer> detect(UndirectedGraph<Integer,Integer> graph){
+		long start = System.currentTimeMillis();
+		Graph.Vertex<Integer> s = find(graph);
+		long end = System.currentTimeMillis();
+		p1time = ""+(end-start);
+		
+		if(s==null)
+			found = "not found";
+		
+		System.out.println(getResult());
+		return s;
+	}
+	
+	public Graph.Vertex<Integer> find(UndirectedGraph<Integer,Integer> graph){
 		
 		//get the vertices
 		Iterator<Graph.Vertex<Integer>> vertices = graph.vertices();
@@ -85,9 +93,19 @@ public class DetectSimplicialVertex {
 			}
 			
 			if(contains){
-				simplicialVertices.add(vertex);
+				return vertex;
 			}
 		}
-		return simplicialVertices;
+		return null;
+	}
+	
+	public  String getResult(){
+		String result = String.format("%-10s%-10s", p1time,found);
+		return result;
+	}
+	
+	public  void resetResult(){
+		p1time = "-";
+		found = "found";
 	}
 }

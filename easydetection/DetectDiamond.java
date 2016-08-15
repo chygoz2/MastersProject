@@ -6,23 +6,24 @@ import java.util.*;
 import general.*;
 
 public class DetectDiamond {
-
+	
+	private String p1time = "-";
+	private String found = "found";
+	
 	public static void main(String [] args) throws IOException{
 		UndirectedGraph<Integer,Integer> graph;
 		for(int a=0;a<1;a++){
 //			String fileName = "matrix2.txt";
-//			String fileName = "generated_graphs\\size_5\\graph_5_0.7_4.txt";
+			String fileName = "generated_graphs\\size_5\\graph_5_0.7_4.txt";
 //			String fileName = "generated_graphs\\size_6\\graph_6_0.6_3.txt";
 //			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
 //			String fileName = "test\\testdata\\diamondtestdata.txt";
 //			String fileName = "generated_graphs\\size_300\\graph_300_0.9_1.txt";
-			String fileName = "generated_graphs\\size_150\\graph_150_1.0_1.txt";
+//			String fileName = "generated_graphs\\size_150\\graph_150_1.0_1.txt";
 //			UndirectedGraph<Integer,Integer> graphs[a] = Utility.makeGraphFromFile(fileName);
 			graph = Utility.makeGraphFromFile(fileName);
 			
-			long sta = System.currentTimeMillis();
-			List<Graph.Vertex<Integer>> diamond = detect(graph);
-			long sto = System.currentTimeMillis();
+			List<Graph.Vertex<Integer>> diamond = new DetectDiamond().detect(graph);
 			
 			if(diamond!=null){
 				Utility.printGraph(Utility.makeGraphFromVertexSet(graph,diamond));
@@ -30,11 +31,24 @@ public class DetectDiamond {
 			else{
 				System.out.println("Diamond not found");
 			}
-			System.out.println("Time taken in milliseconds: " + (sto-sta));
+			
 		}
 	}
 	
-	public static List<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
+	public List<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
+		long starttime = System.currentTimeMillis();
+		List<Graph.Vertex<Integer>> diamond = find(graph);
+		long stoptime = System.currentTimeMillis();
+		
+		p1time = ""+(stoptime-starttime);
+		if(diamond==null)
+			found = "not found";
+		
+		System.out.println(getResult());
+		return diamond;
+	}
+
+	public List<Graph.Vertex<Integer>> find(UndirectedGraph<Integer,Integer> graph){
 		//get the vertices
 		Iterator<Graph.Vertex<Integer>> vertices = graph.vertices();
 		
@@ -60,7 +74,7 @@ public class DetectDiamond {
 	 * @param graph 	the graph to be checked
 	 * @return 			the vertex list if found
 	 */
-	public static List<Graph.Vertex<Integer>> checkP3InComponent(UndirectedGraph<Integer,Integer> graph){
+	public List<Graph.Vertex<Integer>> checkP3InComponent(UndirectedGraph<Integer,Integer> graph){
 		//if the no of vertices in graph is less than 3, then graph cannot have a p3
 		
 		if(graph.size()<3){
@@ -99,5 +113,15 @@ public class DetectDiamond {
 		}
 	
 		return null;
+	}
+	
+	public  String getResult(){
+		String result = String.format("%-10s%-10s", p1time,found);
+		return result;
+	}
+	
+	public  void resetResult(){
+		p1time = "-";
+		found = "found";
 	}
 }

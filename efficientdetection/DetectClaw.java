@@ -13,56 +13,13 @@ public class DetectClaw {
 	private  String found = "found";
 	
 	public static void main(String [] args){
-//		UndirectedGraph graph = new UndirectedGraph();
-//		Graph.Vertex v1 = graph.addVertex(1);
-//		Graph.Vertex v2 = graph.addVertex(2);
-//		Graph.Vertex v3 = graph.addVertex(3);
-//		Graph.Vertex v4 = graph.addVertex(4);
-//		
-//		graph.addEdge(v1, v2);
-//		graph.addEdge(v3, v2);
-//		graph.addEdge(v4, v2);
-//		
-//		graph.mapVertexToId();
-		
-		
-//		UndirectedGraph graph = new UndirectedGraph();
-//		Graph.Vertex v1 = graph.addVertex(0);
-//		Graph.Vertex v2 = graph.addVertex(1);
-//		Graph.Vertex v3 = graph.addVertex(2);
-//		Graph.Vertex v4 = graph.addVertex(3);
-//		Graph.Vertex v5 = graph.addVertex(4);
-//		Graph.Vertex v6 = graph.addVertex(5);
-//		Graph.Vertex v7 = graph.addVertex(6);
-//		
-//		graph.addEdge(v1, v5);
-//		graph.addEdge(v1, v3);
-//		graph.addEdge(v2, v3);
-//		graph.addEdge(v3, v4);
-//		graph.addEdge(v4, v5);
-//		graph.addEdge(v4, v6);
-//		graph.addEdge(v4, v7);
-//		graph.addEdge(v6, v7);
-//		graph.addEdge(v6, v5);
-//		graph.addEdge(v5, v7);
-//		
-//		//graph.mapVertexToId();
-		
-		//UndirectedGraph<Integer,Integer> graph = Utility.makeRandomGraph(7, 0.4);
 		
 		UndirectedGraph<Integer,Integer> graph = null;
-		String fileName = "test\\testdata\\clawtestdata.txt";
-		graph = Utility.makeGraphFromFile(fileName);
+		graph = Utility.makeGraphFromFile(args[0]);
 		
-		long starttime = System.currentTimeMillis();
 		DetectClaw d = new DetectClaw();
 		Collection<Graph.Vertex<Integer>> claw = d.detect(graph);
-		long stoptime = System.currentTimeMillis();
-		if(claw!=null){
-			Utility.printGraph(Utility.makeGraphFromVertexSet(graph,claw));
-		}else
-			System.out.println("Claw not found");
-		System.out.println("Time taken in milliseconds: " + (stoptime-starttime));
+		System.out.print(d.getResult());
 	}
 	
 	public  Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
@@ -181,11 +138,5 @@ public class DetectClaw {
 	public  String getResult(){
 		String result = String.format("%-10s%-10s%-10s", p1time,p2time,found);
 		return result;
-	}
-	
-	public  void resetResult(){
-		p1time = "-";
-		p2time = "-";
-		found = "found";
 	}
 }

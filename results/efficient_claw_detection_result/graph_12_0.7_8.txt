@@ -1,2 +1,0 @@
-File name                     Graph size  Result
-graph_12_0.7_8.txt            12          0         1         found     

@@ -1,2 +1,0 @@
-File name                     Graph size  Result
-graph_16_0.9_6.txt            16          2         -         -         found     

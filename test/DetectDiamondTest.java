@@ -3,14 +3,12 @@ package test;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import efficientdetection.DetectDiamond;
-import efficientdetection.DetectTriangle;
 import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;

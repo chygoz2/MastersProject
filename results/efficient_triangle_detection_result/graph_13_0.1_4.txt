@@ -1,2 +1,0 @@
-File name                     Graph size  Result
-graph_13_0.1_4.txt            13          0         not found 

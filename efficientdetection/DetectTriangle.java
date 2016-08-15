@@ -12,34 +12,12 @@ public class DetectTriangle {
 	private String found = "found";
 	
 	public static void main(String[] args) {
-		UndirectedGraph<Integer,Integer> graph;
-//		for(int a=0;a<15;a++){
-//			String fileName = "matrix3.txt";
-//			String fileName = "generated_graphs\\size_7\\graph_7_0.2_2.txt";
-//			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
-//			String fileName = "generated_graphs\\size_15\\graph_15_1.0_1.txt";
-			String fileName = "test\\testdata\\triangletestdata.txt";
-			graph = Utility.makeGraphFromFile(fileName);
-//			int[][] A = {{0,1,0,1,1},{1,0,1,0,0},{0,1,0,1,1},{1,0,1,0,0},{1,0,1,0,0}};
-//			graph = Utility.makeGraphFromAdjacencyMatrix(A);
-			
-			long starttime = System.currentTimeMillis();
-			DetectTriangle d = new DetectTriangle();
-			Collection<Graph.Vertex<Integer>> triangle = d.detect(graph);
-//			List<UndirectedGraph<Integer,Integer>> triangles = DetectKL.detect(graph,3);
-			long stoptime = System.currentTimeMillis();
-			
-			long timetaken = stoptime-starttime;
-			
-			
-			if(triangle!=null){
-				Utility.printGraph(Utility.makeGraphFromVertexSet(graph, triangle));
-				System.out.println("Time taken in milliseconds: "+timetaken);
-			}
-			else{
-				System.out.println("Triangle not found");
-			}
-
+		UndirectedGraph<Integer,Integer> graph = null;
+		graph = Utility.makeGraphFromFile(args[0]);
+		
+		DetectTriangle d = new DetectTriangle();
+		Collection<Graph.Vertex<Integer>> triangle = d.detect(graph);
+		System.out.print(d.getResult());
 	}
 	
 	public Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
@@ -50,8 +28,6 @@ public class DetectTriangle {
 		
 		if(triangle==null)
 			found = "not found";
-//		System.out.println(getResult());
-//		resetResult();
 		
 		return triangle;
 	}
@@ -205,9 +181,5 @@ public class DetectTriangle {
 		String result = String.format("%-10s%-10s", time,found);
 		return result;
 	}
-	
-	public void resetResult(){
-		time = "-";
-		found = "found";
-	}
+
 }
