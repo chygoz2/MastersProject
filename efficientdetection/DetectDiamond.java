@@ -21,49 +21,12 @@ public class DetectDiamond {
 	private String found = "found";
 	
 	public static void main(String [] args) throws IOException{
-//		String fileName = "generated_graphs\\size_150\\graph_150_1.0_1.txt";
-//		UndirectedGraph<Integer, Integer> graph = new UndirectedGraph<Integer,Integer>();
-//		
-//		Graph.Vertex<Integer> v1 = graph.addVertex(0);
-//		Graph.Vertex<Integer> v2 = graph.addVertex(1);
-//		Graph.Vertex<Integer> v3 = graph.addVertex(2);
-//		Graph.Vertex<Integer> v4 = graph.addVertex(3);
-//		Graph.Vertex<Integer> v5 = graph.addVertex(4);
-//		graph.addEdge(v1, v2);
-//		graph.addEdge(v3, v2);
-//		graph.addEdge(v3, v4);
-//		graph.addEdge(v1, v3);
-//		graph.addEdge(v1, v5);
-//		graph.addEdge(v3, v5);
+		UndirectedGraph<Integer,Integer> graph = null;
+		graph = Utility.makeGraphFromFile(args[0]);
 		
-		
-//		while(true){
-		UndirectedGraph<Integer,Integer> graph;
-		for(int a=0;a<1;a++){
-//			String fileName = "graph_91_0.3_3.txt";
-			String fileName = "generated_graphs\\size_5\\graph_5_0.7_4.txt";
-//			String fileName = "generated_graphs\\size_6\\graph_6_0.6_3.txt";
-//			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
-//			String fileName = "test\\testdata\\diamondtestdata.txt";
-//			String fileName = "generated_graphs\\size_300\\graph_300_0.9_1.txt";
-//			String fileName = "generated_graphs\\size_150\\graph_150_1.0_1.txt";
-//			UndirectedGraph<Integer,Integer> graphs[a] = Utility.makeGraphFromFile(fileName);
-			graph = Utility.makeGraphFromFile(fileName);
-			long sta = System.currentTimeMillis();
-			
-			DetectDiamond d = new DetectDiamond();
-			List<Graph.Vertex<Integer>> diamond = d.detect(graph);
-			long sto = System.currentTimeMillis();
-			
-			if(diamond!=null){
-				Utility.printGraph(Utility.makeGraphFromVertexSet(graph,diamond));
-			}
-			else{
-				System.out.println("Diamond not found");
-			}
-			System.out.println("Time taken in milliseconds: " + (sto-sta));
-			System.out.println(d.getResult());
-		}
+		DetectDiamond d = new DetectDiamond();
+		Collection<Graph.Vertex<Integer>> diamond = d.detect(graph);
+		System.out.print(d.getResult());
 	}
 	
 	/**

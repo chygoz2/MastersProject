@@ -13,42 +13,12 @@ public class DetectSimplicialVertex {
 	private  String found = "found";
 	
 	public static void main(String [] args){
-//		UndirectedGraph<Integer, Integer> graph = new UndirectedGraph<Integer,Integer>();
-//		
-//		Graph.Vertex<Integer> v1 = graph.addVertex(1);
-//		Graph.Vertex<Integer> v2 = graph.addVertex(2);
-//		Graph.Vertex<Integer> v3 = graph.addVertex(3);
-//		Graph.Vertex<Integer> v4 = graph.addVertex(4);
-//		Graph.Vertex<Integer> v5 = graph.addVertex(5);
-//		graph.addEdge(v1, v2);
-//		graph.addEdge(v3, v2);
-//		graph.addEdge(v3, v4);
-//		graph.addEdge(v1, v3);
-////		graph.addEdge(v1, v5);
-////		graph.addEdge(v3, v5);
-//		graph.addEdge(v2, v5);
-//		graph.addEdge(v2, v4);
-//		graph.addEdge(v1, v4);
-//		graph.addEdge(v4, v5);
-//		
-//		Utility.saveGraphToFile(graph, 0.7, 10);
-//		String fileName = "generated_graphs\\size_5\\graph_5_0.7_10.txt";
-//		String fileName = "generated_graphs\\size_6\\graph_6_0.6_2.txt";
-		String fileName = "generated_graphs\\size_150\\graph_150_1.0_1.txt";
-
-		for(int i=0; i<1; i++){
-			UndirectedGraph<Integer, Integer> graph = Utility.makeGraphFromFile(fileName);
-			long starttime = System.currentTimeMillis();
-			
-			DetectSimplicialVertex d = new DetectSimplicialVertex();
-			Graph.Vertex<Integer> simpVertex = d.detect(graph);
-			if(simpVertex!=null){
-				System.out.print(simpVertex.getElement()+", ");
-			}else{
-				System.out.println("Simplicial vertex not found");
-			}
-
-		}
+		UndirectedGraph<Integer,Integer> graph = null;
+		graph = Utility.makeGraphFromFile(args[0]);
+		
+		DetectSimplicialVertex d = new DetectSimplicialVertex();
+		Graph.Vertex<Integer> s = d.detect(graph);
+		System.out.print(d.getResult());
 	}
 	
 	public  Graph.Vertex<Integer> detect(UndirectedGraph<Integer,Integer> graph){
@@ -73,7 +43,6 @@ public class DetectSimplicialVertex {
 		if(simplicialVertex==null)
 			found = "not found";
 		
-		System.out.println(getResult());
 		return simplicialVertex;
 		
 	}

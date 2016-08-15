@@ -11,23 +11,12 @@ public class DetectKL {
 	private  String found = "found";
 	
 	public static void main(String [] args){
+		UndirectedGraph<Integer,Integer> graph = null;
+		graph = Utility.makeGraphFromFile(args[0]);
 		
-//		String fileName = "matrix5.txt";
-		String fileName = "generated_graphs\\size_20\\graph_20_0.6_5.txt";
-		UndirectedGraph<Integer, Integer> graph = Utility.makeGraphFromFile(fileName);
-		
-//		int[][] A = {{0,1,1,1,1,0,1},{1,0,1,1,1,1,1},{1,1,0,1,1,1,0},{1,1,1,0,1,0,0},{1,1,1,1,0,0,0},
-//				{0,1,1,0,0,0,1},{1,1,0,0,0,1,0}};
-//		graph = Utility.makeGraphFromAdjacencyMatrix(A);
-		long starttime = System.currentTimeMillis();
-		Collection<Graph.Vertex<Integer>> kl = new DetectKL().detect(graph,6);
-		long stoptime = System.currentTimeMillis();
-		
-		long timetaken = stoptime-starttime;
-		
-		System.out.println("Time taken in milliseconds: "+timetaken);
-//		if(kl!=null)
-//			Utility.printGraph(Utility.makeGraphFromVertexSet(graph, kl));
+		DetectKL d = new DetectKL();
+		Collection<Graph.Vertex<Integer>> kl = d.detect(graph,4);
+		System.out.print(d.getResult());
 	}
 	
 	public  Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph, int l){
@@ -51,8 +40,6 @@ public class DetectKL {
 		if(kl==null)
 			found = "not found";
 		
-		System.out.println(getResult());
-		resetResult();
 		return kl;
 	}
 	
@@ -368,9 +355,4 @@ public class DetectKL {
 		return result;
 	}
 	
-	public  void resetResult(){
-		p1Time = "-";
-		p2Time = "-";
-		found = "found";
-	}
 }
