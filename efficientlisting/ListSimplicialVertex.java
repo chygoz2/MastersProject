@@ -1,4 +1,4 @@
-package listing;
+package efficientlisting;
 import java.util.*;
 
 import general.Graph;
@@ -39,19 +39,13 @@ public class ListSimplicialVertex {
 
 		for(int i=0; i<1; i++){
 			UndirectedGraph<Integer, Integer> graph = Utility.makeGraphFromFile(fileName);
-			long starttime = System.currentTimeMillis();
+
 			List<Graph.Vertex<Integer>> simpVertex = detect(graph);
-			long stoptime = System.currentTimeMillis();
 			
-			long timetaken = stoptime-starttime;
-			
-			if(!simpVertex.isEmpty()){
-				for(Graph.Vertex<Integer> s: simpVertex)
-					System.out.print(s.getElement()+", ");
-			}else{
-				System.out.println("Simplicial vertex not found");
-			}
-			System.out.println("\nTime taken in milliseconds: "+timetaken);
+//			if(!simpVertex.isEmpty()){
+//				for(Graph.Vertex<Integer> s: simpVertex)
+//					System.out.print(s.getElement()+", ");
+//			}
 		}
 	}
 	

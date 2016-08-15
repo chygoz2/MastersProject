@@ -10,9 +10,8 @@ import java.util.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import efficientdetection.*;
+import efficientlisting.ListClaws;
 import general.*;
-import listing.ListClaws;
 
 /**
  * @author Chigozie Ekwonu

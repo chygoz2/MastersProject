@@ -1,86 +1,66 @@
 package easydetection;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
 
 public class DetectK4 {
+
+	private  String p1time = "-";
+	private  String found = "found";
 	
 	public static void main(String [] args){
-		String fileName = "matrix4.txt";
+//		String fileName = "matrix4.txt";
+		String fileName = "generated_graphs\\size_10\\graph_10_0.9_6.txt ";
 		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(fileName);
+
+		Collection<Graph.Vertex<Integer>> k4 = new DetectK4().detect(graph);
+
+		if(k4!=null){
+			Utility.printGraph(Utility.makeGraphFromVertexSet(graph,k4));
+		}
+
+	}
+
+	public Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
 		
 		long starttime = System.currentTimeMillis();
-		List<UndirectedGraph<Integer,Integer>> k4List = detect(graph);
+		Collection<Graph.Vertex<Integer>> k4 = find(graph);
 		long stoptime = System.currentTimeMillis();
+		p1time = ""+(stoptime-starttime);
 		
-		long timetaken = stoptime-starttime;
-		
-		for(UndirectedGraph<Integer,Integer> k4: k4List){
-			Utility.printGraph(k4);
-		}
-		System.out.println("Time taken in milliseconds: "+timetaken);
-					
+		if(k4==null)
+			found = "not found";
+		System.out.println(getResult());
+		return k4;
 	}
 	
-	public static List<UndirectedGraph<Integer,Integer>> detect(UndirectedGraph<Integer,Integer> graph){
-		List<Set<Integer>> marked = new ArrayList<Set<Integer>>(); //to prevent creating the same k4 more than once 
-		List<UndirectedGraph<Integer,Integer>> k4List = new ArrayList<UndirectedGraph<Integer,Integer>>();
-		
+	public Collection<Graph.Vertex<Integer>> find(UndirectedGraph<Integer,Integer> graph){ 
+
 		//get all the vertices
 		Iterator<Graph.Vertex<Integer>> vertices = graph.vertices();
 		//check if each vertex has a triangle in its neighbourhood
 		while(vertices.hasNext()){
 			Graph.Vertex<Integer> vertex = vertices.next();
-			
+
 			//get the neighbourhood graph of vertex
 			UndirectedGraph<Integer,Integer> neighbourhood = Utility.getNeighbourGraph(graph, vertex);
 			//use triangle detection algorithm to get the triangles in the neighbourhood
-			List<UndirectedGraph<Integer,Integer>> tris = DetectTriangle.detect(neighbourhood);
-			if(!tris.isEmpty()){
-				//if list is not empty, then a triangle is found
-				//get the vertices of each triangle 
-				for(UndirectedGraph<Integer,Integer> triangle: tris){
-					List<Graph.Vertex<Integer>> k4VertexList = new ArrayList<Graph.Vertex<Integer>>();
-					Iterator<Graph.Vertex<Integer>> triVertices = triangle.vertices();
-					
-					Set<Integer> k4VerticesElem = new HashSet<Integer>(); //list to store k4 vertices
-					
-					while(triVertices.hasNext()){
-						Graph.Vertex<Integer> v = triVertices.next();
-						k4VertexList.add(v);
-						k4VerticesElem.add(v.getElement());
-					}
-					
-					//add final vertex to list
-					k4VertexList.add(vertex);
-					k4VerticesElem.add(vertex.getElement());
-					
-					//check in the marked list for an entry that contains all 4 vertex elements
-					boolean contains = false;
-					
-					for(Set<Integer> s: marked){
-						if(s.containsAll(k4VerticesElem)){
-							contains = true;
-							break;
-						}
-					}
-					
-					if(!contains){
-						UndirectedGraph<Integer,Integer> k4 = Utility.makeGraphFromVertexSet(graph, k4VertexList);
-						k4List.add(k4);
-						marked.add(k4VerticesElem);
-//						return k4List;
-					}
-				}
+			Collection<Graph.Vertex<Integer>> tri = new DetectTriangle().detect(neighbourhood);
+			if(tri!=null){
+				//if not null, then a triangle is found
+				//add final vertex to list
+				tri.add(vertex);
+				return tri;
 			}
 		}
-		return k4List;
+		return null;
+	}
+	
+	public  String getResult(){
+		String result = String.format("%-10s%-10s", p1time,found);
+		return result;
 	}
 }

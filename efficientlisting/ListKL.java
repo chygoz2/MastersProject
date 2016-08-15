@@ -1,12 +1,11 @@
-package listing;
+package efficientlisting;
 import java.util.*;
 
 import general.*;
 
-public class ListKL2 {
+public class ListKL {
 	
-	private String p1Time = "-";
-	private String p2Time = "-";
+	private  String time = "-";
 	private  String found = "found";
 	
 	public static void main(String [] args){
@@ -44,14 +43,15 @@ public class ListKL2 {
 //		}
 		
 //		String fileName = "matrix5.txt";
-		String fileName = "generated_graphs\\size_20\\graph_20_1.0_9.txt";
+//		String fileName = "generated_graphs\\size_20\\graph_20_1.0_9.txt";
+		String fileName = "generated_graphs\\size_20\\graph_20_0.5_5.txt";
 		UndirectedGraph<Integer, Integer> graph = Utility.makeGraphFromFile(fileName);
 		
 //		int[][] A = {{0,1,1,1,1,0,1},{1,0,1,1,1,1,1},{1,1,0,1,1,1,0},{1,1,1,0,1,0,0},{1,1,1,1,0,0,0},
 //				{0,1,1,0,0,0,1},{1,1,0,0,0,1,0}};
 //		graph = Utility.makeGraphFromAdjacencyMatrix(A);
 		long starttime = System.currentTimeMillis();
-		List<Collection<Graph.Vertex<Integer>>> k4List = new ListKL2().detect(graph,6);
+		List<Collection<Graph.Vertex<Integer>>> k4List = new ListKL().detect(graph,6);
 		long stoptime = System.currentTimeMillis();
 		
 		long timetaken = stoptime-starttime;
@@ -65,55 +65,14 @@ public class ListKL2 {
 	
 	public  List<Collection<Graph.Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph, int l){
 		
-		List<Graph.Vertex<Integer>>[] verticesPartition = partitionVertices(graph, l);
-		List<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
-		List<Graph.Vertex<Integer>> highDegreeVertices = verticesPartition[1];
-		
 		long starttime = System.currentTimeMillis();
-		List<Collection<Graph.Vertex<Integer>>> kls = phaseOne(graph, l, lowDegreeVertices);
+		List<Collection<Graph.Vertex<Integer>>> kls = find(graph, l);
 		long stoptime = System.currentTimeMillis();
-		p1Time = ""+(stoptime-starttime);
+		time = ""+(stoptime-starttime);
 		
-		if(kls==null){
-			starttime = System.currentTimeMillis();
-			kls = phaseTwo(graph, l, highDegreeVertices);
-			stoptime = System.currentTimeMillis();
-			p2Time = ""+(stoptime-starttime);
-		}
-		
-		if(kls==null)
+		if(kls.isEmpty())
 			found = "not found";
-		
-//		System.out.println(getResult());
-//		resetResult();
 		return kls;
-	}
-	
-	public List<Collection<Graph.Vertex<Integer>>> phaseOne(UndirectedGraph<Integer,Integer> graph, int l, Collection<Graph.Vertex<Integer>> lowDegreeVertices){
-		List<Collection<Graph.Vertex<Integer>>> kls = null;
-		for(Graph.Vertex<Integer> v: lowDegreeVertices){
-			//get the neighbour graph of V and check if it contains a K(l-1)
-			UndirectedGraph<Integer,Integer> vn = Utility.getNeighbourGraph(graph, v);
-			
-			kls = find(vn, (l-1));
-			if(!kls.isEmpty()){
-				break;
-			}
-		}
-		return kls;
-	}
-	
-	public List<Collection<Graph.Vertex<Integer>>> phaseTwo(UndirectedGraph<Integer,Integer> graph, int l, Collection<Graph.Vertex<Integer>> highDegreeVertices){
-		//make a graph from all high degree vertices
-		UndirectedGraph<Integer,Integer> graph2 = Utility.makeGraphFromVertexSet(graph, highDegreeVertices);
-		
-		//check if the graph induced by the high degree vertices contains a kl
-		List<Collection<Graph.Vertex<Integer>>> kls = find(graph2, l);
-		
-		if(!kls.isEmpty())
-			return kls;
-		
-		return null;
 	}
 	
 	/**
@@ -285,9 +244,9 @@ public class ListKL2 {
 				
 				//for any two pairs of vertices in H, 
 				//check if there exists a k2q made up of their corresponding vertices in G 
-				Set<Set<Integer>> ssfound = new HashSet<Set<Integer>>(); //since a k2q can have different permutations
-							//of its vertices, which would then result in many edges in H, this set will be used to ensure
-							//that only one edge is added to H for each K2q found in G.
+				Set<Set<Integer>> ssfound = new HashSet<Set<Integer>>();//since a k2q can have different permutations
+				//of its vertices, which would then result in many edges in H, this set will be used to ensure
+				//that only one edge is added to H for each K2q found in G.
 				Iterator<Graph.Vertex<Integer>> vIt1 = H.vertices();
 				while(vIt1.hasNext()){
 					Graph.Vertex<Integer> vOne = vIt1.next();
@@ -351,57 +310,13 @@ public class ListKL2 {
 		return klList;
 	}
 	
-	//method to partition the vertices into low degree vertices and high degree vertices
-	public  List<Graph.Vertex<Integer>>[] partitionVertices(UndirectedGraph<Integer,Integer> graph, int l){
-		List<Graph.Vertex<Integer>>[] vertices = new List[2];
-		vertices[0] = new ArrayList<Graph.Vertex<Integer>>();
-		vertices[1] = new ArrayList<Graph.Vertex<Integer>>();
-		
-		//get vertices
-		Iterator<Graph.Vertex<Integer>> vertexIterator = graph.vertices();
-		
-		//get edges
-		Iterator<Graph.Edge<Integer>> edgeIterator = graph.edges();
-		
-		//get number of edges
-		int noOfEdges = 0;
-		while(edgeIterator.hasNext()){
-			edgeIterator.next();
-			noOfEdges++;
-		}
-		
-
-		//calculate D for Vertex partitioning
-		double D = 0;
-		if(l%3==0)
-			D = Math.sqrt(noOfEdges);
-		else{
-			double alpha = 3; //exponent of matrix multiplication
-			double beta = (alpha * l) / 3;
-			
-			//calculate D for Vertex partitioning
-			D = Math.pow(noOfEdges, ((beta - 1)*(2*beta-alpha+1)));
-		}
-		
-		while(vertexIterator.hasNext()){
-			Graph.Vertex<Integer> v = vertexIterator.next();
-			if(graph.degree(v)>D)
-				vertices[1].add(v);
-			else
-				vertices[0].add(v);
-		}
-		
-		return vertices;
-	}
-	
 	public  String getResult(){
-		String result = String.format("%-10s%-10s%-10s", p1Time,p2Time,found);
+		String result = String.format("%-10s%-10s", time,found);
 		return result;
 	}
 	
 	public  void resetResult(){
-		p1Time = "-";
-		p2Time = "-";
+		time = "-";
 		found = "found";
 	}
 }

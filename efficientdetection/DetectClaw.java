@@ -182,10 +182,4 @@ public class DetectClaw {
 		String result = String.format("%-10s%-10s%-10s", p1time,p2time,found);
 		return result;
 	}
-	
-	public  void resetResult(){
-		p1time = "-";
-		p2time = "-";
-		found = "found";
-	}
 }

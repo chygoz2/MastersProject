@@ -1,4 +1,4 @@
-package easydetection;
+package easylisting;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,40 +11,29 @@ import general.UndirectedGraph;
 import general.Utility;
 import general.Graph.Vertex;
 
-public class DetectClaw {
-	
-	private  String p1time = "-";
-	private  String found = "found";
+public class ListClaws {
 	
 	public static void main(String [] args){
 		
 		UndirectedGraph<Integer,Integer> graph = null;
 //		String fileName = "test\\testdata\\clawtestdata.txt";
-		String fileName = "generated_graphs\\size_100\\graph_100_0.1_14.txt";
+		String fileName = "generated_graphs\\size_100\\graph_100_0.8_14.txt";
 		graph = Utility.makeGraphFromFile(fileName);
 		
-		Collection<Graph.Vertex<Integer>> claw = new DetectClaw().detect(graph);
-		
-		if(claw!=null){
-			Utility.printGraph(Utility.makeGraphFromVertexSet(graph,claw));
+		long starttime = System.currentTimeMillis();
+		List<Collection<Graph.Vertex<Integer>>> claws = new ListClaws().detect(graph);
+		long stoptime = System.currentTimeMillis();
+		if(!claws.isEmpty()){
+//			for(Collection<Graph.Vertex<Integer>> claw: claws)
+//				Utility.printGraph(Utility.makeGraphFromVertexSet(graph,claw));
 		}else
 			System.out.println("Claw not found");
+		System.out.println("Time taken in milliseconds: " + (stoptime-starttime));
+		System.out.println(claws.size());
 	}
 
-	public Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
-		long start = System.currentTimeMillis();
-		Collection<Graph.Vertex<Integer>> s = find(graph);
-		long end = System.currentTimeMillis();
-		p1time = ""+(end-start);
-		
-		if(s==null)
-			found = "not found";
-		
-		System.out.println(getResult());
-		return s;
-	}
-	
-	public Collection<Graph.Vertex<Integer>> find(UndirectedGraph<Integer,Integer> graph){		
+	public List<Collection<Graph.Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph){		
+		List<Collection<Graph.Vertex<Integer>>> claws = new ArrayList<Collection<Graph.Vertex<Integer>>>();
 		//for each vertex, check if the complement of its neighbour contains a triangle
 		
 		Iterator<Graph.Vertex<Integer>> vertices = graph.vertices();
@@ -57,15 +46,15 @@ public class DetectClaw {
 			if(vNeighGraph.size()<3)
 				continue;
 			
-			Collection<Graph.Vertex<Integer>> claw = getClawVerticesFromNeighbourGraph(vNeighGraph);
-			if(claw!=null){
+			List<Collection<Graph.Vertex<Integer>>> tris = getClawVerticesFromNeighbourGraph(vNeighGraph);
+			for(Collection<Graph.Vertex<Integer>> tri: tris){
 				//add v to the collection
-				claw.add(v);
-				return claw;
+				tri.add(v);
+				claws.add(tri);
 			}
 			
 		}
-		return null;
+		return claws;
 	}
 	
 	/**
@@ -74,10 +63,10 @@ public class DetectClaw {
 	 * @param vNeighGraph		the neighbourhood graph to be checked
 	 * @return					the vertices if found
 	 */
-	private Collection<Graph.Vertex<Integer>> getClawVerticesFromNeighbourGraph(UndirectedGraph<Integer,Integer> vNeighGraph){
+	private static List<Collection<Graph.Vertex<Integer>>> getClawVerticesFromNeighbourGraph(UndirectedGraph<Integer,Integer> vNeighGraph){
 		//get the complement matrix of the neighbour graph
 		int[][] vncomp = vNeighGraph.getComplementMatrix();
-		
+		List<Collection<Graph.Vertex<Integer>>> claws = new ArrayList<Collection<Graph.Vertex<Integer>>>(); 
 		//map the neighbour graph vertices to the complement matrix indices
 		List<Graph.Vertex<Integer>> vimap = new ArrayList<Graph.Vertex<Integer>>();
 		Iterator<Graph.Vertex<Integer>> vnIt = vNeighGraph.vertices();
@@ -90,28 +79,18 @@ public class DetectClaw {
 		
 		//look for a triangle in the complement graph. Such a triangle forms the remaining vertices
 		//of the claw
-		List<Graph.Vertex<Integer>> tri = (List<Vertex<Integer>>) new DetectTriangle().detect(vncompgraph);
-		if(tri!=null){
+		List<Collection<Graph.Vertex<Integer>>> triList = new ListTriangles().detect(vncompgraph);
+		for(Collection<Graph.Vertex<Integer>> tri: triList){
 			//get the vertices of the main graph that correspond to the vertices of the triangle found
 			Collection<Graph.Vertex<Integer>> claw = new ArrayList<Graph.Vertex<Integer>>();
 			
-			claw.add(vimap.get(tri.get(0).getElement()));
-			claw.add(vimap.get(tri.get(1).getElement()));
-			claw.add(vimap.get(tri.get(2).getElement()));
+			claw.add(vimap.get(((List<Vertex<Integer>>) tri).get(0).getElement()));
+			claw.add(vimap.get(((List<Vertex<Integer>>) tri).get(1).getElement()));
+			claw.add(vimap.get(((List<Vertex<Integer>>) tri).get(2).getElement()));
 			
-			return claw;
+			claws.add(claw);
 		}
 		
-		return null;
-	}
-	
-	public  String getResult(){
-		String result = String.format("%-10s%-10s", p1time,found);
-		return result;
-	}
-	
-	public  void resetResult(){
-		p1time = "-";
-		found = "found";
+		return claws;
 	}
 }

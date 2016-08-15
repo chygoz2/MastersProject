@@ -11,10 +11,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import efficientdetection.DetectK4;
+import efficientlisting.ListK4;
 import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
-import listing.ListK4;
 
 public class ListK4Test {
 	

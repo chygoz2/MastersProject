@@ -70,7 +70,7 @@ public class DetectK4 {
 		
 		if(k4==null)
 			found = "not found";
-//		System.out.println(getResult());
+		System.out.println(getResult());
 		return k4;
 	}
 	
@@ -170,9 +170,4 @@ public class DetectK4 {
 		return result;
 	}
 	
-	public  void resetResult(){
-		p1time = "-";
-		p2time = "-";
-		found = "found";
-	}
 }

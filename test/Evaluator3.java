@@ -11,75 +11,15 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import efficientdetection.DetectClaw;
-import efficientdetection.DetectDiamond;
-import efficientdetection.DetectK4;
-import efficientdetection.DetectKL;
-import efficientdetection.DetectSimplicialVertex;
-import efficientdetection.DetectTriangle;
+import easydetection.*;
+
 import general.UndirectedGraph;
 import general.Utility;
 
-public class Evaluator2 {
+public class Evaluator3 {
 	static boolean done;
-	static int start=0, end=0, no=0;
 
 	public static void main(String[] args) {
-		String generateGraphs = "";
-		if(args.length>0){
-			start = Integer.parseInt(args[0]);
-			end = Integer.parseInt(args[1]);
-			no = Integer.parseInt(args[2]); 
-			generateGraphs = args[3];
-		}
-		
-		ThreadPoolExecutor executor2 = null;
-		
-		if(generateGraphs.equals("gg")){
-			System.out.print("Generating graphs\n");
-			BlockingQueue<Runnable> blockingQueue2 = new ArrayBlockingQueue<Runnable>(20);
-	
-			executor2 = new ThreadPoolExecutor(20,
-					20, 60000, TimeUnit.MILLISECONDS, blockingQueue2);
-	
-			executor2.setRejectedExecutionHandler(new RejectedExecutionHandler() {
-				@Override
-				public void rejectedExecution(Runnable r,
-						ThreadPoolExecutor executor) {
-//					System.out.println(r.toString() + " Rejected");
-					//            	System.out.print(".");
-					try {
-						Thread.sleep(5);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-//					System.out.println("Trying "+ r.toString() + " again");
-					//                System.out.print(".");
-					executor.execute(r);
-				}
-			});
-	
-			// Let start all core threads initially
-			executor2.prestartAllCoreThreads();
-	
-			int i=1;
-			//generate random graphs
-			for(int j=start; j<=end; j++){
-				Runnable r = new GraphGenerator(j,i++,no);
-				executor2.execute(r);
-			}
-			
-			executor2.shutdown();
-		}
-		if(executor2!=null){
-			while(!executor2.isTerminated()){
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}
 		 
 		BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<Runnable>(20);
 
@@ -200,7 +140,8 @@ public class Evaluator2 {
 		}
 
 		public String toString(){
-			return count+"";
+			String name = gname.substring(gname.lastIndexOf("graph"));
+			return name;
 		}
 
 	}
@@ -231,7 +172,8 @@ public class Evaluator2 {
 		}
 
 		public String toString(){
-			return count+"";
+			String name = gname.substring(gname.lastIndexOf("graph"));
+			return name;
 		}
 
 	}
@@ -294,7 +236,8 @@ public class Evaluator2 {
 		}
 
 		public String toString(){
-			return count+"";
+			String name = gname.substring(gname.lastIndexOf("graph"));
+			return name;
 		}
 
 	}
@@ -325,7 +268,8 @@ public class Evaluator2 {
 		}
 
 		public String toString(){
-			return count+"";
+			String name = gname.substring(gname.lastIndexOf("graph"));
+			return name;
 		}
 
 	}
@@ -340,7 +284,8 @@ public class Evaluator2 {
 		}
 
 		public String toString(){
-			return count+"";
+			String name = gname.substring(gname.lastIndexOf("graph"));
+			return name;
 		}
 
 		public void run(){
@@ -360,29 +305,29 @@ public class Evaluator2 {
 		}
 	}
 
-	public static class GraphGenerator implements Runnable{
-		private int start,name,no;
-
-		GraphGenerator(int start,int name,int no){
-			this.start = start;
-			this.name = name;
-			this.no = no;
-		}
-
-		public String toString(){
-			return name+"";
-		}
-
-		public void run(){
-			for(double p=0.1; p<=1; p+=0.1){
-				System.out.println("Generating size "+start+" graph with p= "+p);
-				if(p<=0.9)
-					Utility.generateRandomGraphFile(start, Math.round(p*10)/10.0, no);
-				else
-					Utility.generateRandomGraphFile(start, Math.round(p*10)/10.0, 1);
-			}
-		}
-	}
+//	public static class GraphGenerator implements Runnable{
+//		private int start,name,no;
+//
+//		GraphGenerator(int start,int name,int no){
+//			this.start = start;
+//			this.name = name;
+//			this.no = no;
+//		}
+//
+//		public String toString(){
+//			return name+"";
+//		}
+//
+//		public void run(){
+//			for(double p=0.1; p<=1; p+=0.1){
+//				System.out.println("Generating size "+start+" graph with p= "+p);
+//				if(p<=0.9)
+//					Utility.generateRandomGraphFile(start, Math.round(p*10)/10.0, no);
+//				else
+//					Utility.generateRandomGraphFile(start, Math.round(p*10)/10.0, 1);
+//			}
+//		}
+//	}
 
 	public static void saveResultToFile(String result, String filename, String graphname){
 		File f = new File("");

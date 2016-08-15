@@ -1,4 +1,4 @@
-package listing;
+package efficientlisting;
 import java.util.*;
 
 import general.Graph;
@@ -36,24 +36,25 @@ public class ListClaws {
 //		UndirectedGraph<Integer,Integer> graph = Utility.makeRandomGraph(7, 0.4);
 		
 		UndirectedGraph<Integer,Integer> graph = null;
-		String fileName = "test\\testdata\\clawtestdata.txt";
+//		String fileName = "test\\testdata\\clawtestdata.txt";
+		String fileName = "generated_graphs\\size_100\\graph_100_0.8_14.txt";
 		graph = Utility.makeGraphFromFile(fileName);
 		
 		long starttime = System.currentTimeMillis();
 		List<Collection<Vertex<Integer>>> claws = detect(graph);
 		long stoptime = System.currentTimeMillis();
 		if(!claws.isEmpty()){
-			for(Collection<Graph.Vertex<Integer>> claw: claws)
-				Utility.printGraph(Utility.makeGraphFromVertexSet(graph,claw));
+//			for(Collection<Graph.Vertex<Integer>> claw: claws)
+//				Utility.printGraph(Utility.makeGraphFromVertexSet(graph,claw));
 		}else
 			System.out.println("Claw not found");
 		System.out.println("Time taken in milliseconds: " + (stoptime-starttime));
+		System.out.println(claws.size());
 	}	
 	
 	public static List<Collection<Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph){		
 		//for each vertex, check if the complement of its neighbour contains a triangle
 		List<Collection<Graph.Vertex<Integer>>> claws = new ArrayList<Collection<Graph.Vertex<Integer>>>();
-		Set<Set<Integer>> marked = new HashSet<Set<Integer>>(); //to prevent creating the same diamond more than once
 		
 		Iterator<Graph.Vertex<Integer>> vertices = graph.vertices();
 		
@@ -72,17 +73,7 @@ public class ListClaws {
 					//add v to the collection
 					claw.add(v);
 					
-					Set<Integer> clawListElem = new HashSet<Integer>(); //set to store diamond vertices elements
-					for(Graph.Vertex<Integer> cv: claw){
-						clawListElem.add(cv.getElement());
-					}
-					
-					//check in the seen list for an entry that contains all 4 vertex elements
-					boolean contains = marked.add(clawListElem);
-					
-					if(contains){
-						claws.add((List<Vertex<Integer>>) claw);
-					}
+					claws.add((List<Vertex<Integer>>) claw);
 				}
 			}
 			

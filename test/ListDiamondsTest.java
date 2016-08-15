@@ -11,9 +11,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import efficientdetection.*;
+import efficientlisting.ListDiamonds;
 import general.*;
 import general.Graph.Vertex;
-import listing.ListDiamonds;
 
 /**
  * @author Chigozie Ekwonu
@@ -37,62 +37,6 @@ public class ListDiamondsTest {
 	public void testDetect() {
 		List<Collection<Graph.Vertex<Integer>>> actualResult = ListDiamonds.detect(graph);
 		int[][] expectedResult = {{0,1,2,4},{0,2,3,4}}; //expected result should have 3 triangles 
-															//with the specified vertex elements
-		
-		for(int i=0; i<expectedResult.length;i++){
-			List<Integer> vList = new ArrayList<Integer>();
-			Collection<Graph.Vertex<Integer>> aRIt = actualResult.get(i);
-			for(Graph.Vertex<Integer> v: aRIt)
-				vList.add(v.getElement());
-			for(int j=0; j<expectedResult[i].length; j++){
-				assertTrue(vList.contains(expectedResult[i][j]));
-			}
-		}
-		assertEquals(actualResult.size(),expectedResult.length);
-	}
-	
-	@Test
-	public void testPhaseOne(){
-		Map phase1Result = ListDiamonds.phaseOne(lowDegreeVertices,graph);
-		List<Collection<Graph.Vertex<Integer>>> actualResult = (List<Collection<Vertex<Integer>>>) phase1Result.get("diamonds");
-		int[][] expectedResult = {}; //expected result should have 3 triangles 
-															//with the specified vertex elements
-		
-		for(int i=0; i<expectedResult.length;i++){
-			List<Integer> vList = new ArrayList<Integer>();
-			Collection<Graph.Vertex<Integer>> aRIt = actualResult.get(i);
-			for(Graph.Vertex<Integer> v: aRIt)
-				vList.add(v.getElement());
-			for(int j=0; j<expectedResult[i].length; j++){
-				assertTrue(vList.contains(expectedResult[i][j]));
-			}
-		}
-		assertEquals(actualResult.size(),expectedResult.length);
-	}
-	
-	@Test
-	public void testPhaseTwo(){
-		Map phase1Result = ListDiamonds.phaseOne(lowDegreeVertices,graph);
-		List<Collection<Graph.Vertex<Integer>>> actualResult = ListDiamonds.phaseTwo((Map) phase1Result.get("cliques"),graph);
-		int[][] expectedResult = {{0,1,2,4},{0,2,3,4}}; //expected result should have 3 triangles 
-															//with the specified vertex elements
-		
-		for(int i=0; i<expectedResult.length;i++){
-			List<Integer> vList = new ArrayList<Integer>();
-			Collection<Graph.Vertex<Integer>> aRIt = actualResult.get(i);
-			for(Graph.Vertex<Integer> v: aRIt)
-				vList.add(v.getElement());
-			for(int j=0; j<expectedResult[i].length; j++){
-				assertTrue(vList.contains(expectedResult[i][j]));
-			}
-		}
-		assertEquals(actualResult.size(),expectedResult.length);
-	}
-	
-	@Test
-	public void testPhaseThree(){
-		List<Collection<Graph.Vertex<Integer>>> actualResult = ListDiamonds.phaseThree(graph,lowDegreeVertices);
-		int[][] expectedResult = {}; //expected result should have 3 triangles 
 															//with the specified vertex elements
 		
 		for(int i=0; i<expectedResult.length;i++){

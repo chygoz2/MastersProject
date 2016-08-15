@@ -6,11 +6,11 @@ import java.util.concurrent.ThreadLocalRandom;
 import javax.swing.JOptionPane;
 
 import efficientdetection.*;
+import efficientlisting.ListSimplicialVertex;
 import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
 import general.Graph.Vertex;
-import listing.ListSimplicialVertex;
 
 public class GraphGenerator {
 	
@@ -31,7 +31,7 @@ public class GraphGenerator {
 					adjMatrix[j][i] = 1;
 					
 					UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(adjMatrix);
-					List<Graph.Vertex<Integer>> diamond = DetectDiamond.detect(graph);
+					List<Graph.Vertex<Integer>> diamond = new DetectDiamond().detect(graph);
 					if(diamond!=null){
 						adjMatrix[i][j] = 0;
 						adjMatrix[j][i] = 0;
@@ -60,7 +60,7 @@ public class GraphGenerator {
 					adjMatrix[j][i] = 1;
 					
 					UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(adjMatrix);
-					List<Graph.Vertex<Integer>> triangle = (List<Vertex<Integer>>) DetectTriangle.detect(graph);
+					List<Graph.Vertex<Integer>> triangle = (List<Vertex<Integer>>) new DetectTriangle().detect(graph);
 					if(!triangle.isEmpty()){
 						adjMatrix[i][j] = 0;
 						adjMatrix[j][i] = 0;
@@ -89,7 +89,7 @@ public class GraphGenerator {
 					adjMatrix[j][i] = 1;
 					
 					UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(adjMatrix);
-					List<Graph.Vertex<Integer>> k4 = (List<Vertex<Integer>>) DetectK4.detect(graph);
+					List<Graph.Vertex<Integer>> k4 = (List<Vertex<Integer>>) new DetectK4().detect(graph);
 					if(!k4.isEmpty()){
 						adjMatrix[i][j] = 0;
 						adjMatrix[j][i] = 0;
@@ -118,7 +118,7 @@ public class GraphGenerator {
 					adjMatrix[j][i] = 1;
 					
 					UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(adjMatrix);
-					List<Graph.Vertex<Integer>> claw = (List<Vertex<Integer>>) DetectClaw.detect(graph);
+					List<Graph.Vertex<Integer>> claw = (List<Vertex<Integer>>) new DetectClaw().detect(graph);
 					if(claw!=null){
 						adjMatrix[i][j] = 0;
 						adjMatrix[j][i] = 0;

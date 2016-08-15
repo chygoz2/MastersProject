@@ -1,12 +1,14 @@
-package easydetection;
+package easylisting;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
 
-public class DetectSimplicialVertex {
+public class ListSimplicialVertices {
 	
 	private  String p1time = "-";
 	private  String found = "found";
@@ -37,32 +39,34 @@ public class DetectSimplicialVertex {
 
 		for(int i=0; i<1; i++){
 			UndirectedGraph<Integer, Integer> graph = Utility.makeGraphFromFile(fileName);
-			DetectSimplicialVertex d = new DetectSimplicialVertex();
+			long starttime = System.currentTimeMillis();
+			ListSimplicialVertices d = new ListSimplicialVertices();
+			List<Graph.Vertex<Integer>> simpVertex = d.detect(graph);
+			long stoptime = System.currentTimeMillis();
 			
-			Graph.Vertex<Integer> simpVertex = d.detect(graph);
+//			if(!simpVertex.isEmpty()){
+//				for(Graph.Vertex<Integer> s: simpVertex)
+//					System.out.print(s.getElement()+", ");
+//			}
 			
-			if(simpVertex!=null){
-				System.out.print(simpVertex.getElement()+", ");
-			}else{
-				System.out.println("Simplicial vertex not found");
-			}
 		}
 	}
 	
-	public Graph.Vertex<Integer> detect(UndirectedGraph<Integer,Integer> graph){
+	public List<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
 		long start = System.currentTimeMillis();
-		Graph.Vertex<Integer> s = find(graph);
+		List<Graph.Vertex<Integer>> s = find(graph);
 		long end = System.currentTimeMillis();
 		p1time = ""+(end-start);
 		
-		if(s==null)
+		if(s.isEmpty())
 			found = "not found";
-		
 		System.out.println(getResult());
 		return s;
 	}
 	
-	public Graph.Vertex<Integer> find(UndirectedGraph<Integer,Integer> graph){
+	public List<Graph.Vertex<Integer>> find(UndirectedGraph<Integer,Integer> graph){
+		long start = System.currentTimeMillis();
+		List<Graph.Vertex<Integer>> simplicialVertices = new ArrayList<Graph.Vertex<Integer>>();
 		
 		//get the vertices
 		Iterator<Graph.Vertex<Integer>> vertices = graph.vertices();
@@ -93,10 +97,10 @@ public class DetectSimplicialVertex {
 			}
 			
 			if(contains){
-				return vertex;
+				simplicialVertices.add(vertex);
 			}
 		}
-		return null;
+		return simplicialVertices;
 	}
 	
 	public  String getResult(){

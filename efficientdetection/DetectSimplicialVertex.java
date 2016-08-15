@@ -40,17 +40,14 @@ public class DetectSimplicialVertex {
 			UndirectedGraph<Integer, Integer> graph = Utility.makeGraphFromFile(fileName);
 			long starttime = System.currentTimeMillis();
 			
-			Graph.Vertex<Integer> simpVertex = new DetectSimplicialVertex().detect(graph);
-			long stoptime = System.currentTimeMillis();
-			
-			long timetaken = stoptime-starttime;
-			
+			DetectSimplicialVertex d = new DetectSimplicialVertex();
+			Graph.Vertex<Integer> simpVertex = d.detect(graph);
 			if(simpVertex!=null){
 				System.out.print(simpVertex.getElement()+", ");
 			}else{
 				System.out.println("Simplicial vertex not found");
 			}
-			System.out.println("\nTime taken in milliseconds: "+timetaken);
+
 		}
 	}
 	
@@ -73,10 +70,10 @@ public class DetectSimplicialVertex {
 			p2time = ""+(stoptime-starttime);
 		}
 		
-
 		if(simplicialVertex==null)
 			found = "not found";
 		
+		System.out.println(getResult());
 		return simplicialVertex;
 		
 	}
@@ -236,11 +233,5 @@ public class DetectSimplicialVertex {
 	public  String getResult(){
 		String result = String.format("%-10s%-10s%-10s", p1time,p2time,found);
 		return result;
-	}
-	
-	public  void resetResult(){
-		p1time = "-";
-		p2time = "-";
-		found = "found";
 	}
 }

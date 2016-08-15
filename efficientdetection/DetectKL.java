@@ -1,8 +1,8 @@
 package efficientdetection;
 import java.util.*;
 
+import efficientlisting.ListTriangles;
 import general.*;
-import listing.ListTriangles;
 
 public class DetectKL {
 	
@@ -11,41 +11,9 @@ public class DetectKL {
 	private  String found = "found";
 	
 	public static void main(String [] args){
-//		UndirectedGraph<Integer, Integer> graph = new UndirectedGraph<Integer,Integer>();
-//		
-//		Graph.Vertex<Integer> v0 = graph.addVertex(0);
-//		Graph.Vertex<Integer> v1 = graph.addVertex(1);
-//		Graph.Vertex<Integer> v2 = graph.addVertex(2);
-//		Graph.Vertex<Integer> v3 = graph.addVertex(3);
-//		Graph.Vertex<Integer> v4 = graph.addVertex(4);
-//		Graph.Vertex<Integer> v5 = graph.addVertex(5);
-//		graph.addEdge(v0, v1);
-//		graph.addEdge(v2, v1);
-//		graph.addEdge(v2, v3);
-//		graph.addEdge(v0, v2);
-//		graph.addEdge(v0, v4);
-//		graph.addEdge(v2, v4);
-//		graph.addEdge(v1, v4);
-//		graph.addEdge(v3, v4);
-//		graph.addEdge(v1, v3);
-//		graph.addEdge(v0, v3);
-	
-//		String fileName = "matrix5.txt";
-//		UndirectedGraph<Integer, Integer> graph = Utility.makeGraphFromFile(fileName);
-//		int l = 2;
-//		List<UndirectedGraph<Integer,Integer>> klList = detect(graph, l);
-//		System.out.println("No of k"+l+" found is "+klList.size()+"\n");
-//		if(!klList.isEmpty()){
-//			for(UndirectedGraph<Integer,Integer> kl: klList){
-//				Utility.printGraph(kl);
-//				System.out.println();
-//			}
-//		}else{
-//			System.out.println("Not found");
-//		}
 		
 //		String fileName = "matrix5.txt";
-		String fileName = "generated_graphs\\size_20\\graph_20_0.5_5.txt";
+		String fileName = "generated_graphs\\size_20\\graph_20_0.6_5.txt";
 		UndirectedGraph<Integer, Integer> graph = Utility.makeGraphFromFile(fileName);
 		
 //		int[][] A = {{0,1,1,1,1,0,1},{1,0,1,1,1,1,1},{1,1,0,1,1,1,0},{1,1,1,0,1,0,0},{1,1,1,1,0,0,0},
@@ -57,12 +25,9 @@ public class DetectKL {
 		
 		long timetaken = stoptime-starttime;
 		
-//		for(Collection<Graph.Vertex<Integer>> k4: k4List){
-//			Utility.printGraph(Utility.makeGraphFromVertexSet(graph, k4));
-//		}
 		System.out.println("Time taken in milliseconds: "+timetaken);
-		if(kl!=null)
-			Utility.printGraph(Utility.makeGraphFromVertexSet(graph, kl));
+//		if(kl!=null)
+//			Utility.printGraph(Utility.makeGraphFromVertexSet(graph, kl));
 	}
 	
 	public  Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph, int l){

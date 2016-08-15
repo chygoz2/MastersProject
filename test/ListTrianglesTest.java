@@ -11,8 +11,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import efficientdetection.*;
+import efficientlisting.ListTriangles;
 import general.*;
-import listing.ListTriangles;
 
 /**
  * @author Chigozie Ekwonu

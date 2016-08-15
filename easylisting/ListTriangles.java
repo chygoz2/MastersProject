@@ -1,4 +1,4 @@
-package easydetection;
+package easylisting;
 
 import java.util.*;
 
@@ -6,31 +6,31 @@ import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
 
-public class DetectTriangle {
-	private String time = "-";
-	private String found = "found";
+public class ListTriangles {
 	
 	public static void main(String[] args) {
 		UndirectedGraph<Integer,Integer> graph;
 
 //			String fileName = "matrix3.txt";
 //			String fileName = "generated_graphs\\size_7\\graph_7_0.2_2.txt";
-			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
+//			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
+			String fileName = "generated_graphs\\size_15\\graph_15_1.0_1.txt";
 			graph = Utility.makeGraphFromFile(fileName);
 //			int[][] A = {{0,1,0,1,1},{1,0,1,0,0},{0,1,0,1,1},{1,0,1,0,0},{1,0,1,0,0}};
 //			graph = Utility.makeGraphFromAdjacencyMatrix(A);
 			
 			long starttime = System.currentTimeMillis();
-			DetectTriangle d = new DetectTriangle();
-			
-			Collection<Graph.Vertex<Integer>> triangle = d.detect(graph);
+			List<Collection<Graph.Vertex<Integer>>> triangles = new ListTriangles().detect(graph);
 			long stoptime = System.currentTimeMillis();
 			
 			long timetaken = stoptime-starttime;
 			
 			
-			if(triangle!=null){
-				Utility.printGraph(Utility.makeGraphFromVertexSet(graph,triangle));
+			if(!triangles.isEmpty()){
+				for(Collection<Graph.Vertex<Integer>> triangle: triangles)
+					Utility.printGraph(Utility.makeGraphFromVertexSet(graph,triangle));
+				System.out.println("Time taken in milliseconds: "+timetaken);
+				System.out.println(triangles.size());
 			}
 			else{
 				System.out.println("Triangle not found");
@@ -38,20 +38,9 @@ public class DetectTriangle {
 
 	}
 	
-	public Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
-		long starttime = System.currentTimeMillis();
-		Collection<Graph.Vertex<Integer>> triangle= find(graph);
-		long stoptime = System.currentTimeMillis();
-		time = ""+(stoptime-starttime);
-		
-		if(triangle==null)
-			found = "not found";
-		System.out.println(getResult());
-		
-		return triangle;
-	}
-	
-	public static Collection<Graph.Vertex<Integer>> find(UndirectedGraph<Integer,Integer> graph){
+	public List<Collection<Graph.Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph){
+		List<Collection<Graph.Vertex<Integer>>> triangles = new ArrayList<Collection<Graph.Vertex<Integer>>>();
+		Set<Set<Integer>> marked = new HashSet<Set<Integer>>(); //to prevent creating the same triangle more than once
 		
 		//for each edge in graph, check if each vertex has an edge between it and the 
 		//vertices at the edge
@@ -74,19 +63,22 @@ public class DetectTriangle {
 					List<Graph.Vertex<Integer>> triangleVertices = new ArrayList<Graph.Vertex<Integer>>();
 					triangleVertices.add(source);
 					triangleVertices.add(destination);
-					triangleVertices.add(vertex);				
+					triangleVertices.add(vertex);
 					
-					return triangleVertices;					
+					Set<Integer> triListElem = new HashSet<Integer>(); //list to store triangle vertices elements
+					
+					triListElem.add(source.getElement()); triListElem.add(destination.getElement());
+					triListElem.add(vertex.getElement());
+					
+					//check in the marked list for an entry that contains all 3 vertex elements
+					if(marked.add(triListElem)){
+						triangles.add(triangleVertices);
+					}
 				}
 			}
 			
 		}
 		
-		return null;
-	}
-	
-	public String getResult(){
-		String result = String.format("%-10s%-10s", time,found);
-		return result;
+		return triangles;
 	}
 }

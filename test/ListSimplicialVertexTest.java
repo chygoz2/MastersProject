@@ -8,10 +8,10 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+import efficientlisting.ListSimplicialVertex;
 import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
-import listing.ListSimplicialVertex;
 
 public class ListSimplicialVertexTest {
 	UndirectedGraph<Integer,Integer> graph;
