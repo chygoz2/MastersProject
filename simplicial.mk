@@ -4,11 +4,10 @@ JVM = java
 SHELL := /bin/bash
 INSTANCES := $(shell cut -d' ' -f1 instances.txt)
 RESULTSDIR := results
-PATTERNDIR := efficient_simplicial_detection_result
-PATTERNALG := efficientdetection/DetectSimplicialVertex
+GRAPHDIR := generated_graphs
 
-default: $(foreach i, $(INSTANCES), $(RESULTS)/$(PATTERN)/$(i))
+simplicial: $(foreach i, $(INSTANCES), $(RESULTSDIR)/efficient_simplicial_detection_result/$(i))
 
-$(RESULTSDIR)/$(PATTERNDIR)/%:
-	mkdir -p $(RESULTSDIR)$(PATTERNDIR)
-	$(JVM) efficientdetection $(PATTERNALG) $* | tee $(RESULTSDIR)/$(PATTERNDIR)/$*
+$(RESULTSDIR)/efficient_simplicial_detection_result/%:
+	mkdir -p $(RESULTSDIR)/efficient_simplicial_detection_result
+	$(JVM) efficientdetection/DetectSimplicialVertex $(GRAPHDIR)/$* | tee $(RESULTSDIR)/efficient_simplicial_detection_result/$*

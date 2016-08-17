@@ -4,11 +4,10 @@ JVM = java
 SHELL := /bin/bash
 INSTANCES := $(shell cut -d' ' -f1 instances.txt)
 RESULTSDIR := results
-PATTERNDIR := efficient_k4_detection_result
-PATTERNALG := efficientdetection/DetectK4
+GRAPHDIR := generated_graphs
 
-default: $(foreach i, $(INSTANCES), $(RESULTS)/$(PATTERN)/$(i))
+k4: $(foreach i, $(INSTANCES), $(RESULTSDIR)/efficient_k4_detection_result/$(i))
 
-$(RESULTSDIR)/$(PATTERNDIR)/%:
-	mkdir -p $(RESULTSDIR)$(PATTERNDIR)
-	$(JVM) efficientdetection $(PATTERNALG) $* | tee $(RESULTSDIR)/$(PATTERNDIR)/$*
+$(RESULTSDIR)/efficient_k4_detection_result/%:
+	mkdir -p $(RESULTSDIR)/efficient_k4_detection_result
+	$(JVM) efficientdetection/DetectK4 $(GRAPHDIR)/$* | tee $(RESULTSDIR)/efficient_k4_detection_result/$*

@@ -4,11 +4,10 @@ JVM = java
 SHELL := /bin/bash
 INSTANCES := $(shell cut -d' ' -f1 instances.txt)
 RESULTSDIR := results
-PATTERNDIR := efficient_claw_detection_result
-PATTERNALG := efficientdetection/DetectClaw
+GRAPHDIR := generated_graphs
 
-default: $(foreach i, $(INSTANCES), $(RESULTS)/$(PATTERN)/$(i))
+claw: $(foreach i, $(INSTANCES), $(RESULTSDIR)/efficient_claw_detection_result/$(i))
 
-$(RESULTSDIR)/$(PATTERNDIR)/%:
-	mkdir -p $(RESULTSDIR)$(PATTERNDIR)
-	$(JVM) efficientdetection $(PATTERNALG) $* | tee $(RESULTSDIR)/$(PATTERNDIR)/$*
+$(RESULTSDIR)/efficient_claw_detection_result/%:
+	mkdir -p $(RESULTSDIR)/efficient_claw_detection_result
+	$(JVM) efficientdetection/DetectClaw $(GRAPHDIR)/$* | tee $(RESULTSDIR)/efficient_claw_detection_result/$*
