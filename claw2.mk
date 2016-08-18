@@ -2,7 +2,7 @@ JFLAGS  = -g
 JC = javac
 JVM = java
 SHELL := /bin/bash
-INSTANCES := $(shell cut -d' ' -f1 trimmedinstances.txt)
+INSTANCES := $(shell cut -d' ' -f1 instances.txt)
 RESULTSDIR := results
 GRAPHDIR := generated_graphs
 
