@@ -63,18 +63,16 @@ public class CombineResults {
 				
 				try {
 					Scanner scan = new Scanner(new FileReader(resultFileName));
-					int i=0;
 					while(scan.hasNextLine()){
-						if(i==0){
-							scan.nextLine();
-							i++;
-						}else{
-							String result = scan.nextLine();
-							output += String.format("%s%n", result);
-						}
+						String result = scan.nextLine();
+						String[] tokens = t.split("[_]");
+						output += String.format("%-30s%-12s", t, tokens[1]);
+						output += String.format("%s%n", result);
+						break;
 					}
 					scan.close();
 					PrintWriter writer = new PrintWriter(finalResultName);
+					
 					writer.println(output);
 					writer.close();
 				} catch (FileNotFoundException e) {
