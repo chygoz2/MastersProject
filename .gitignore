@@ -2,3 +2,7 @@
 *.class
 generated_graphs/
 results/
+.settings
+.project
+.classpath
+

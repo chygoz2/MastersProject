@@ -16,19 +16,33 @@ public class DetectClaw {
 	private  String p1time = "-";
 	private  String found = "found";
 	
-	public static void main(String [] args){
-		
-		UndirectedGraph<Integer,Integer> graph = null;
-//		String fileName = "test\\testdata\\clawtestdata.txt";
-		String fileName = "generated_graphs\\size_100\\graph_100_0.1_14.txt";
-		graph = Utility.makeGraphFromFile(fileName);
-		
-		Collection<Graph.Vertex<Integer>> claw = new DetectClaw().detect(graph);
-		
-		if(claw!=null){
-			Utility.printGraph(Utility.makeGraphFromVertexSet(graph,claw));
-		}else
-			System.out.println("Claw not found");
+	public static void main(String [] args){		
+		try{			
+			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]);
+			DetectClaw d = new DetectClaw();
+			long a = System.currentTimeMillis();
+			Thread t = new Thread(new Runnable(){
+				public void run(){
+					Collection<Graph.Vertex<Integer>> claw = d.detect(graph);	
+				}
+			});
+			t.start();
+			while(!t.isInterrupted() && t.isAlive()){
+				long timeout = 120000; //timeout of 2 minutes
+				long b = System.currentTimeMillis();
+				if((b-a)>timeout){
+					d.found = "timed out";
+					t.interrupt();
+				}else{
+					Thread.sleep(500);
+				}
+			}
+			
+			System.out.print(d.getResult());
+			System.exit(0);
+		}catch(ArrayIndexOutOfBoundsException e){
+			System.out.println("Please provide the graph file as a command line argument");
+		}catch(InterruptedException e){}
 	}
 
 	public Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
@@ -39,8 +53,6 @@ public class DetectClaw {
 		
 		if(s==null)
 			found = "not found";
-		
-		System.out.println(getResult());
 		return s;
 	}
 	
@@ -108,10 +120,5 @@ public class DetectClaw {
 	public  String getResult(){
 		String result = String.format("%-10s%-10s", p1time,found);
 		return result;
-	}
-	
-	public  void resetResult(){
-		p1time = "-";
-		found = "found";
 	}
 }

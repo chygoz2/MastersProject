@@ -21,12 +21,19 @@ public class DetectDiamond {
 	private String found = "found";
 	
 	public static void main(String [] args) throws IOException{
-		UndirectedGraph<Integer,Integer> graph = null;
-		graph = Utility.makeGraphFromFile(args[0]);
-		
-		DetectDiamond d = new DetectDiamond();
-		Collection<Graph.Vertex<Integer>> diamond = d.detect(graph);
-		System.out.print(d.getResult());
+		try{
+			UndirectedGraph<Integer,Integer> graph = null;
+			graph = Utility.makeGraphFromFile(args[0]);
+			
+			DetectDiamond d = new DetectDiamond();
+			Collection<Graph.Vertex<Integer>> diamond = d.detect(graph);
+			if(diamond!=null){
+				Utility.printGraph(Utility.makeGraphFromVertexSet(graph,diamond));
+			}
+			System.out.print(d.getResult());
+		}catch(ArrayIndexOutOfBoundsException e){
+			System.out.println("Please provide the graph file as a command line argument");
+		}
 	}
 	
 	/**
@@ -40,21 +47,24 @@ public class DetectDiamond {
 		List<Graph.Vertex<Integer>>[] verticesPartition = partitionVertices(graph);
 		List<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
 		
+		//check for a diamond in phase one and measure time taken
 		long starttime = System.currentTimeMillis();
 		Map<String,Object> phase1Results = phaseOne(lowDegreeVertices, graph);
 		long stoptime = System.currentTimeMillis();
 		p1time = ""+(stoptime-starttime);
 		
+		//get cliques found in phase one
 		Map<Integer,UndirectedGraph<Integer,Integer>> cli = (HashMap<Integer,UndirectedGraph<Integer,Integer>>)phase1Results.get("cliques");
-		
+		 
+
 		List<Graph.Vertex<Integer>> diamond = (List<Vertex<Integer>>) phase1Results.get("diamond");
-		if(diamond==null){	
+		if(diamond==null){ //if no diamond found in phase one, check for diamond in phase two and measure time taken
 			starttime = System.currentTimeMillis();
 			diamond = phaseTwo(cli, graph);
 			stoptime = System.currentTimeMillis();
 			p2time = ""+(stoptime-starttime);
 			
-			if(diamond==null){
+			if(diamond==null){ //if no diamond found in phase two, check for diamond in phase three and measure time taken
 				starttime = System.currentTimeMillis();
 				diamond = phaseThree(graph, lowDegreeVertices);
 				stoptime = System.currentTimeMillis();
@@ -62,10 +72,10 @@ public class DetectDiamond {
 				
 			}
 		}
+
 		if(diamond==null)
 			found = "not found";
-//		System.out.println(getResult());
-//		resetResult();
+
 		return diamond;
 	}
 	
@@ -236,49 +246,13 @@ public class DetectDiamond {
 	 * @return 			the result of the check. 
 	 */
 	private  boolean checkIfClique(UndirectedGraph<Integer,Integer> graph){
-		int[][] A = graph.getAdjacencyMatrix();
-		
-		for(int i=0; i<A.length; i++){
-			for(int j=i+1; j<A.length; j++){
-				if(A[i][j] != 1)
-					return false;
-			}
+		int edgeCount = graph.getEdgeCount();
+		int reqCount = (graph.size()*(graph.size()-1))/2;
+		if(edgeCount==reqCount){
+			return true;
 		}
-		return true;
+		return false;
 	}
-	
-	//checks if a P3 exists in component and returns one
-//	public  Map checkP3InComponent(UndirectedGraph graph){
-//		//if the no of vertices in graph is less than 3, then graph cannot have a p3
-//		Map result = new HashMap();
-//		if(graph.size()<3){
-//			result.put("hasP3", false);
-//			return result;
-//		}
-//		
-//		Iterator<Graph.Vertex> vIt = graph.vertices(); //gets the vertex iterator
-//		
-//		while(vIt.hasNext()){
-//			Graph.Vertex v = vIt.next();
-//			//do a breadth first search on each vertex of graph in search for a P3
-//			//stop once a p3 has been found
-//			List<Graph.Vertex> bfVertices = graph.breadthFirstTraversal(v);
-//			Graph.Vertex v1 = bfVertices.get(0);
-//			Graph.Vertex v2 = bfVertices.get(1);
-//			Graph.Vertex v3 = bfVertices.get(2);
-//			
-//			if(!(graph.containsEdge(v1, v2) && graph.containsEdge(v2, v3) &&
-//					graph.containsEdge(v1, v3))){
-//				result.put("hasP3", true);
-//				List<Graph.Vertex> vert = new ArrayList<Graph.Vertex>();
-//				vert.add(v1); vert.add(v2); vert.add(v3);
-//				result.put("p3Graph", Utility.makeGraphFromVertexSet(graph, vert));
-//				break;
-//			}
-//		}
-//	
-//		return result;
-//	}
 	
 	/**
 	 * method that checks if a P3 is present in a graph and returns the vertices of the P3
@@ -287,44 +261,77 @@ public class DetectDiamond {
 	 */
 	public  List<Graph.Vertex<Integer>> checkP3InComponent(UndirectedGraph<Integer,Integer> graph){
 		//if the no of vertices in graph is less than 3, then graph cannot have a p3
-		
 		if(graph.size()<3){
 			return null;
 		}
 		
-		//create mapping between matrix indices and vertex
-		List<Graph.Vertex<Integer>> vertexIndexMap = new ArrayList<Graph.Vertex<Integer>>();
 		Iterator<Graph.Vertex<Integer>> vIt = graph.vertices(); //gets the vertex iterator
+		
 		while(vIt.hasNext()){
-			vertexIndexMap.add(vIt.next());
-		}
-		
-		int[][] A = graph.getAdjacencyMatrix();
-		int[][] A2;
-		try {
-			A2 = Utility.multiplyMatrix(A, A);
-		} catch (MatrixException e) {
-			return null;
-		}
-		
-		//look for a path of length 2 in A2
-		for(int i=0; i<A2.length;i++){
-			for(int j=i+1; j<A2.length;j++){
-				if((int)A2[i][j]>0 && (int)A[i][j]==0){ //then a P3 is found
-					//look for third vertex
-					for(int k=0; k<A.length;k++){
-						if(k!=i && k!= j && ((int)A[k][i] == 1) && ((int)A[k][j] == 1)){
-							List<Graph.Vertex<Integer>> vert = new ArrayList<Graph.Vertex<Integer>>();
-							vert.add(vertexIndexMap.get(i)); vert.add(vertexIndexMap.get(j)); vert.add(vertexIndexMap.get(k));
-							return vert;
-						}
-					}
-				}
+			Graph.Vertex<Integer> v = vIt.next();
+			//do a breadth first search on each vertex of graph in search for a P3
+			//stop once a p3 has been found
+			List<Graph.Vertex<Integer>> bfVertices = graph.breadthFirstTraversal(v);
+			Graph.Vertex<Integer> v1 = bfVertices.get(0);
+			Graph.Vertex<Integer> v2 = bfVertices.get(1);
+			Graph.Vertex<Integer> v3 = bfVertices.get(2);
+			
+			if(!(graph.containsEdge(v1, v2) && graph.containsEdge(v2, v3) &&
+					graph.containsEdge(v1, v3))){
+				List<Graph.Vertex<Integer>> vert = new ArrayList<Graph.Vertex<Integer>>();
+				vert.add(v1); vert.add(v2); vert.add(v3);
+				return vert;
 			}
 		}
 	
 		return null;
 	}
+	
+	/**
+	 * method that checks if a P3 is present in a graph and returns the vertices of the P3
+	 * @param graph 	the graph to be checked
+	 * @return 			the vertex list if found
+	 */
+//	private List<Graph.Vertex<Integer>> checkP3InComponent(UndirectedGraph<Integer,Integer> graph){
+//		//if the no of vertices in graph is less than 3, then graph cannot have a p3
+//		
+//		if(graph.size()<3){
+//			return null;
+//		}
+//		
+//		//create mapping between matrix indices and vertex
+//		List<Graph.Vertex<Integer>> vertexIndexMap = new ArrayList<Graph.Vertex<Integer>>();
+//		Iterator<Graph.Vertex<Integer>> vIt = graph.vertices(); //gets the vertex iterator
+//		while(vIt.hasNext()){
+//			vertexIndexMap.add(vIt.next());
+//		}
+//		
+//		int[][] A = graph.getAdjacencyMatrix();
+//		int[][] A2;
+//		try {
+//			A2 = Utility.multiplyMatrix(A, A);
+//		} catch (MatrixException e) {
+//			return null;
+//		}
+//		
+//		//look for a path of length 2 in A2
+//		for(int i=0; i<A2.length;i++){
+//			for(int j=i+1; j<A2.length;j++){
+//				if((int)A2[i][j]>0 && (int)A[i][j]==0){ //then a P3 is found
+//					//look for third vertex
+//					for(int k=0; k<A.length;k++){
+//						if(k!=i && k!= j && ((int)A[k][i] == 1) && ((int)A[k][j] == 1)){
+//							List<Graph.Vertex<Integer>> vert = new ArrayList<Graph.Vertex<Integer>>();
+//							vert.add(vertexIndexMap.get(i)); vert.add(vertexIndexMap.get(j)); vert.add(vertexIndexMap.get(k));
+//							return vert;
+//						}
+//					}
+//				}
+//			}
+//		}
+//	
+//		return null;
+//	}
 	
 	//method to partition the vertices into low degree vertices and high degree vertices
 	public  List<Graph.Vertex<Integer>>[] partitionVertices(UndirectedGraph<Integer,Integer> graph){
@@ -335,15 +342,8 @@ public class DetectDiamond {
 		//get vertices
 		Iterator<Graph.Vertex<Integer>> vertexIterator = graph.vertices();
 		
-		//get edges
-		Iterator<Graph.Edge<Integer>> edgeIterator = graph.edges();
-		
 		//get number of edges
-		int noOfEdges = 0;
-		while(edgeIterator.hasNext()){
-			edgeIterator.next();
-			noOfEdges++;
-		}
+		int noOfEdges = graph.getEdgeCount();
 		
 
 		//calculate D for Vertex partitioning

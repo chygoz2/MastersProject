@@ -2,6 +2,7 @@ package efficientlisting;
 import java.util.*;
 
 import general.*;
+import general.Graph.Vertex;
 
 public class ListKL {
 	
@@ -9,58 +10,23 @@ public class ListKL {
 	private  String found = "found";
 	
 	public static void main(String [] args){
-//		UndirectedGraph<Integer, Integer> graph = new UndirectedGraph<Integer,Integer>();
-//		
-//		Graph.Vertex<Integer> v0 = graph.addVertex(0);
-//		Graph.Vertex<Integer> v1 = graph.addVertex(1);
-//		Graph.Vertex<Integer> v2 = graph.addVertex(2);
-//		Graph.Vertex<Integer> v3 = graph.addVertex(3);
-//		Graph.Vertex<Integer> v4 = graph.addVertex(4);
-//		Graph.Vertex<Integer> v5 = graph.addVertex(5);
-//		graph.addEdge(v0, v1);
-//		graph.addEdge(v2, v1);
-//		graph.addEdge(v2, v3);
-//		graph.addEdge(v0, v2);
-//		graph.addEdge(v0, v4);
-//		graph.addEdge(v2, v4);
-//		graph.addEdge(v1, v4);
-//		graph.addEdge(v3, v4);
-//		graph.addEdge(v1, v3);
-//		graph.addEdge(v0, v3);
-	
-//		String fileName = "matrix5.txt";
-//		UndirectedGraph<Integer, Integer> graph = Utility.makeGraphFromFile(fileName);
-//		int l = 2;
-//		List<UndirectedGraph<Integer,Integer>> klList = detect(graph, l);
-//		System.out.println("No of k"+l+" found is "+klList.size()+"\n");
-//		if(!klList.isEmpty()){
-//			for(UndirectedGraph<Integer,Integer> kl: klList){
-//				Utility.printGraph(kl);
-//				System.out.println();
-//			}
-//		}else{
-//			System.out.println("Not found");
-//		}
-		
-//		String fileName = "matrix5.txt";
-//		String fileName = "generated_graphs\\size_20\\graph_20_1.0_9.txt";
-		String fileName = "generated_graphs\\size_20\\graph_20_0.5_5.txt";
-		UndirectedGraph<Integer, Integer> graph = Utility.makeGraphFromFile(fileName);
-		
-//		int[][] A = {{0,1,1,1,1,0,1},{1,0,1,1,1,1,1},{1,1,0,1,1,1,0},{1,1,1,0,1,0,0},{1,1,1,1,0,0,0},
-//				{0,1,1,0,0,0,1},{1,1,0,0,0,1,0}};
-//		graph = Utility.makeGraphFromAdjacencyMatrix(A);
-		long starttime = System.currentTimeMillis();
-		List<Collection<Graph.Vertex<Integer>>> k4List = new ListKL().detect(graph,6);
-		long stoptime = System.currentTimeMillis();
-		
-		long timetaken = stoptime-starttime;
-		
-//		for(Collection<Graph.Vertex<Integer>> k4: k4List){
-//			Utility.printGraph(Utility.makeGraphFromVertexSet(graph, k4));
-//		}
-		System.out.println("Time taken in milliseconds: "+timetaken);
-		System.out.println(k4List.size());
+		UndirectedGraph<Integer,Integer> graph = null;
+		try{
+			graph = Utility.makeGraphFromFile(args[0]);
+			ListKL d = new ListKL();
+			if(args.length>1){
+				int l = Integer.parseInt(args[1]);
+				List<Collection<Vertex<Integer>>> kls = d.detect(graph,l);
+				System.out.println("Number of kl found: "+kls.size());
+				System.out.print(d.getResult());
+			}else{
+				System.out.println("Please enter the size of the complete graph to be found");
+			}
+		}catch(ArrayIndexOutOfBoundsException e){
+			System.out.println("Please provide the graph file as a command line argument");
+		}catch(NumberFormatException e){
+			System.out.println("The graph size entered is not valid");
+		}
 	}
 	
 	public  List<Collection<Graph.Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph, int l){
@@ -107,7 +73,7 @@ public class ListKL {
 
 		else if(l==3){
 			//get all triangles in graph
-			List<Collection<Graph.Vertex<Integer>>> k3 = ListTriangles.detect(graph);
+			List<Collection<Graph.Vertex<Integer>>> k3 = new ListTriangles().detect(graph);
 			klList.addAll(k3);
 		}
 		else if(l>3){
@@ -314,9 +280,5 @@ public class ListKL {
 		String result = String.format("%-10s%-10s", time,found);
 		return result;
 	}
-	
-	public  void resetResult(){
-		time = "-";
-		found = "found";
-	}
+
 }

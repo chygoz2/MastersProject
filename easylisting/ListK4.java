@@ -1,5 +1,6 @@
 package easylisting;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -10,28 +11,28 @@ import java.util.Set;
 import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
+import general.Graph.Vertex;
 
 public class ListK4 {
 	
-	public static void main(String [] args){
-//		String fileName = "matrix4.txt";
-		String fileName = "generated_graphs\\size_20\\graph_20_1.0_9.txt";
-		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(fileName);
-		
-		long starttime = System.currentTimeMillis();
-		List<Collection<Graph.Vertex<Integer>>> k4List = detect(graph);
-		long stoptime = System.currentTimeMillis();
-		
-		long timetaken = stoptime-starttime;
-		
-		for(Collection<Graph.Vertex<Integer>> k4: k4List){
-			Utility.printGraph(Utility.makeGraphFromVertexSet(graph, k4));
+	private  String p1time = "-";
+	private  String found = "found";
+	
+	public static void main(String [] args) throws IOException{
+		UndirectedGraph<Integer,Integer> graph = null;
+		try{
+			graph = Utility.makeGraphFromFile(args[0]);
+			ListK4 d = new ListK4();
+			List<Collection<Vertex<Integer>>> k4s = d.detect(graph);
+			System.out.println("Number of k4 found: "+k4s.size());
+			System.out.print(d.getResult());
+		}catch(ArrayIndexOutOfBoundsException e){
+			System.out.println("Please provide the graph file as a command line argument");
 		}
-		System.out.println("Time taken in milliseconds: "+timetaken);
-		System.out.println(k4List.size());
 	}
 	
-	public static List<Collection<Graph.Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph){
+	public List<Collection<Graph.Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph){
+		long start = System.currentTimeMillis();
 		Set<Set<Integer>> marked = new HashSet<Set<Integer>>(); //to prevent creating the same k4 more than once 
 		List<Collection<Graph.Vertex<Integer>>> k4List = new ArrayList<Collection<Graph.Vertex<Integer>>>();
 		
@@ -68,6 +69,20 @@ public class ListK4 {
 				}
 			}
 		}
+		long stop = System.currentTimeMillis();
+		p1time = ""+(stop-start);
+		if(k4List.isEmpty()){
+			found = "not found";
+		}
 		return k4List;
+	}
+	
+	/**
+	*	method to return the time taken to run the listing	
+	*	and whether a k4 was found or not
+	*/
+	public String getResult(){
+		String result = String.format("%-10s%-10s", p1time,found);
+		return result;
 	}
 }

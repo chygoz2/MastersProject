@@ -12,12 +12,16 @@ public class DetectK4 {
 	private  String found = "found";
 	
 	public static void main(String [] args){
-		UndirectedGraph<Integer,Integer> graph = null;
-		graph = Utility.makeGraphFromFile(args[0]);
-		
-		DetectK4 d = new DetectK4();
-		Collection<Graph.Vertex<Integer>> k4 = d.detect(graph);
-		System.out.print(d.getResult());
+		try{
+			UndirectedGraph<Integer,Integer> graph = null;
+			graph = Utility.makeGraphFromFile(args[0]);
+			
+			DetectK4 d = new DetectK4();
+			Collection<Graph.Vertex<Integer>> k4 = d.detect(graph);
+			System.out.print(d.getResult());
+		}catch(ArrayIndexOutOfBoundsException e){
+			System.out.println("Please provide the graph file as a command line argument");
+		}
 	}
 	
 	public  Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){		
@@ -110,16 +114,9 @@ public class DetectK4 {
 		
 		//get vertices
 		Iterator<Graph.Vertex<Integer>> vertexIterator = graph.vertices();
-		
-		//get edges
-		Iterator<Graph.Edge<Integer>> edgeIterator = graph.edges();
-		
+				
 		//get number of edges
-		int noOfEdges = 0;
-		while(edgeIterator.hasNext()){
-			edgeIterator.next();
-			noOfEdges++;
-		}
+		int noOfEdges = graph.getEdgeCount();
 		
 
 		//calculate D for Graph.Vertex partitioning

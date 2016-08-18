@@ -15,13 +15,23 @@ public class DetectClaw {
 	public static void main(String [] args){
 		
 		UndirectedGraph<Integer,Integer> graph = null;
-		graph = Utility.makeGraphFromFile(args[0]);
+		try{
+			graph = Utility.makeGraphFromFile(args[0]);
+			DetectClaw d = new DetectClaw();
+			Collection<Graph.Vertex<Integer>> claw = d.detect(graph);
+			System.out.print(d.getResult());
+		}catch(ArrayIndexOutOfBoundsException e){
+			System.out.println("Please provide the graph file as a command line argument");
+		}
 		
-		DetectClaw d = new DetectClaw();
-		Collection<Graph.Vertex<Integer>> claw = d.detect(graph);
-		System.out.print(d.getResult());
 	}
 	
+	/**
+	* method that detects for the presence of a claw in a given graph. The detection is done
+	* in phases, hence it calls the other phase methods.
+	* @param graph 		the graph to be checked for a claw
+	* @return			the vertices of the claw if found
+	*/
 	public  Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
 		Collection<Graph.Vertex<Integer>> claw = null;
 		long starttime = System.currentTimeMillis();
@@ -41,8 +51,15 @@ public class DetectClaw {
 		return claw;
 	}
 	
+	/**
+	* phase one checks if there is any vertex whose degree is greater than 2(e)^0.5. The presence
+	* of such a vertex indicates that a claw exists
+	* @param graph 		the graph to be checked
+	* @return 			the vertices of the claw if any
+	*/
 	public  Collection<Graph.Vertex<Integer>> phaseOne(UndirectedGraph<Integer,Integer> graph){
 		
+		//get number of edges in graph
 		int edgeCount = 0;
 		Iterator<Graph.Edge<Integer>> edgeIt = graph.edges();
 		while(edgeIt.hasNext()){
@@ -50,6 +67,7 @@ public class DetectClaw {
 			edgeCount++;
 		}
 		
+		//calculate maximum edge count that a vertex must have if the graph is to contain a claw
 		double maxEdgeCount = 2*Math.sqrt(edgeCount);
 		Iterator<Graph.Vertex<Integer>> vertices = (Iterator<Graph.Vertex<Integer>>)graph.vertices();
 		
@@ -69,9 +87,15 @@ public class DetectClaw {
 				
 			}
 		}
-		return null;
+		return null; //return null if no claw is found
 	}
 	
+	/** 
+	* phase two checks for the presence of a triangle in the complement of the neighbourhood of 
+	* each vertex. Such a triangle indicates the presence of a claw in the graph
+	* @param graph 		the graph to be checked
+	* @return 			the vertices of the claw if any
+	*/
 	public  Collection<Graph.Vertex<Integer>> phaseTwo(UndirectedGraph<Integer,Integer> graph){		
 		//for each vertex, check if the complement of its neighbour contains a triangle
 		
@@ -82,6 +106,7 @@ public class DetectClaw {
 			Graph.Vertex<Integer> v = vertices.next();
 			UndirectedGraph<Integer,Integer> vNeighGraph = Utility.getNeighbourGraph(graph, v);
 			
+			//if size of neighbourhood graph is less than 3, then a triangle cannot be found in it
 			if(vNeighGraph.size()<3)
 				continue;
 			
@@ -94,7 +119,7 @@ public class DetectClaw {
 			}
 			
 		}
-		return null;
+		return null; //return null if no claw is found
 	}
 	
 	/**
@@ -135,6 +160,10 @@ public class DetectClaw {
 		return null;
 	}
 	
+	/**
+	*	method to return the time taken to run the detection	
+	*	and whether a claw was found or not
+	*/
 	public  String getResult(){
 		String result = String.format("%-10s%-10s%-10s", p1time,p2time,found);
 		return result;

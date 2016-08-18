@@ -25,13 +25,13 @@ public class ListK4Test {
 	public void before(){
 		String fileName = "test\\testdata\\k4testdata.txt";
 		graph = Utility.makeGraphFromFile(fileName);
-		lowDegreeVertices = ListK4.partitionVertices(graph)[0];
-		highDegreeVertices = ListK4.partitionVertices(graph)[1];
+		lowDegreeVertices = new ListK4().partitionVertices(graph)[0];
+		highDegreeVertices = new ListK4().partitionVertices(graph)[1];
 	}
 	
 	@Test
 	public void testDetect() {
-		List<Collection<Graph.Vertex<Integer>>> actualResult = ListK4.detect(graph);
+		List<Collection<Graph.Vertex<Integer>>> actualResult = new ListK4().detect(graph);
 		int[][] expectedResult = {{0,1,2,3},{1,2,3,4},{0,2,3,5}}; //expected result should have 2 k4's 
 													//with the specified vertex elements
 	
@@ -49,7 +49,7 @@ public class ListK4Test {
 
 	@Test
 	public void testPhaseOne() {
-		List<Collection<Graph.Vertex<Integer>>> actualResult = ListK4.phaseOne(graph, highDegreeVertices);
+		List<Collection<Graph.Vertex<Integer>>> actualResult = new ListK4().phaseOne(graph, highDegreeVertices);
 		int[][] expectedResult = {{0,1,2,3}}; //expected result should have 1 k4 
 													//with the specified vertex elements
 	
@@ -67,7 +67,7 @@ public class ListK4Test {
 
 	@Test
 	public void testPhaseTwo() {
-		List<Collection<Graph.Vertex<Integer>>> actualResult = ListK4.phaseTwo(graph, lowDegreeVertices);
+		List<Collection<Graph.Vertex<Integer>>> actualResult = new ListK4().phaseTwo(graph, lowDegreeVertices);
 		int[][] expectedResult = {{1,2,3,4},{0,2,3,5}}; //expected result should have 2 k4's 
 													//with the specified vertex elements
 	

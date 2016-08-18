@@ -11,28 +11,36 @@ public class DetectDiamond {
 	private String found = "found";
 	
 	public static void main(String [] args) throws IOException{
-		UndirectedGraph<Integer,Integer> graph;
-		for(int a=0;a<1;a++){
-//			String fileName = "matrix2.txt";
-			String fileName = "generated_graphs\\size_5\\graph_5_0.7_4.txt";
-//			String fileName = "generated_graphs\\size_6\\graph_6_0.6_3.txt";
-//			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
-//			String fileName = "test\\testdata\\diamondtestdata.txt";
-//			String fileName = "generated_graphs\\size_300\\graph_300_0.9_1.txt";
-//			String fileName = "generated_graphs\\size_150\\graph_150_1.0_1.txt";
-//			UndirectedGraph<Integer,Integer> graphs[a] = Utility.makeGraphFromFile(fileName);
-			graph = Utility.makeGraphFromFile(fileName);
-			
-			List<Graph.Vertex<Integer>> diamond = new DetectDiamond().detect(graph);
-			
-			if(diamond!=null){
-				Utility.printGraph(Utility.makeGraphFromVertexSet(graph,diamond));
+		
+		try{			
+			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]);
+			DetectDiamond d = new DetectDiamond();
+			long a = System.currentTimeMillis();
+			Thread t = new Thread(new Runnable(){
+				public void run(){
+					Collection<Graph.Vertex<Integer>> diamond = d.detect(graph);
+					if(diamond!=null){
+						Utility.printGraph(Utility.makeGraphFromVertexSet(graph,diamond));
+					}
+				}
+			});
+			t.start();
+			while(!t.isInterrupted() && t.isAlive()){
+				long timeout = 120000; //timeout of 2 minutes
+				long b = System.currentTimeMillis();
+				if((b-a)>timeout){
+					d.found = "timed out";
+					t.interrupt();
+				}else{
+					Thread.sleep(500);
+				}
 			}
-			else{
-				System.out.println("Diamond not found");
-			}
 			
-		}
+			System.out.print(d.getResult());
+			System.exit(0);
+		}catch(ArrayIndexOutOfBoundsException e){
+			System.out.println("Please provide the graph file as a command line argument");
+		}catch(InterruptedException e){}
 	}
 	
 	public List<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
@@ -43,8 +51,6 @@ public class DetectDiamond {
 		p1time = ""+(stoptime-starttime);
 		if(diamond==null)
 			found = "not found";
-		
-		System.out.println(getResult());
 		return diamond;
 	}
 
@@ -118,10 +124,5 @@ public class DetectDiamond {
 	public  String getResult(){
 		String result = String.format("%-10s%-10s", p1time,found);
 		return result;
-	}
-	
-	public  void resetResult(){
-		p1time = "-";
-		found = "found";
 	}
 }

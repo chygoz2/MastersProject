@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import efficientdetection.DetectTriangle;
 import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
@@ -13,26 +12,34 @@ import general.Graph.Vertex;
 
 public class ListClaws {
 	
+	private  String p1time = "-";
+	private  String found = "found";
+	
 	public static void main(String [] args){
-		
 		UndirectedGraph<Integer,Integer> graph = null;
-//		String fileName = "test\\testdata\\clawtestdata.txt";
-		String fileName = "generated_graphs\\size_100\\graph_100_0.8_14.txt";
-		graph = Utility.makeGraphFromFile(fileName);
-		
-		long starttime = System.currentTimeMillis();
-		List<Collection<Graph.Vertex<Integer>>> claws = new ListClaws().detect(graph);
-		long stoptime = System.currentTimeMillis();
-		if(!claws.isEmpty()){
-//			for(Collection<Graph.Vertex<Integer>> claw: claws)
-//				Utility.printGraph(Utility.makeGraphFromVertexSet(graph,claw));
-		}else
-			System.out.println("Claw not found");
-		System.out.println("Time taken in milliseconds: " + (stoptime-starttime));
-		System.out.println(claws.size());
+		try{
+			graph = Utility.makeGraphFromFile(args[0]);
+			ListClaws d = new ListClaws();
+			List<Collection<Vertex<Integer>>> claws = d.detect(graph);
+			System.out.println("Number of claws found: "+claws.size());
+			System.out.print(d.getResult());
+		}catch(ArrayIndexOutOfBoundsException e){
+			System.out.println("Please provide the graph file as a command line argument");
+		}
 	}
-
-	public List<Collection<Graph.Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph){		
+	
+	public List<Collection<Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph){
+		long start = System.currentTimeMillis();
+		List<Collection<Vertex<Integer>>> claws = find(graph);
+		long stop = System.currentTimeMillis();
+		p1time = ""+(stop-start);
+		if(claws.isEmpty()){
+			found = "not found";
+		}
+		return claws;
+	}
+	
+	public List<Collection<Graph.Vertex<Integer>>> find(UndirectedGraph<Integer,Integer> graph){		
 		List<Collection<Graph.Vertex<Integer>>> claws = new ArrayList<Collection<Graph.Vertex<Integer>>>();
 		//for each vertex, check if the complement of its neighbour contains a triangle
 		
@@ -63,7 +70,7 @@ public class ListClaws {
 	 * @param vNeighGraph		the neighbourhood graph to be checked
 	 * @return					the vertices if found
 	 */
-	private static List<Collection<Graph.Vertex<Integer>>> getClawVerticesFromNeighbourGraph(UndirectedGraph<Integer,Integer> vNeighGraph){
+	private List<Collection<Graph.Vertex<Integer>>> getClawVerticesFromNeighbourGraph(UndirectedGraph<Integer,Integer> vNeighGraph){
 		//get the complement matrix of the neighbour graph
 		int[][] vncomp = vNeighGraph.getComplementMatrix();
 		List<Collection<Graph.Vertex<Integer>>> claws = new ArrayList<Collection<Graph.Vertex<Integer>>>(); 
@@ -92,5 +99,14 @@ public class ListClaws {
 		}
 		
 		return claws;
+	}
+	
+	/**
+	*	method to return the time taken to run the listing	
+	*	and whether a claw was found or not
+	*/
+	public String getResult(){
+		String result = String.format("%-10s%-10s", p1time,found);
+		return result;
 	}
 }

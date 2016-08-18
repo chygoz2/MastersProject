@@ -1,10 +1,6 @@
 package general;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 //import javax.swing.JOptionPane;
@@ -285,24 +281,24 @@ public final class Utility {
 	public static List<UndirectedGraph<Integer,Integer>> getComponents(UndirectedGraph<Integer,Integer> graph){
 		List<UndirectedGraph<Integer,Integer>> components = new ArrayList<UndirectedGraph<Integer,Integer>>();
 		//get vertices list
-		List<Integer> vertices = new ArrayList<Integer>();
+		Set<Integer> verticesElem = new HashSet<Integer>();
 		Iterator<Graph.Vertex<Integer>> it = graph.vertices();
 		while(it.hasNext()){
-			vertices.add(it.next().getElement());
+			verticesElem.add(it.next().getElement());
 		}
 		
 		//find components
-		while(!vertices.isEmpty()){
-			List<Graph.Vertex<Integer>> compList = graph.depthFirstTraversal(graph.getVertexWithElement(vertices.get(0)));
-//			System.out.println("Vertices in component found are ");
-//			for(Graph.Vertex v: compList){
-//				System.out.print(v.getElement()+", ");
-//			}
+		while(!verticesElem.isEmpty()){
+			Integer next = 0;
+			for(Integer i: verticesElem){
+				next = i;
+				break;
+			}
+			List<Graph.Vertex<Integer>> compList = graph.depthFirstTraversal(graph.getVertexWithElement(next));
 			components.add(makeGraphFromVertexSet(graph, compList));
 			for(Graph.Vertex<Integer> v: compList){
-				vertices.remove(v.getElement());
+				verticesElem.remove(v.getElement());
 			}
-//			vertices.removeAll(compList);
 		}
 		
 		return components;

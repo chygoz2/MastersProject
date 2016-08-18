@@ -28,6 +28,25 @@ public class UndirectedGraphTest2 {
 //		assertEquals("Graph size",3,graph.size());
 		assertFalse("Graph order 2", 3==graph.size());
 	}
+	
+	@Test
+	public void testEdgeCount(){
+		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
+		
+		Graph.Vertex<Integer> v1 = graph.addVertex(1);
+		Graph.Vertex<Integer> v2 = graph.addVertex(3);
+		Graph.Vertex<Integer> v3 = graph.addVertex(4);
+		Graph.Vertex<Integer> v4 = graph.addVertex(2);
+		graph.addEdge(v1, v2);
+		Graph.Edge<Integer> e2 = graph.addEdge(v3, v2);
+		Graph.Edge<Integer> e3 = graph.addEdge(v3, v4);
+		
+		assertEquals(3,graph.getEdgeCount());
+		graph.addEdge(v2, v4);
+		assertEquals(4,graph.getEdgeCount());
+		graph.removeVertex(v2);
+		assertEquals(1,graph.getEdgeCount());
+	}
 
 	@Test
 	public void testDegree() {

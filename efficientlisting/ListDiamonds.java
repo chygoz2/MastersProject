@@ -9,68 +9,44 @@ import general.Utility;
 import java.io.*;
 
 /**
- * class that detects a diamond in a graph if any and returns it
+ * class that lists diamonds found in a graph
  * @author Chigozie Ekwonu
  *
  */
 public class ListDiamonds {
-	private static String time = "";
+	private  String p1time = "-";
+	private  String found = "found";
 	
 	public static void main(String [] args) throws IOException{
-//		String fileName = "generated_graphs\\size_150\\graph_150_0.7_4.txt";	
-		
-//		while(true){
-		UndirectedGraph<Integer,Integer> graph;
-		for(int a=0;a<1;a++){
-//			String fileName = "matrix2.txt";
-//			String fileName = "generated_graphs\\size_5\\graph_5_0.7_4.txt";
-//			String fileName = "generated_graphs\\size_6\\graph_6_0.6_3.txt";
-//			String fileName = "test\\testdata\\diamondtestdata.txt";
-//			String fileName = "generated_graphs\\size_300\\graph_300_0.9_1.txt";
-			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
-//			String fileName = "test\\testdata\\diamondtestdata.txt";
-//			UndirectedGraph<Integer,Integer> graphs[a] = Utility.makeGraphFromFile(fileName);
-			graph = Utility.makeGraphFromFile(fileName);
-			
-			long sta = System.currentTimeMillis();
-			List<Collection<Graph.Vertex<Integer>>> diamonds = detect(graph);
-			long sto = System.currentTimeMillis();
-//			
-//			if(diamond!=null){
-//				Utility.printGraph(diamond);
-//			}
-//			else{
-//				System.out.println("Diamond not found");
-//				//Utility.printGraph(graph);
-//			}
-			
-//			int[][] A = {{0,1,1,0,0},{1,0,1,0,1},{1,1,0,1,1,},{0,0,1,0,1},{0,1,1,1,0}};
-//			graph=Utility.makeGraphFromAdjacencyMatrix(A);
-//			getP3(graph);
-			
-			if(!diamonds.isEmpty())
-				time+="1";
-			else
-				time+="0";
-			
-//			for(Collection<Graph.Vertex<Integer>> d: diamonds){
-//				Utility.printGraph(Utility.makeGraphFromVertexSet(graph, d));
-//			}
-//			System.out.println(time);
-			System.out.println("No of diamonds found = "+diamonds.size());
-			System.out.println("Time taken in milliseconds: "+(sto-sta));
-			resetTime();
+		UndirectedGraph<Integer,Integer> graph = null;
+		try{
+			graph = Utility.makeGraphFromFile(args[0]);
+			ListDiamonds d = new ListDiamonds();
+			List<Collection<Vertex<Integer>>> diamonds = d.detect(graph);
+			System.out.println("Number of diamonds found: "+diamonds.size());
+			System.out.print(d.getResult());
+		}catch(ArrayIndexOutOfBoundsException e){
+			System.out.println("Please provide the graph file as a command line argument");
 		}
-		
 	}
 	
 	/**
-	 * method to detect and return all induced subgraphs isomorphic with a diamond
+	 * method to detect and return all induced diamonds
 	 * @param graph 		the graph to be checked
 	 * @return  			the list of sets of vertices which induce diamonds
 	 */
-	public static List<Collection<Graph.Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph){
-		time+="size_"+graph.size()+"_";
+	public List<Collection<Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph){
+		long start = System.currentTimeMillis();
+		List<Collection<Vertex<Integer>>> diamonds = find(graph);
+		long stop = System.currentTimeMillis();
+		p1time = ""+(stop-start);
+		if(diamonds.isEmpty()){
+			found = "not found";
+		}
+		return diamonds;
+	}
+	
+	public List<Collection<Graph.Vertex<Integer>>> find(UndirectedGraph<Integer,Integer> graph){
 		//list of diamond vertices found
 		List<Collection<Graph.Vertex<Integer>>> diamonds = new ArrayList<Collection<Graph.Vertex<Integer>>>(); 
 		
@@ -86,7 +62,6 @@ public class ListDiamonds {
 		
 		List<Collection<Graph.Vertex<Integer>>> p1diamonds = (List<Collection<Vertex<Integer>>>) phase1Results.get("diamonds");
 		diamonds.addAll(p1diamonds);
-		time += "phase1("+(stoptime-starttime)+")_";
 //		
 //		//phase two
 //		Map cli = (HashMap)phase1Results.get("cliques");
@@ -113,7 +88,7 @@ public class ListDiamonds {
 	 * @return 						a map object containing a diamond if found, as well as a collection of cliques mapped to each low degree
 	 * 								vertex
 	 */
-	public static Map phaseOne(UndirectedGraph<Integer,Integer> graph){
+	public Map phaseOne(UndirectedGraph<Integer,Integer> graph){
 		
 		Map phaseOneResults = new HashMap(); //map for storing the results of the phase
 		List<Collection<Graph.Vertex<Integer>>> diamonds = new ArrayList<Collection<Graph.Vertex<Integer>>>();
@@ -181,7 +156,7 @@ public class ListDiamonds {
 //	 * @param graph 		the graph to be checked
 //	 * @return 				a diamond subgraph if found
 //	 */
-//	public static List<Collection<Graph.Vertex<Integer>>> phaseTwo(Map cliques, UndirectedGraph<Integer,Integer> graph){
+//	public List<Collection<Graph.Vertex<Integer>>> phaseTwo(Map cliques, UndirectedGraph<Integer,Integer> graph){
 //		List<Collection<Graph.Vertex<Integer>>> diamonds = new ArrayList<Collection<Graph.Vertex<Integer>>>();
 //		Set<Set<Integer>> marked = new HashSet<Set<Integer>>(); //to prevent creating the same diamond more than once
 //		
@@ -268,7 +243,7 @@ public class ListDiamonds {
 //	 * @param lowDegreeVertices 	a list of low degree vertices
 //	 * @return						a diamond subgraph if found
 //	 */
-//	public static List<Collection<Graph.Vertex<Integer>>> phaseThree(UndirectedGraph<Integer,Integer> graph2, List<Graph.Vertex<Integer>> lowDegreeVertices){
+//	public List<Collection<Graph.Vertex<Integer>>> phaseThree(UndirectedGraph<Integer,Integer> graph2, List<Graph.Vertex<Integer>> lowDegreeVertices){
 //		
 //		//remove low degree vertices from graph G
 //		UndirectedGraph<Integer,Integer> graph = graph2.clone();
@@ -293,36 +268,24 @@ public class ListDiamonds {
 //		return diamonds;
 //	}
 	
-	/**
-	 * method to return a report of the time taken to execute the detection
-	 * @return		the report string
-	 */
-	public static String getTime(){
-		return time;
-	}
-	
-	/**
-	 * method to reset the report string
-	 */
-	public static void resetTime(){
-		time = "";
-	}
 	
 	/**
 	 * method that checks if a graph is a clique
 	 * @param graph 	the graph to be checked
 	 * @return 			the result of the check. 
 	 */
-	private static boolean checkIfClique(UndirectedGraph<Integer,Integer> graph){
-		int[][] A = graph.getAdjacencyMatrix();
-		
-		for(int i=0; i<A.length; i++){
-			for(int j=i+1; j<A.length; j++){
-				if(A[i][j] != 1)
-					return false;
-			}
+	private boolean checkIfClique(UndirectedGraph<Integer,Integer> graph){
+		int edgeCount = 0;
+		Iterator<Graph.Edge<Integer>> eit = graph.edges();
+		while(eit.hasNext()){
+			eit.next();
+			edgeCount++;
 		}
-		return true;
+		int reqCount = (graph.size()*(graph.size()-1))/2;
+		if(edgeCount==reqCount){
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -330,7 +293,7 @@ public class ListDiamonds {
 	 * @param graph 	the graph to be checked
 	 * @return 			the vertex list if found
 	 */
-	public static List<Collection<Graph.Vertex<Integer>>> getP3(UndirectedGraph<Integer,Integer> graph){
+	public List<Collection<Graph.Vertex<Integer>>> getP3(UndirectedGraph<Integer,Integer> graph){
 		//if the no of vertices in graph is less than 3, then graph cannot have a p3
 		
 		if(graph.size()<3){
@@ -383,25 +346,25 @@ public class ListDiamonds {
 		return p3s;
 	}
 	
-	private static class VertexComparator implements Comparator<Graph.Vertex<Integer>>{
-		
-		private UndirectedGraph<Integer,Integer> graph;
-		
-		public VertexComparator(UndirectedGraph<Integer,Integer> g){
-			this.graph = g;
-		}
-
-		@Override
-		public int compare(Graph.Vertex<Integer> v1, Graph.Vertex<Integer> v2) {
-			Integer d1 = graph.degree(v1);
-			Integer d2 = graph.degree(v2);
-			
-			return -1 *(d1.compareTo(d2));
-		}
-	}
+//	private class VertexComparator implements Comparator<Graph.Vertex<Integer>>{
+//		
+//		private UndirectedGraph<Integer,Integer> graph;
+//		
+//		public VertexComparator(UndirectedGraph<Integer,Integer> g){
+//			this.graph = g;
+//		}
+//
+//		@Override
+//		public int compare(Graph.Vertex<Integer> v1, Graph.Vertex<Integer> v2) {
+//			Integer d1 = graph.degree(v1);
+//			Integer d2 = graph.degree(v2);
+//			
+//			return -1 *(d1.compareTo(d2));
+//		}
+//	}
 	
 	//method to partition the vertices into low degree vertices and high degree vertices
-	public static List<Graph.Vertex<Integer>>[] partitionVertices(UndirectedGraph<Integer,Integer> graph){
+	public List<Graph.Vertex<Integer>>[] partitionVertices(UndirectedGraph<Integer,Integer> graph){
 		List<Graph.Vertex<Integer>>[] vertices = new List[2];
 		vertices[0] = new ArrayList<Graph.Vertex<Integer>>();
 		vertices[1] = new ArrayList<Graph.Vertex<Integer>>();
@@ -409,16 +372,8 @@ public class ListDiamonds {
 		//get vertices
 		Iterator<Graph.Vertex<Integer>> vertexIterator = graph.vertices();
 		
-		//get edges
-		Iterator<Graph.Edge<Integer>> edgeIterator = graph.edges();
-		
 		//get number of edges
-		int noOfEdges = 0;
-		while(edgeIterator.hasNext()){
-			edgeIterator.next();
-			noOfEdges++;
-		}
-		
+		int noOfEdges = graph.getEdgeCount();
 
 		//calculate D for Graph.Vertex partitioning
 		double D = Math.sqrt(noOfEdges);
@@ -432,5 +387,14 @@ public class ListDiamonds {
 		}
 		
 		return vertices;
+	}
+	
+	/**
+	*	method to return the time taken to run the listing	
+	*	and whether a diamond was found or not
+	*/
+	public String getResult(){
+		String result = String.format("%-10s%-10s", p1time,found);
+		return result;
 	}
 }

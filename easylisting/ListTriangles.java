@@ -5,40 +5,38 @@ import java.util.*;
 import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
+import general.Graph.Vertex;
 
 public class ListTriangles {
 	
+	private  String p1time = "-";
+	private  String found = "found";
+	
 	public static void main(String[] args) {
-		UndirectedGraph<Integer,Integer> graph;
-
-//			String fileName = "matrix3.txt";
-//			String fileName = "generated_graphs\\size_7\\graph_7_0.2_2.txt";
-//			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
-			String fileName = "generated_graphs\\size_15\\graph_15_1.0_1.txt";
-			graph = Utility.makeGraphFromFile(fileName);
-//			int[][] A = {{0,1,0,1,1},{1,0,1,0,0},{0,1,0,1,1},{1,0,1,0,0},{1,0,1,0,0}};
-//			graph = Utility.makeGraphFromAdjacencyMatrix(A);
-			
-			long starttime = System.currentTimeMillis();
-			List<Collection<Graph.Vertex<Integer>>> triangles = new ListTriangles().detect(graph);
-			long stoptime = System.currentTimeMillis();
-			
-			long timetaken = stoptime-starttime;
-			
-			
-			if(!triangles.isEmpty()){
-				for(Collection<Graph.Vertex<Integer>> triangle: triangles)
-					Utility.printGraph(Utility.makeGraphFromVertexSet(graph,triangle));
-				System.out.println("Time taken in milliseconds: "+timetaken);
-				System.out.println(triangles.size());
-			}
-			else{
-				System.out.println("Triangle not found");
-			}
-
+		UndirectedGraph<Integer,Integer> graph = null;
+		try{
+			graph = Utility.makeGraphFromFile(args[0]);
+			ListTriangles d = new ListTriangles();
+			List<Collection<Vertex<Integer>>> tris = d.detect(graph);
+			System.out.println("Number of triangles found: "+tris.size());
+			System.out.print(d.getResult());
+		}catch(ArrayIndexOutOfBoundsException e){
+			System.out.println("Please provide the graph file as a command line argument");
+		}
 	}
 	
 	public List<Collection<Graph.Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph){
+		long start = System.currentTimeMillis();
+		List<Collection<Vertex<Integer>>> triangles = find(graph);
+		long stop = System.currentTimeMillis();
+		p1time = ""+(stop-start);
+		if(triangles.isEmpty()){
+			found = "not found";
+		}
+		return triangles;
+	}
+	
+	public List<Collection<Graph.Vertex<Integer>>> find(UndirectedGraph<Integer,Integer> graph){
 		List<Collection<Graph.Vertex<Integer>>> triangles = new ArrayList<Collection<Graph.Vertex<Integer>>>();
 		Set<Set<Integer>> marked = new HashSet<Set<Integer>>(); //to prevent creating the same triangle more than once
 		
@@ -80,5 +78,14 @@ public class ListTriangles {
 		}
 		
 		return triangles;
+	}
+	
+	/**
+	*	method to return the time taken to run the listing	
+	*	and whether a triangle was found or not
+	*/
+	public String getResult(){
+		String result = String.format("%-10s%-10s", p1time,found);
+		return result;
 	}
 }

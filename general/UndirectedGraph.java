@@ -15,10 +15,12 @@ import general.Graph.Vertex;
 public class UndirectedGraph<E,A> implements Graph<E,A>{
 
 	private UnEdge firstEdge;
+	private int edgeCount;
 	private Map<E,Vertex<E>> vertexElementMap;
 	
 	public UndirectedGraph(){
 		firstEdge = null;
+		edgeCount = 0;
 		vertexElementMap = new HashMap<E,Vertex<E>>();
 	}
 	
@@ -94,7 +96,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 			((UnVertex)v0).neighbours.add(edge);
 			((UnVertex)v1).neighbours.add(edge);
 		}
-		
+		edgeCount++;
 		return edge;
 	}
 
@@ -135,6 +137,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		UnVertex d = (UnVertex)e.getDestination();
 		s.neighbours.remove(e);
 		d.neighbours.remove(e);
+		edgeCount--;
 	}
 
 	@Override
@@ -219,6 +222,10 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		}
 		this.resetVisited();
 		return list;
+	}
+	
+	public int getEdgeCount(){
+		return edgeCount;
 	}
 	
 	public void resetVisited(){
@@ -327,6 +334,9 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		public Iterator<Edge<A>> iterator() {
 			return this;
 		}
+
+		@Override
+		public void remove(){}
 		
 	}
 	
@@ -358,6 +368,9 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		public Iterator<Edge<A>> iterator() {
 			return this;
 		}
+
+		@Override
+		public void remove(){}
 		
 	}
 	
@@ -462,6 +475,9 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		public Iterator<Vertex<E>> iterator() {
 			return this;
 		}
+
+		@Override
+		public void remove(){}
 		
 	}
 

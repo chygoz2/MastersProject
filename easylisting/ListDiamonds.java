@@ -4,42 +4,43 @@ import java.io.IOException;
 import java.util.*;
 
 import general.*;
+import general.Graph.Vertex;
 
 public class ListDiamonds {
 
+	private  String p1time = "-";
+	private  String found = "found";
+	
 	public static void main(String [] args) throws IOException{
-		UndirectedGraph<Integer,Integer> graph;
-		for(int a=0;a<1;a++){
-//			String fileName = "matrix2.txt";
-//			String fileName = "generated_graphs\\size_5\\graph_5_0.7_4.txt";
-//			String fileName = "generated_graphs\\size_6\\graph_6_0.6_3.txt";
-			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
-//			String fileName = "test\\testdata\\diamondtestdata.txt";
-//			String fileName = "generated_graphs\\size_300\\graph_300_0.9_1.txt";
-//			String fileName = "generated_graphs\\size_150\\graph_150_1.0_1.txt";
-//			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
-//			String fileName = "generated_graphs\\size_150\\graph_150_0.7_4.txt";
-//			UndirectedGraph<Integer,Integer> graphs[a] = Utility.makeGraphFromFile(fileName);
-			graph = Utility.makeGraphFromFile(fileName);
-			
-			long sta = System.currentTimeMillis();
-			List<Collection<Graph.Vertex<Integer>>> diamonds = new ListDiamonds().detect(graph);
-			long sto = System.currentTimeMillis();
-			
-			if(!diamonds.isEmpty()){
-				for(Collection<Graph.Vertex<Integer>> diamond: diamonds){
-					Utility.printGraph(Utility.makeGraphFromVertexSet(graph,diamond));
-				}
-			}
-			else{
-				System.out.println("Diamond not found");
-			}
-			System.out.println("Time taken in milliseconds: " + (sto-sta));
-			System.out.println(diamonds.size());
+		UndirectedGraph<Integer,Integer> graph = null;
+		try{
+			graph = Utility.makeGraphFromFile(args[0]);
+			ListDiamonds d = new ListDiamonds();
+			List<Collection<Vertex<Integer>>> diamonds = d.detect(graph);
+			System.out.println("Number of diamonds found: "+diamonds.size());
+			System.out.print(d.getResult());
+		}catch(ArrayIndexOutOfBoundsException e){
+			System.out.println("Please provide the graph file as a command line argument");
 		}
 	}
 	
-	public List<Collection<Graph.Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph){
+	/**
+	 * method to detect and return all induced diamonds found
+	 * @param graph 		the graph to be checked
+	 * @return  			the list of sets of vertices which induce diamonds
+	 */
+	public List<Collection<Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph){
+		long start = System.currentTimeMillis();
+		List<Collection<Vertex<Integer>>> diamonds = find(graph);
+		long stop = System.currentTimeMillis();
+		p1time = ""+(stop-start);
+		if(diamonds.isEmpty()){
+			found = "not found";
+		}
+		return diamonds;
+	}
+	
+	public List<Collection<Graph.Vertex<Integer>>> find(UndirectedGraph<Integer,Integer> graph){
 		List<Collection<Graph.Vertex<Integer>>> diamonds = new ArrayList<Collection<Graph.Vertex<Integer>>>();
 		Set<Set<Integer>> marked = new HashSet<Set<Integer>>(); //to prevent creating the same diamond more than once
 		
@@ -129,5 +130,14 @@ public class ListDiamonds {
 		}
 	
 		return p3s;
+	}
+	
+	/**
+	*	method to return the time taken to run the listing	
+	*	and whether a diamond was found or not
+	*/
+	public String getResult(){
+		String result = String.format("%-10s%-10s", p1time,found);
+		return result;
 	}
 }

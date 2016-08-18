@@ -34,7 +34,7 @@ public class ListTrianglesTest {
 	 */
 	@Test
 	public void testDetect() {
-		List<Collection<Graph.Vertex<Integer>>> actualResult = ListTriangles.detect(graph);
+		List<Collection<Graph.Vertex<Integer>>> actualResult = new ListTriangles().detect(graph);
 		int[][] expectedResult = {{2,3,4},{0,2,4},{0,1,2}}; //expected result should have 3 triangles 
 															//with the specified vertex elements
 		

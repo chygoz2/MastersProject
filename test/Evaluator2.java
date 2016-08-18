@@ -257,7 +257,6 @@ public class Evaluator2 {
 			int index = gname.lastIndexOf("graph");
 			String name = gname.substring(index);
 			output += String.format("%-30s%-12s%s%n", name,graph.size(),result);
-			d.resetResult();
 
 			saveResultToFile(output, "efficient_kL_detection_result",name);
 		}

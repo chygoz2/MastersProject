@@ -7,49 +7,26 @@ import general.UndirectedGraph;
 import general.Utility;
 import general.Graph.Vertex;
 
-public class ListSimplicialVertex {
+public class ListSimplicialVertices {
 	
-	private static String p1time = "-";
-	private static String p2time = "-";
-	private static String found = "found";
+	private String p1time = "-";
+	private String p2time = "-";
+	private String found = "found";
 	
 	public static void main(String [] args){
-//		UndirectedGraph<Integer, Integer> graph = new UndirectedGraph<Integer,Integer>();
-//		
-//		Graph.Vertex<Integer> v1 = graph.addVertex(1);
-//		Graph.Vertex<Integer> v2 = graph.addVertex(2);
-//		Graph.Vertex<Integer> v3 = graph.addVertex(3);
-//		Graph.Vertex<Integer> v4 = graph.addVertex(4);
-//		Graph.Vertex<Integer> v5 = graph.addVertex(5);
-//		graph.addEdge(v1, v2);
-//		graph.addEdge(v3, v2);
-//		graph.addEdge(v3, v4);
-//		graph.addEdge(v1, v3);
-////		graph.addEdge(v1, v5);
-////		graph.addEdge(v3, v5);
-//		graph.addEdge(v2, v5);
-//		graph.addEdge(v2, v4);
-//		graph.addEdge(v1, v4);
-//		graph.addEdge(v4, v5);
-//		
-//		Utility.saveGraphToFile(graph, 0.7, 10);
-//		String fileName = "generated_graphs\\size_5\\graph_5_0.7_10.txt";
-//		String fileName = "generated_graphs\\size_6\\graph_6_0.6_2.txt";
-		String fileName = "generated_graphs\\size_150\\graph_150_1.0_1.txt";
-
-		for(int i=0; i<1; i++){
-			UndirectedGraph<Integer, Integer> graph = Utility.makeGraphFromFile(fileName);
-
-			List<Graph.Vertex<Integer>> simpVertex = detect(graph);
-			
-//			if(!simpVertex.isEmpty()){
-//				for(Graph.Vertex<Integer> s: simpVertex)
-//					System.out.print(s.getElement()+", ");
-//			}
+		UndirectedGraph<Integer,Integer> graph = null;
+		try{
+			graph = Utility.makeGraphFromFile(args[0]);
+			ListSimplicialVertices d = new ListSimplicialVertices();
+			Collection<Vertex<Integer>> svs = d.detect(graph);
+			System.out.println("Number of simplicial vertices found: "+svs.size());
+			System.out.print(d.getResult());
+		}catch(ArrayIndexOutOfBoundsException e){
+			System.out.println("Please provide the graph file as a command line argument");
 		}
 	}
 	
-	public static List<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
+	public List<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
 		List[] verticesPartition = partitionVertices(graph);
 		List<Graph.Vertex<Integer>> simplicialVertices = new ArrayList<Graph.Vertex<Integer>>();
 		
@@ -68,13 +45,12 @@ public class ListSimplicialVertex {
 
 		if(simplicialVertices.isEmpty())
 			found = "not found";
-		System.out.println(getResult());
 		
 		return simplicialVertices;
 		
 	}
 	
-	public static List<Graph.Vertex<Integer>> phaseOne(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> lowDegreeVertices){
+	public List<Graph.Vertex<Integer>> phaseOne(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> lowDegreeVertices){
 		List<Graph.Vertex<Integer>> simplicialVertices = new ArrayList<Graph.Vertex<Integer>>();
 		for(Graph.Vertex<Integer> v: lowDegreeVertices){
 			if(graph.degree(v) > 0){
@@ -107,7 +83,7 @@ public class ListSimplicialVertex {
 		return simplicialVertices;
 	}
 	
-	public static List<Graph.Vertex<Integer>> phaseTwo(UndirectedGraph<Integer,Integer> graph2, Collection<Graph.Vertex<Integer>> lowDegreeVertices, Collection<Graph.Vertex<Integer>> highDegreeVertices){
+	public List<Graph.Vertex<Integer>> phaseTwo(UndirectedGraph<Integer,Integer> graph2, Collection<Graph.Vertex<Integer>> lowDegreeVertices, Collection<Graph.Vertex<Integer>> highDegreeVertices){
 		UndirectedGraph<Integer,Integer> graph = graph2.clone();
 		
 		//marked high degree vertices that have a low degree neighbour
@@ -191,7 +167,7 @@ public class ListSimplicialVertex {
 	}
 	
 	//method to partition the vertices into low degree vertices and high degree vertices
-	public static List<Graph.Vertex<Integer>>[] partitionVertices(UndirectedGraph<Integer,Integer> graph){
+	public List<Graph.Vertex<Integer>>[] partitionVertices(UndirectedGraph<Integer,Integer> graph){
 		List<Graph.Vertex<Integer>>[] vertices = new List[2];
 		vertices[0] = new ArrayList<Graph.Vertex<Integer>>();
 		vertices[1] = new ArrayList<Graph.Vertex<Integer>>();
@@ -199,15 +175,8 @@ public class ListSimplicialVertex {
 		//get vertices
 		Iterator<Graph.Vertex<Integer>> vertexIterator = graph.vertices();
 		
-		//get edges
-		Iterator<Graph.Edge<Integer>> edgeIterator = graph.edges();
-		
 		//get number of edges
-		int noOfEdges = 0;
-		while(edgeIterator.hasNext()){
-			edgeIterator.next();
-			noOfEdges++;
-		}
+		int noOfEdges = graph.getEdgeCount();
 		
 
 		//calculate D for Graph.Vertex partitioning
@@ -227,12 +196,12 @@ public class ListSimplicialVertex {
 		return vertices;
 	}
 	
-	public static String getResult(){
+	public String getResult(){
 		String result = String.format("%-10s%-10s%-10s", p1time,p2time,found);
 		return result;
 	}
 	
-	public static void resetResult(){
+	public void resetResult(){
 		p1time = "-";
 		p2time = "-";
 		found = "found";

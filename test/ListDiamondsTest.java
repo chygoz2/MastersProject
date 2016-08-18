@@ -27,7 +27,7 @@ public class ListDiamondsTest {
 	public void before(){
 		String fileName = "test\\testdata\\diamondtestdata.txt";
 		graph = Utility.makeGraphFromFile(fileName);
-		lowDegreeVertices = ListDiamonds.partitionVertices(graph)[0];
+		lowDegreeVertices = new ListDiamonds().partitionVertices(graph)[0];
 	}
 	
 	/**
@@ -35,7 +35,7 @@ public class ListDiamondsTest {
 	 */
 	@Test
 	public void testDetect() {
-		List<Collection<Graph.Vertex<Integer>>> actualResult = ListDiamonds.detect(graph);
+		List<Collection<Graph.Vertex<Integer>>> actualResult = new ListDiamonds().detect(graph);
 		int[][] expectedResult = {{0,1,2,4},{0,2,3,4}}; //expected result should have 3 triangles 
 															//with the specified vertex elements
 		

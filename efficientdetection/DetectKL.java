@@ -11,12 +11,16 @@ public class DetectKL {
 	private  String found = "found";
 	
 	public static void main(String [] args){
-		UndirectedGraph<Integer,Integer> graph = null;
-		graph = Utility.makeGraphFromFile(args[0]);
-		
-		DetectKL d = new DetectKL();
-		Collection<Graph.Vertex<Integer>> kl = d.detect(graph,4);
-		System.out.print(d.getResult());
+		try{
+			UndirectedGraph<Integer,Integer> graph = null;
+			graph = Utility.makeGraphFromFile(args[0]);
+			
+			DetectKL d = new DetectKL();
+			Collection<Graph.Vertex<Integer>> kl = d.detect(graph,7);
+			System.out.print(d.getResult());
+		}catch(ArrayIndexOutOfBoundsException e){
+			System.out.println("Please provide the graph file as a command line argument");
+		}
 	}
 	
 	public  Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph, int l){
@@ -104,7 +108,7 @@ public class DetectKL {
 
 		else if(l==3){
 			//get all triangles in graph
-			List<Collection<Graph.Vertex<Integer>>> k3 = ListTriangles.detect(graph);
+			List<Collection<Graph.Vertex<Integer>>> k3 = new ListTriangles().detect(graph);
 			klList.addAll(k3);
 		}
 		else if(l>3){
@@ -316,15 +320,9 @@ public class DetectKL {
 		//get vertices
 		Iterator<Graph.Vertex<Integer>> vertexIterator = graph.vertices();
 		
-		//get edges
-		Iterator<Graph.Edge<Integer>> edgeIterator = graph.edges();
-		
 		//get number of edges
-		int noOfEdges = 0;
-		while(edgeIterator.hasNext()){
-			edgeIterator.next();
-			noOfEdges++;
-		}
+		int noOfEdges = graph.getEdgeCount();
+				
 		
 
 		//calculate D for Vertex partitioning

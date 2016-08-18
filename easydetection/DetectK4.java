@@ -12,16 +12,32 @@ public class DetectK4 {
 	private  String found = "found";
 	
 	public static void main(String [] args){
-//		String fileName = "matrix4.txt";
-		String fileName = "generated_graphs\\size_10\\graph_10_0.9_6.txt ";
-		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(fileName);
-
-		Collection<Graph.Vertex<Integer>> k4 = new DetectK4().detect(graph);
-
-		if(k4!=null){
-			Utility.printGraph(Utility.makeGraphFromVertexSet(graph,k4));
-		}
-
+		try{			
+			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]);
+			DetectK4 d = new DetectK4();
+			long a = System.currentTimeMillis();
+			Thread t = new Thread(new Runnable(){
+				public void run(){
+					Collection<Graph.Vertex<Integer>> k4 = d.detect(graph);	
+				}
+			});
+			t.start();
+			while(!t.isInterrupted() && t.isAlive()){
+				long timeout = 120000; //timeout of 2 minutes
+				long b = System.currentTimeMillis();
+				if((b-a)>timeout){
+					d.found = "timed out";
+					t.interrupt();
+				}else{
+					Thread.sleep(500);
+				}
+			}
+			
+			System.out.print(d.getResult());
+			System.exit(0);
+		}catch(ArrayIndexOutOfBoundsException e){
+			System.out.println("Please provide the graph file as a command line argument");
+		}catch(InterruptedException e){}
 	}
 
 	public Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
@@ -33,7 +49,6 @@ public class DetectK4 {
 		
 		if(k4==null)
 			found = "not found";
-		System.out.println(getResult());
 		return k4;
 	}
 	

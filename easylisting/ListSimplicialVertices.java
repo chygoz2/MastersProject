@@ -1,54 +1,31 @@
 package easylisting;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import efficientlisting.ListK4;
 import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
+import general.Graph.Vertex;
 
 public class ListSimplicialVertices {
 	
-	private  String p1time = "-";
-	private  String found = "found";
+	private String p1time = "-";
+	private String found = "found";
 	
 	public static void main(String [] args){
-//		UndirectedGraph<Integer, Integer> graph = new UndirectedGraph<Integer,Integer>();
-//		
-//		Graph.Vertex<Integer> v1 = graph.addVertex(1);
-//		Graph.Vertex<Integer> v2 = graph.addVertex(2);
-//		Graph.Vertex<Integer> v3 = graph.addVertex(3);
-//		Graph.Vertex<Integer> v4 = graph.addVertex(4);
-//		Graph.Vertex<Integer> v5 = graph.addVertex(5);
-//		graph.addEdge(v1, v2);
-//		graph.addEdge(v3, v2);
-//		graph.addEdge(v3, v4);
-//		graph.addEdge(v1, v3);
-////		graph.addEdge(v1, v5);
-////		graph.addEdge(v3, v5);
-//		graph.addEdge(v2, v5);
-//		graph.addEdge(v2, v4);
-//		graph.addEdge(v1, v4);
-//		graph.addEdge(v4, v5);
-//		
-//		Utility.saveGraphToFile(graph, 0.7, 10);
-//		String fileName = "generated_graphs\\size_5\\graph_5_0.7_10.txt";
-//		String fileName = "generated_graphs\\size_6\\graph_6_0.6_2.txt";
-		String fileName = "generated_graphs\\size_150\\graph_150_1.0_1.txt";
-
-		for(int i=0; i<1; i++){
-			UndirectedGraph<Integer, Integer> graph = Utility.makeGraphFromFile(fileName);
-			long starttime = System.currentTimeMillis();
+		UndirectedGraph<Integer,Integer> graph = null;
+		try{
+			graph = Utility.makeGraphFromFile(args[0]);
 			ListSimplicialVertices d = new ListSimplicialVertices();
-			List<Graph.Vertex<Integer>> simpVertex = d.detect(graph);
-			long stoptime = System.currentTimeMillis();
-			
-//			if(!simpVertex.isEmpty()){
-//				for(Graph.Vertex<Integer> s: simpVertex)
-//					System.out.print(s.getElement()+", ");
-//			}
-			
+			Collection<Vertex<Integer>> svs = d.detect(graph);
+			System.out.println("Number of simplicial vertices found: "+svs.size());
+			System.out.print(d.getResult());
+		}catch(ArrayIndexOutOfBoundsException e){
+			System.out.println("Please provide the graph file as a command line argument");
 		}
 	}
 	
@@ -60,7 +37,6 @@ public class ListSimplicialVertices {
 		
 		if(s.isEmpty())
 			found = "not found";
-		System.out.println(getResult());
 		return s;
 	}
 	
@@ -103,7 +79,7 @@ public class ListSimplicialVertices {
 		return simplicialVertices;
 	}
 	
-	public  String getResult(){
+	public String getResult(){
 		String result = String.format("%-10s%-10s", p1time,found);
 		return result;
 	}

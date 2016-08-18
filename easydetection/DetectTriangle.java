@@ -10,32 +10,33 @@ public class DetectTriangle {
 	private String time = "-";
 	private String found = "found";
 	
-	public static void main(String[] args) {
-		UndirectedGraph<Integer,Integer> graph;
-
-//			String fileName = "matrix3.txt";
-//			String fileName = "generated_graphs\\size_7\\graph_7_0.2_2.txt";
-			String fileName = "generated_graphs\\size_15\\graph_15_0.7_3.txt";
-			graph = Utility.makeGraphFromFile(fileName);
-//			int[][] A = {{0,1,0,1,1},{1,0,1,0,0},{0,1,0,1,1},{1,0,1,0,0},{1,0,1,0,0}};
-//			graph = Utility.makeGraphFromAdjacencyMatrix(A);
-			
-			long starttime = System.currentTimeMillis();
+	public static void main(String[] args) {		
+		try{			
+			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]);
 			DetectTriangle d = new DetectTriangle();
-			
-			Collection<Graph.Vertex<Integer>> triangle = d.detect(graph);
-			long stoptime = System.currentTimeMillis();
-			
-			long timetaken = stoptime-starttime;
-			
-			
-			if(triangle!=null){
-				Utility.printGraph(Utility.makeGraphFromVertexSet(graph,triangle));
+			long a = System.currentTimeMillis();
+			Thread t = new Thread(new Runnable(){
+				public void run(){
+					Collection<Graph.Vertex<Integer>> triangle = d.detect(graph);
+				}
+			});
+			t.start();
+			while(!t.isInterrupted() && t.isAlive()){
+				long timeout = 120000; //timeout of 2 minutes
+				long b = System.currentTimeMillis();
+				if((b-a)>timeout){
+					d.found = "timed out";
+					t.interrupt();
+				}else{
+					Thread.sleep(500);
+				}
 			}
-			else{
-				System.out.println("Triangle not found");
-			}
-
+			
+			System.out.print(d.getResult());
+			System.exit(0);
+		}catch(ArrayIndexOutOfBoundsException e){
+			System.out.println("Please provide the graph file as a command line argument");
+		}catch(InterruptedException e){}
 	}
 	
 	public Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
@@ -46,7 +47,6 @@ public class DetectTriangle {
 		
 		if(triangle==null)
 			found = "not found";
-		System.out.println(getResult());
 		
 		return triangle;
 	}

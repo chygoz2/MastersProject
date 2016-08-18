@@ -8,51 +8,34 @@ import general.Utility;
 
 public class ListClaws {
 	
-	private static String time = "";
+	private  String p1time = "-";
+	private  String found = "found";
 	
 	public static void main(String [] args){		
-		
-//		UndirectedGraph graph = new UndirectedGraph();
-//		Graph.Vertex v1 = graph.addVertex(0);
-//		Graph.Vertex v2 = graph.addVertex(1);
-//		Graph.Vertex v3 = graph.addVertex(2);
-//		Graph.Vertex v4 = graph.addVertex(3);
-//		Graph.Vertex v5 = graph.addVertex(4);
-//		Graph.Vertex v6 = graph.addVertex(5);
-//		Graph.Vertex v7 = graph.addVertex(6);
-//		
-//		graph.addEdge(v1, v5);
-//		graph.addEdge(v1, v3);
-//		graph.addEdge(v2, v3);
-//		graph.addEdge(v3, v4);
-//		graph.addEdge(v4, v5);
-//		graph.addEdge(v4, v6);
-//		graph.addEdge(v4, v7);
-//		graph.addEdge(v6, v7);
-//		graph.addEdge(v6, v5);
-//		graph.addEdge(v5, v7);
-		
-		
-//		UndirectedGraph<Integer,Integer> graph = Utility.makeRandomGraph(7, 0.4);
-		
 		UndirectedGraph<Integer,Integer> graph = null;
-//		String fileName = "test\\testdata\\clawtestdata.txt";
-		String fileName = "generated_graphs\\size_100\\graph_100_0.8_14.txt";
-		graph = Utility.makeGraphFromFile(fileName);
-		
-		long starttime = System.currentTimeMillis();
-		List<Collection<Vertex<Integer>>> claws = detect(graph);
-		long stoptime = System.currentTimeMillis();
-		if(!claws.isEmpty()){
-//			for(Collection<Graph.Vertex<Integer>> claw: claws)
-//				Utility.printGraph(Utility.makeGraphFromVertexSet(graph,claw));
-		}else
-			System.out.println("Claw not found");
-		System.out.println("Time taken in milliseconds: " + (stoptime-starttime));
-		System.out.println(claws.size());
+		try{
+			graph = Utility.makeGraphFromFile(args[0]);
+			ListClaws d = new ListClaws();
+			List<Collection<Vertex<Integer>>> claws = d.detect(graph);
+			System.out.println("Number of claws found: "+claws.size());
+			System.out.print(d.getResult());
+		}catch(ArrayIndexOutOfBoundsException e){
+			System.out.println("Please provide the graph file as a command line argument");
+		}
 	}	
 	
-	public static List<Collection<Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph){		
+	public List<Collection<Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph){
+		long start = System.currentTimeMillis();
+		List<Collection<Vertex<Integer>>> claws = find(graph);
+		long stop = System.currentTimeMillis();
+		p1time = ""+(stop-start);
+		if(claws.isEmpty()){
+			found = "not found";
+		}
+		return claws;
+	}
+
+	public List<Collection<Vertex<Integer>>> find(UndirectedGraph<Integer,Integer> graph){
 		//for each vertex, check if the complement of its neighbour contains a triangle
 		List<Collection<Graph.Vertex<Integer>>> claws = new ArrayList<Collection<Graph.Vertex<Integer>>>();
 		
@@ -87,7 +70,7 @@ public class ListClaws {
 	 * @param vNeighGraph		the neighbourhood graph to be checked
 	 * @return					the vertices if found
 	 */
-	private static List<Collection<Graph.Vertex<Integer>>> getClawVerticesFromNeighbourGraph(UndirectedGraph<Integer,Integer> vNeighGraph){
+	private List<Collection<Graph.Vertex<Integer>>> getClawVerticesFromNeighbourGraph(UndirectedGraph<Integer,Integer> vNeighGraph){
 		//get the complement matrix of the neighbour graph
 		List<Collection<Graph.Vertex<Integer>>> claws = new ArrayList<Collection<Graph.Vertex<Integer>>>();
 		int[][] vncomp = vNeighGraph.getComplementMatrix();
@@ -104,7 +87,7 @@ public class ListClaws {
 		
 		//look for a triangle in the complement graph. Such a triangle forms the remaining vertices
 		//of the claw
-		List<Collection<Graph.Vertex<Integer>>> tris =  ListTriangles.detect(vncompgraph);
+		List<Collection<Graph.Vertex<Integer>>> tris =  new ListTriangles().detect(vncompgraph);
 		if(!tris.isEmpty()){
 			for(Collection<Graph.Vertex<Integer>> tri: tris){
 				//get the vertices of the main graph that correspond to the vertices of the triangle found
@@ -121,11 +104,13 @@ public class ListClaws {
 		return claws;
 	}
 	
-	public static String getTime(){
-		return time;
+	/**
+	*	method to return the time taken to run the listing	
+	*	and whether a claw was found or not
+	*/
+	public String getResult(){
+		String result = String.format("%-10s%-10s", p1time,found);
+		return result;
 	}
-	
-	public static void resetTime(){
-		time = "";
-	}
+
 }

@@ -12,12 +12,16 @@ public class DetectTriangle {
 	private String found = "found";
 	
 	public static void main(String[] args) {
-		UndirectedGraph<Integer,Integer> graph = null;
-		graph = Utility.makeGraphFromFile(args[0]);
-		
-		DetectTriangle d = new DetectTriangle();
-		Collection<Graph.Vertex<Integer>> triangle = d.detect(graph);
-		System.out.print(d.getResult());
+		try{
+			UndirectedGraph<Integer,Integer> graph = null;
+			graph = Utility.makeGraphFromFile(args[0]);
+			
+			DetectTriangle d = new DetectTriangle();
+			Collection<Graph.Vertex<Integer>> triangle = d.detect(graph);
+			System.out.print(d.getResult());
+		}catch(ArrayIndexOutOfBoundsException e){
+			System.out.println("Please provide the graph file as a command line argument");
+		}	
 	}
 	
 	public Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
