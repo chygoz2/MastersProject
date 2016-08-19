@@ -1,6 +1,5 @@
 package easydetection;
 
-import java.util.Collection;
 import java.util.Iterator;
 
 import general.Graph;
@@ -15,6 +14,7 @@ public class DetectSimplicialVertex {
 	public static void main(String [] args){		
 		try{			
 			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]);
+			
 			DetectSimplicialVertex d = new DetectSimplicialVertex();
 			long a = System.currentTimeMillis();
 			Thread t = new Thread(new Runnable(){
@@ -24,13 +24,13 @@ public class DetectSimplicialVertex {
 			});
 			t.start();
 			while(!t.isInterrupted() && t.isAlive()){
-				long timeout = 120000; //timeout of 2 minutes
+				long timeout = 30000; //timeout of 30 seconds
 				long b = System.currentTimeMillis();
 				if((b-a)>timeout){
 					d.found = "timed out";
 					t.interrupt();
 				}else{
-					Thread.sleep(500);
+					Thread.sleep(100);
 				}
 			}
 			
@@ -63,28 +63,30 @@ public class DetectSimplicialVertex {
 			//get the neighbourhood graph of vertex
 			UndirectedGraph<Integer,Integer> vertexNeighbourhood = Utility.getNeighbourGraph(graph, vertex);
 			
-			//check if each pair of vertices in the neighbourhood are adjacent
-			Iterator<Graph.Vertex<Integer>> vIt1 = vertexNeighbourhood.vertices();
-			
-			boolean contains = true;
-			
-			here:
-			while(vIt1.hasNext()){
-				Graph.Vertex<Integer> v1 = vIt1.next();
+			if(vertexNeighbourhood.size()>0){
+				//check if each pair of vertices in the neighbourhood are adjacent
+				Iterator<Graph.Vertex<Integer>> vIt1 = vertexNeighbourhood.vertices();
 				
-				Iterator<Graph.Vertex<Integer>> vIt2 = vertexNeighbourhood.vertices();
-				while(vIt2.hasNext()){
-					Graph.Vertex<Integer> v2 = vIt2.next();
+				boolean contains = true;
+				
+				here:
+				while(vIt1.hasNext()){
+					Graph.Vertex<Integer> v1 = vIt1.next();
 					
-					if(v1!=v2 && !vertexNeighbourhood.containsEdge(v1, v2)){
-						contains = false;
-						break here;
+					Iterator<Graph.Vertex<Integer>> vIt2 = vertexNeighbourhood.vertices();
+					while(vIt2.hasNext()){
+						Graph.Vertex<Integer> v2 = vIt2.next();
+						
+						if(v1!=v2 && !vertexNeighbourhood.containsEdge(v1, v2)){
+							contains = false;
+							break here;
+						}
 					}
 				}
-			}
-			
-			if(contains){
-				return vertex;
+				
+				if(contains){
+					return vertex;
+				}
 			}
 		}
 		return null;
