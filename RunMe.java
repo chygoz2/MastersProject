@@ -1,34 +1,150 @@
 import java.awt.EventQueue;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
 
 import efficientdetection.*;
-import efficientlisting.ListSimplicialVertices;
+import efficientlisting.*;
 import general.*;
+import general.Graph.Vertex;
 import generate.GraphGenerator;
 import gui.GUI;
 
-public class RunMe {
+public class Runme {
 	public static void main(String[] args){
-		String commands = "help, detect, generate, quit, triangle, claw, k4, kl, diamond, simplicial, gui, test";
-
-		System.out.println(commands);
+		String operationvalues = "Possible values for operation_type: help, detect, list, generate, quit, gui, test";
+		String detectionValues = "Possible values for detection_type: triangle, claw, k4, kl, simplicial, diamond";
+		String info = "Please enter commands in the form: "
+				+ "[operation_type] [detection_type] [graph_file]";
+		System.out.println(info);
+		System.out.println(operationvalues);
+		System.out.println(detectionValues);
 		Scanner sc = new Scanner(System.in);
 
 		System.out.print("> ");
 		String input = sc.nextLine();
 
 		String[] words = input.split("[ ]+");
-		
 		while(!words[0].equals("quit")){
-			if(words.length > 3){
-				if(words[0].equals("help")){
-					System.out.println(commands);
+			if(words[0].equals("detect")){
+				if(words.length < 3){
+					System.out.println("You entered fewer arguments than required.");
+					System.out.println("Arguments should be in the form");
+					System.out.println("[operation_type] [detection_type] [graph_file]");
+				}else{
+					String path = words[2];
+					File fr= new File(path);
+					System.out.println(path);
+					if(!fr.exists())
+						System.out.println("File not found");
+					else{	
+						UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(path);
+						if(graph!=null){
+							if (words[1].equals("triangle")) {
+								DetectTriangle d = new DetectTriangle();
+								List<Graph.Vertex<Integer>> triangle = d.detect(graph);
+								if(triangle!=null){
+									String out = printList(triangle);
+									out = String.format("Triangle found%nVertices: %s%n", out);
+									out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+									System.out.println(out);
+								}else{
+									String out = String.format("Triangle not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+									System.out.println(out);
+								}
+							}
+	
+							else if (words[1].equals("claw")) {
+								DetectClaw d = new DetectClaw();
+								List<Graph.Vertex<Integer>> claw = d.detect(graph);
+								if(claw!=null){
+									String out = printList(claw);
+									out = String.format("Claw found%nVertices: %s%n", out);
+									out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+									System.out.println(out);
+								}else{
+									String out = String.format("Claw not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+									System.out.println(out);
+								}
+							}
+	
+							else if (words[1].equals("diamond")) {
+								DetectDiamond d = new DetectDiamond();
+								List<Graph.Vertex<Integer>> diamond = d.detect(graph);
+								if(diamond!=null){
+									String out = printList(diamond);
+									out = String.format("Diamond found%nVertices: %s%n", out);
+									out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+									System.out.println(out);
+								}else{
+									String out = String.format("Diamond not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+									System.out.println(out);
+								}
+							}
+	
+							else if (words[1].equals("simplicial")) {
+								DetectSimplicialVertex d = new DetectSimplicialVertex();
+								Graph.Vertex<Integer> simpVertex = d.detect(graph);
+								if(simpVertex!=null){
+									String out = String.format("Simplicial vertex found%nOne such vertex: %s%n", simpVertex.getElement());
+									out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+									System.out.println(out);
+								}else{
+									String out = String.format("Simplicial vertex not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+									System.out.println(out);
+								}
+							}	
+	
+							else if (words[1].equals("k4")) {
+								DetectK4 d = new DetectK4();
+								List<Graph.Vertex<Integer>> k4 = d.detect(graph);
+								if(k4!=null){
+									String out = printList(k4);
+									out = String.format("K4 found%nVertices: %s%n", out);
+									out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+									System.out.println(out);
+								}else{
+									String out = String.format("K4 not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+									System.out.println(out);
+								}
+							}
+							else if (words[1].equals("kl")) {
+								try{
+									System.out.println("Please enter size of complete subgraph to be detected");
+									System.out.print("> ");
+									input = sc.nextLine();
+									int l = Integer.parseInt(input);
+									DetectKL d = new DetectKL();
+									List<Graph.Vertex<Integer>> kl = d.detect(graph, l);
+									if(kl!=null){
+										String out = printList(kl);
+										out = String.format("K"+l+" found%nVertices: %s%n", out);
+										out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+										System.out.println(out);
+									}else{
+										String out = String.format("K"+l+" not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+										System.out.println(out);
+									}
+								}catch(NumberFormatException e){
+									System.out.println("Value entered is not an integer");
+								}
+							}
+							else{
+								System.out.println("For detection operation, the second argument should be "
+										+ "the detection pattern, e.g. diamond, claw, triangle, k4, kl, simplicial");
+							}
+						}	
+					}
 				}
-
-				if (words[0].equals("detect")) {
-
+			}
+			else if(words[0].equals("list")){
+				if(words.length < 3){
+					System.out.println("You entered fewer arguments than required.");
+					System.out.println("Arguments should be in the form");
+					System.out.println("[operation_type] [detection_or_listing_type] [graph_file]");
+				}else{
 					String path = words[2];
 					File fr= new File(path);
 					if(!fr.exists())
@@ -37,148 +153,207 @@ public class RunMe {
 						UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(path);
 						if(graph!=null){
 							if (words[1].equals("triangle")) {
-								List<Graph.Vertex<Integer>> triangle = new DetectTriangle().detect(graph);
-								if(triangle!=null){
-									String out = printList(triangle);
-									out = String.format("Triangle found %n%s", out.substring(0,out.length()-1));
+								ListTriangles d = new ListTriangles();
+								List<List<Vertex<Integer>>> triangles = d.detect(graph);
+								if(!triangles.isEmpty()){
+									String out = "";
+									for(List<Graph.Vertex<Integer>> triangle: triangles){
+										out += printList(triangle)+"\n";
+									}
+									out = String.format("Triangle found%nVertices:%n%s", out);
+									out += String.format("Number of triangles found: %d%n", triangles.size());
+									out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
 									System.out.println(out);
-								}else
-									System.out.println("Triangle not found");
+								}else{
+									String out = String.format("Triangle not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+									System.out.println(out);
+								}
 							}
-
+	
 							else if (words[1].equals("claw")) {
-								List<Graph.Vertex<Integer>> claw = new DetectClaw().detect(graph);
-								if(claw!=null){
-									String out = printList(claw);
-									out = String.format("Claw found %n%s", out.substring(0,out.length()-1));
+								ListClaws d = new ListClaws();
+								List<List<Vertex<Integer>>> claws = d.detect(graph);
+								if(!claws.isEmpty()){
+									String out = "";
+									for(List<Graph.Vertex<Integer>> claw: claws){
+										out += printList(claw)+"\n";
+									}
+									out = String.format("Claw found%nVertices:%n%s", out);
+									out += String.format("Number of claws found: %d%n", claws.size());
+									out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
 									System.out.println(out);
-								}else
-									System.out.println("Claw not found");
+								}else{
+									String out = String.format("Claw not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+									System.out.println(out);
+								}
 							}
-
+	
 							else if (words[1].equals("diamond")) {
-								List<Graph.Vertex<Integer>> diamond = new DetectDiamond().detect(graph);
-								if(diamond!=null){
-									String out = printList(diamond);
-									out = String.format("Diamond found %n%s", out.substring(0,out.length()-1));
+								ListDiamonds d = new ListDiamonds();
+								List<List<Vertex<Integer>>> diamonds = d.detect(graph);
+								if(!diamonds.isEmpty()){
+									String out = "";
+									for(List<Graph.Vertex<Integer>> diamond: diamonds){
+										out += printList(diamond)+"\n";
+									}
+									out = String.format("Diamond found%nVertices:%n%s", out);
+									out += String.format("Number of diamonds found: %d%n", diamonds.size());
+									out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
 									System.out.println(out);
-								}else
-									System.out.println("Diamond not found");
+								}else{
+									String out = String.format("Diamond not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+									System.out.println(out);
+								}
 							}
-
+	
 							else if (words[1].equals("simplicial")) {
-								List<Graph.Vertex<Integer>> simpVertex = new ListSimplicialVertices().detect(graph);
+								ListSimplicialVertices d = new ListSimplicialVertices();
+								List<Graph.Vertex<Integer>> simpVertex = d.detect(graph);
 								if(!simpVertex.isEmpty()){
-									String out = simpVertex.get(0).getElement()+"";
-									out = String.format("Simplicial vertex found %n%s", out);
+									String out = printList(simpVertex);
+									out = String.format("Simplicial vertices found%nVertices: %s%n", out);
+									out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
 									System.out.println(out);
-								}else
-									System.out.println("Simplicial vertex not found");
+								}else{
+									String out = String.format("Simplicial vertices not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+									System.out.println(out);
+								}
 							}	
-
+	
 							else if (words[1].equals("k4")) {
-								List<Graph.Vertex<Integer>> k4 = new DetectK4().detect(graph);
-								if(k4!=null){
-									String out = printList(k4);
-									out = String.format("K4 found %n%s", out.substring(0,out.length()-1));
+								ListK4 d = new ListK4();
+								List<List<Vertex<Integer>>> k4s = d.detect(graph);
+								if(!k4s.isEmpty()){
+									String out = "";
+									for(List<Graph.Vertex<Integer>> k4: k4s){
+										out += printList(k4)+"\n";
+									}
+									out = String.format("K4 found%nVertices:%n%s", out);
+									out += String.format("Number of K4s found: %d%n", k4s.size());
+									out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
 									System.out.println(out);
-								}else
-									System.out.println("K4 not found");
+								}else{
+									String out = String.format("K4 not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+									System.out.println(out);
+								}
 							}
-
+							else if (words[1].equals("kl")) {
+								try{
+									System.out.println("Please enter size of complete subgraph to be listed");
+									System.out.print("> ");
+									input = sc.nextLine();
+									int l = Integer.parseInt(input);
+									ListKL d = new ListKL();
+									List<List<Vertex<Integer>>> kls = d.detect(graph, l);
+									if(!kls.isEmpty()){
+										String out = "";
+										for(List<Graph.Vertex<Integer>> kl: kls){
+											out += printList(kl)+"\n";
+										}
+										out = String.format("K"+l+" found%nVertices:%n%s", out);
+										out += String.format("Number of K"+l+"s found: %d%n", kls.size());
+										out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+										System.out.println(out);
+									}else{
+										String out = String.format("K"+l+" not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+										System.out.println(out);
+									}
+								}catch(NumberFormatException e){
+									System.out.println("Value entered is not an integer");
+								}
+							}
+							else{
+								System.out.println("For listing operation, the second argument should be "
+										+ "the listing pattern, e.g. diamond, claw, triangle, k4, kl, simplicial");
+							}
 						}	
 					}
-				}else if(words[0].equals("gui")){
-					EventQueue.invokeLater(new Runnable() {
-						public void run() {
-							try {
-								GUI frame = new GUI();
-								frame.setVisible(true);
-								frame.setAlwaysOnTop(true);
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}
-					});
-				}else if(words[0].equals("quit")){
-					System.exit(0);
-				}else if(words[0].equals("generate")){
-					try{
-						int vertexCount = Integer.parseInt(words[2]);
-						if(vertexCount<0)
-							System.out.println("The value entered for vertex count is not a valid number");
-						else{
-							int graphCount = 0;
-							try{
-								graphCount = Integer.parseInt(words[3]);
-							}catch(ArrayIndexOutOfBoundsException e){
-								System.out.println("The arguments are not complete");
-							}
-							if(graphCount<1)
-								System.out.println("The value entered for graph count should be greater than zero");
-							else{
-								String name = null;
-								if (words[1].equals("triangle")) {
-									String n = "";
-									for(int i=1; i<=graphCount; i++){
-										int[][] A = GraphGenerator.generateTriangleFreeGraph(vertexCount);
-										UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(A);
-										n += Utility.saveGraphToFile(graph, i, "triangle")+System.lineSeparator();
-									}
-									name = n;
-								}
-
-								else if (words[1].equals("claw")) {
-									String n = "";
-									for(int i=1; i<=graphCount; i++){
-										int[][] A = GraphGenerator.generateClawFreeGraph(vertexCount);
-										UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(A);
-										n += Utility.saveGraphToFile(graph, i, "claw")+System.lineSeparator();
-									}
-									name = n;
-								}
-
-								else if (words[1].equals("diamond")) {
-									String n = "";
-									for(int i=1; i<=graphCount; i++){
-										int[][] A = GraphGenerator.generateDiamondFreeGraph(vertexCount);
-										UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(A);
-										n+=Utility.saveGraphToFile(graph, i, "diamond")+System.lineSeparator();
-									}
-									name = n;
-								}
-
-								else if (words[1].equals("k4")) {
-									String n = "";
-									for(int i=1; i<=graphCount; i++){
-										int[][] A = GraphGenerator.generateK4FreeGraph(vertexCount);
-										UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(A);
-										n+=Utility.saveGraphToFile(graph, i, "k4")+System.lineSeparator();
-									}
-									name = n;
-								}
-								System.out.println(name);
-							}
-						}
-
-					}catch(NumberFormatException e){
-						System.out.println("The value entered for vertex count is not a valid number");
-					}
-
 				}
-
-				System.out.print("> ");
-				input = sc.nextLine();
-				words = input.split("[ ]+");
 			}
-			sc.close();
-		} 
-		if(!words[0].equals("gui") && !words[0].equals("quit") && !words[0].equals("test")
-				    && !words[0].equals("help")){
-			System.out.println("You entered fewer arguments than required.");
-			System.out.println("Arguments should be in the form");
-			System.out.println("[operation_type] [detection_type] [graph_file]");
+			else if(words[0].equals("generate")){
+				GraphGenerator g = new GraphGenerator();
+				List<String> allowed = new ArrayList<String>();
+				allowed.add("triangle"); allowed.add("claw"); allowed.add("diamond");
+				allowed.add("k4"); allowed.add("kl");
+				
+				if(allowed.contains(words[1])){
+					try{
+						int n = Integer.parseInt(words[2]);
+						if (words[1].equals("triangle")) {
+							String filename = g.generateTriangleFreeGraph(n);
+							String out = String.format("Name of graph file: %s", filename);
+							System.out.println(out);
+						}
+		
+						else if (words[1].equals("claw")) {
+							String filename = g.generateClawFreeGraph(n);
+							String out = String.format("Name of graph file: %s", filename);
+							System.out.println(out);
+						}
+		
+						else if (words[1].equals("diamond")) {
+							String filename = g.generateDiamondFreeGraph(n);
+							String out = String.format("Name of graph file: %s", filename);
+							System.out.println(out);
+						}
+		
+						else if (words[1].equals("k4")) {
+							String filename = g.generateK4FreeGraph(n);
+							String out = String.format("Name of graph file: %s", filename);
+							System.out.println(out);
+						}
+						else if (words[1].equals("kl")) {
+							try{
+								System.out.println("Please enter size of complete subgraph");
+								System.out.print("> ");
+								input = sc.nextLine();
+								int l = Integer.parseInt(input);
+								
+								String filename = g.generateTriangleFreeGraph(n);
+								String out = String.format("Name of graph file: %s", filename);
+								System.out.println(out);
+							}catch(NumberFormatException e){
+								System.out.println("Value entered is not an integer");
+							}
+						}
+					}catch(NumberFormatException e){
+						System.out.println("Value entered is not an integer");
+					}
+				}else{
+					System.out.println("For generation operation, the second argument should be among: "
+							+ "diamond, claw, triangle, k4, kl");
+				}
+			}
+			else if(words[0].equals("test")){
+				
+			}
+			else if(words[0].equals("gui")){
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							GUI frame = new GUI();
+							frame.setVisible(true);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+			}
+			else if(words[0].equals("help")){
+				System.out.println(info);
+				System.out.println(operationvalues);
+				System.out.println(detectionValues);
+			}
+			else{
+				System.out.println("Invalid keyword entered.");
+				System.out.println("The first argument should be one of the following: "
+						+ "detect, generate, quit, list, test, gui ");
+			}
+			System.out.print("> ");
+			input = sc.nextLine();
+			words = input.split("[ ]+");
 		}
+		sc.close();
 	}
 
 	public static String printList(List<Graph.Vertex<Integer>> list){
@@ -187,6 +362,18 @@ public class RunMe {
 		for(Graph.Vertex<Integer> v:list){
 			out+=v.getElement()+","; 
 		}
+		out = out.substring(0,out.length()-1);
 		return out;
+	}
+	
+	public static int getTotalTime(String s){
+		String[] tokens = s.split("[ ]+");
+		int time = 0;
+		int limit = tokens[tokens.length-2].equals("not") ? tokens.length-2: tokens.length-1;
+		for(int i=0; i<limit; i++){
+			if(!tokens[i].equals("-"))
+				time += Integer.parseInt(tokens[i]);
+		}
+		return time;
 	}
 }

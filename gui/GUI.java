@@ -25,6 +25,7 @@ import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
 import general.Graph.Vertex;
+import generate.GraphGenerator;
 
 public class GUI extends JFrame 
 		implements ActionListener, ItemListener{
@@ -47,25 +48,32 @@ public class GUI extends JFrame
 	private JButton listButton;
 	
 	private JTextField vertexCountField;
-	private JTextField edgeProbabilityField;
-	private JTextField graphNoField;
 	private JTextField selectFileField;
 	private JTextField selectFileField2;
 	
 	private JButton selectFileButton;
 	private JButton selectFileButton2;
-	private JTextArea outputArea;
+	private JEditorPane outputArea;
 	private JButton generateButton;
 	
 	private ButtonGroup buttonGroup;
 	private ButtonGroup buttonGroup2;
+	private ButtonGroup buttonGroup3;
 	private JPanel klPanel;
 	private JTextField sizeField;
 	
 	private JPanel klPanel2;
 	private JTextField sizeField2;
+	
+	private JPanel klPanel3;
+	private JTextField sizeField3;
 
 	private JTabbedPane tabbedPane;
+	private JRadioButton triangleFreeButton;
+	private JRadioButton diamondFreeButton;
+	private JRadioButton clawFreeButton;
+	private JRadioButton k4FreeButton;
+	private JRadioButton klFreeButton; 
 
 	/**
 	 * Launch the application.
@@ -211,42 +219,56 @@ public class GUI extends JFrame
 		panel4.setLayout(new BorderLayout());
 		JLabel outputLabel = new JLabel("Output Area");
 		panel4.add(outputLabel, BorderLayout.NORTH);
-		outputArea = new JTextArea(15,15);
+		outputArea = new JEditorPane();
 		JScrollPane scrollPane = new JScrollPane(outputArea);
 		outputArea.setEditable(false);
 		panel4.add(scrollPane, BorderLayout.CENTER);
 		contentPane.add(panel4, BorderLayout.CENTER);
 		
-		generatePanel.setLayout(new BorderLayout(5,20));
+		//for generate panel
+		JLabel titleLabel = new JLabel("Generate Random Pattern-free Graph");
+		generatePanel.setLayout(new BorderLayout());
+		generatePanel.add(titleLabel, BorderLayout.NORTH);
+		
+		JPanel centerPanel = new JPanel();
+		centerPanel.setLayout(new GridLayout(8,2));
 		JLabel vertexCountLabel = new JLabel("Vertex Count");
-		JLabel edgeProbabilityLabel = new JLabel("Edge probability");
-		JLabel graphNoLabel = new JLabel("No. of graphs");
+		vertexCountField = new JTextField(5);
+		centerPanel.add(vertexCountLabel); centerPanel.add(vertexCountField);
+		centerPanel.add(new JLabel("Select pattern type")); centerPanel.add(new JLabel());
 		
-		JTextField vertexCountField = new JTextField(10);
-		JTextField edgeProbabilityField = new JTextField(10);
-		JTextField graphNoField = new JTextField(10);
+		triangleFreeButton = new JRadioButton("Triangle-free");
+		triangleFreeButton.setSelected(true);
+		diamondFreeButton = new JRadioButton("Diamond-free");
+		clawFreeButton = new JRadioButton("Claw-free");
+		k4FreeButton = new JRadioButton("K4-free");
+		klFreeButton = new JRadioButton("KL-free");
 		
-		JLabel blankLabel9 = new JLabel();
+		buttonGroup3 = new ButtonGroup();
+		buttonGroup3.add(triangleFreeButton);
+		buttonGroup3.add(diamondFreeButton);
+		buttonGroup3.add(clawFreeButton);
+		buttonGroup3.add(k4FreeButton);
+		buttonGroup3.add(klFreeButton);
+		
+		centerPanel.add(triangleFreeButton); 	centerPanel.add(new JLabel());
+		centerPanel.add(diamondFreeButton); 	centerPanel.add(new JLabel());
+		centerPanel.add(clawFreeButton);		centerPanel.add(new JLabel());
+		centerPanel.add(k4FreeButton);			centerPanel.add(new JLabel());
+		centerPanel.add(klFreeButton);
+		
+		klPanel3 = new JPanel();
+		klPanel3.add(new JLabel("Enter size: "));
+		sizeField3 = new JTextField(5);
+		klPanel3.add(sizeField3);
+		klPanel3.setVisible(false);
+		
+		centerPanel.add(klPanel3);
 		generateButton = new JButton("Generate");
+		centerPanel.add(new JLabel());			centerPanel.add(generateButton);
 		
-		JPanel panel5 = new JPanel();
-		JPanel panel6 = new JPanel();
-		panel6.setLayout(new BorderLayout(5,5));
-		panel6.add(new JLabel("Random Graph Generation"), BorderLayout.NORTH);
-		panel6.add(panel5, BorderLayout.SOUTH);
+		generatePanel.add(centerPanel, BorderLayout.CENTER);
 		
-		panel5.setLayout(new GridLayout(4,2));
-		panel5.add(vertexCountLabel); 		panel5.add(vertexCountField);
-		panel5.add(edgeProbabilityLabel);	panel5.add(edgeProbabilityField);
-		panel5.add(graphNoLabel);			panel5.add(graphNoField);
-		panel5.add(blankLabel9);			panel5.add(generateButton);
-		generatePanel.add(panel6,BorderLayout.NORTH);
-		
-		JPanel panel7 = new JPanel();
-		panel7.setLayout(new BorderLayout());
-		panel7.add(new JLabel("Pattern-less graph generation"));
-		
-		generatePanel.add(panel7,BorderLayout.CENTER);
 		
 		detectButton.addActionListener(this);
 		listButton.addActionListener(this);
@@ -255,6 +277,7 @@ public class GUI extends JFrame
 		selectFileButton2.addActionListener(this);
 		kLRadioButton.addItemListener(this);
 		kLRadioButton2.addItemListener(this);
+		klFreeButton.addItemListener(this);
 		
 	}
 
@@ -274,7 +297,7 @@ public class GUI extends JFrame
 				JOptionPane.showMessageDialog(null, r);
 				return;
 			}
-			outputArea.setText("Detecting...");
+			outputArea.setText(outputArea.getText()+"Detecting...\n");
 			DetectWorker w = new DetectWorker(selectedButton,fileName);
 			w.execute();
 			
@@ -290,13 +313,22 @@ public class GUI extends JFrame
 				JOptionPane.showMessageDialog(null, r);
 				return;
 			}
-			outputArea.setText("Listing...");
+			outputArea.setText(outputArea.getText()+"Listing...\n");
 			ListWorker w = new ListWorker(selectedButton,fileName);
 			w.execute();
-			
 		}
 		else if(source.equals(generateButton)){
-			
+			String selectedButton = getSelectedButtonText(buttonGroup3);
+			int n = 0;
+			try{
+				n = Integer.parseInt(vertexCountField.getText().trim());
+			}catch(NumberFormatException f){
+				JOptionPane.showMessageDialog(null, "The size entered is not an integer");
+				return;
+			}
+			outputArea.setText(outputArea.getText()+"Generating...\n");
+			GenerateWorker w = new GenerateWorker(selectedButton,n);
+			w.execute();
 		}
 		else if(source.equals(selectFileButton)){
 			JFileChooser chooser = new JFileChooser();
@@ -453,7 +485,7 @@ public class GUI extends JFrame
 			} catch (InterruptedException | ExecutionException e) {
 				e.printStackTrace();
 			}
-			outputArea.setText(out);
+			outputArea.setText(outputArea.getText()+out+"\n\n");
 		}	
 	}
 	
@@ -568,7 +600,57 @@ public class GUI extends JFrame
 			} catch (InterruptedException | ExecutionException e) {
 				e.printStackTrace();
 			}
-			outputArea.setText(out);
+			outputArea.setText(outputArea.getText()+out+"\n\n");
+		}	
+	}
+	
+	private class GenerateWorker extends SwingWorker<String,Void>{
+
+		private String type;
+		private int n;
+		
+		private GenerateWorker(String type, int n){
+			this.type = type;
+			this.n = n;
+		}
+		
+		@Override
+		protected String doInBackground() throws Exception {
+			String out = "";
+			GraphGenerator g = new GraphGenerator();
+			if(type.equals("Diamond-free")){
+				String filename = g.generateDiamondFreeGraph(n);
+				out = String.format("Name of graph file: %s", filename);
+			}else if(type.equals("Claw-free")){
+				String filename = g.generateClawFreeGraph(n);
+				out = String.format("Name of graph file: %s", filename);
+			}else if(type.equals("K4-free")){
+				String filename = g.generateK4FreeGraph(n);
+				out = String.format("Name of graph file: %s", filename);
+			}else if(type.equals("Triangle-free")){
+				String filename = g.generateTriangleFreeGraph(n);
+				out = String.format("Name of graph file: %s", filename);
+			}else if(type.equals("KL-free")){
+				try{
+					int l = Integer.parseInt(sizeField3.getText().trim());
+					String filename = g.generateKLFreeGraph(n,l);
+					out = String.format("Name of graph file: %s", filename);
+				}catch(NumberFormatException e){
+					JOptionPane.showMessageDialog(null, "The size entered is not an integer");
+				}
+			}
+			return out;
+		}
+
+		@Override
+		protected void done() {
+			String out = "";
+			try {
+				out = get();
+			} catch (InterruptedException | ExecutionException e) {
+				e.printStackTrace();
+			}
+			outputArea.setText(outputArea.getText()+out+"\n\n");
 		}	
 	}
 
@@ -589,6 +671,14 @@ public class GUI extends JFrame
 			}
 			else{
 				klPanel2.setVisible(false);
+			}
+		}
+		else if(source.equals(klFreeButton)){
+			if(e.getStateChange()==ItemEvent.SELECTED){
+				klPanel3.setVisible(true);
+			}
+			else{
+				klPanel3.setVisible(false);
 			}
 		}
 	}
