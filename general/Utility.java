@@ -7,26 +7,41 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public final class Utility {
 	
-	public static UndirectedGraph<Integer,Integer> makeGraphFromFile(String fileName){
+	public static String validateInput(String fileName){		
 		FileReader reader = null;
 		try {
 			reader = new FileReader(fileName);
 		} catch (FileNotFoundException e1) {
-//			JOptionPane.showMessageDialog(null, "Input file not found");
-			System.out.println("Input file not found");
-			return null;
+			return "Input file not found";
 		}
 		Scanner scanner;
-		int vertexCount = -1;
 		scanner = new Scanner(reader);
-		//get number of vertices
+
 		if(!scanner.hasNextLine()){
-//			JOptionPane.showMessageDialog(null, "Input file is empty");
-			System.out.println("Input file is empty");
 			scanner.close();
+			return "Input file is empty";
+		}
+		scanner.close();
+		return null;
+	}
+	
+	public static UndirectedGraph<Integer,Integer> makeGraphFromFile(String fileName){
+	
+		String r = validateInput(fileName);
+		if(r!=null){
+			System.out.println(r);
 			return null;
 		}
 		
+		FileReader reader = null;
+		try {
+			reader = new FileReader(fileName);
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		Scanner scanner = new Scanner(reader);
+		int vertexCount = -1;
 		
 		List<String> lines = new ArrayList<String>();
 		while(scanner.hasNextLine()){
@@ -64,7 +79,7 @@ public final class Utility {
 		return graph;
 	}
 	
-	public static UndirectedGraph<Integer,Integer> makeRandomGraph(int v, double p){
+	public static int[][] makeRandomGraph(int v, double p){
 		if(p<0.0 || p>1.0){
 //			JOptionPane.showMessageDialog(null, "Edge probability should be between 0 and 1");
 			System.out.println("Edge probability should be between 0 and 1");
@@ -86,10 +101,7 @@ public final class Utility {
 			}
 		}
 		
-		UndirectedGraph<Integer,Integer> graph = makeGraphFromAdjacencyMatrix(adjMatrix);
-		//printGraph(graph);
-		//graph.printAdjacencyMatrix();
-		return graph;
+		return adjMatrix;
 	}
 	
 	public static UndirectedGraph<Integer,Integer> makeGraphFromAdjacencyMatrix(int[][] adjMatrix){
@@ -167,31 +179,23 @@ public final class Utility {
 
 	public static void generateRandomGraphFile(int v, double p, int no){
 		for(int i=1; i<=no; i++){
-			UndirectedGraph<Integer,Integer> g = makeRandomGraph(v,p);
-			saveGraphToFile(g,p,i);
+			int[][] A = makeRandomGraph(v,p);
+			saveGraphToFile(A,p,i);
 		}
 	}
 	
-	public static void saveGraphToFile(UndirectedGraph<Integer,Integer> graph, double p, int no){
+	public static void saveGraphToFile(int[][] A, double p, int no){
 		String out = "";
-		Iterator<Graph.Vertex<Integer>> vertices = graph.vertices();
 		
-		while(vertices.hasNext()){
-			Graph.Vertex<Integer> v1 = vertices.next();
-			Iterator<Graph.Vertex<Integer>> vertices2 = graph.vertices();
-			while(vertices2.hasNext()){
-				Graph.Vertex<Integer> v2 = vertices2.next();
-				if(graph.containsEdge(v1, v2)){
-					out += "1 ";
-				}else{
-					out += "0 ";
-				}
+		for(int i=0; i<A.length; i++){
+			for(int j=0; j<A[i].length; j++){
+				out += A[i][j]+" "; 
 			}
-			out+=String.format("%n");
+			out += String.format("%n");
 		}
-		
+	
 		//get graph size
-		int size = graph.size();
+		int size = A.length;
 		
 		//create folder for saving generated graphs if none exists
 		File f = new File("");
@@ -217,55 +221,7 @@ public final class Utility {
 		
 	}
 	
-	public static String saveGraphToFile(UndirectedGraph<Integer,Integer> graph, int no, String type){
-		String out = "";
-		Iterator<Graph.Vertex<Integer>> vertices = graph.vertices();
-		
-		while(vertices.hasNext()){
-			Graph.Vertex<Integer> v1 = vertices.next();
-			Iterator<Graph.Vertex<Integer>> vertices2 = graph.vertices();
-			while(vertices2.hasNext()){
-				Graph.Vertex<Integer> v2 = vertices2.next();
-				if(graph.containsEdge(v1, v2)){
-					out += "1 ";
-				}else{
-					out += "0 ";
-				}
-			}
-			out+=String.format("%n");
-		}
-		
-		//get graph size
-		int size = graph.size();
-		
-		//create folder for saving generated graphs if none exists
-		File f = new File("");
-		String path = f.getAbsolutePath();
-		String ggFolder = "generated_patternfree_graphs";
-		File dir = new File(path+File.separator+ggFolder);
-		dir.mkdir();
-		
-		//create folder for the pattern type if not existing
-		File dir3 = new File(path+File.separator+ggFolder+File.separator+type+"_free");
-		dir3.mkdir();
-		
-		//create folder for that size if not existing
-		File dir2 = new File(path+File.separator+ggFolder+File.separator+type+"_free"+File.separator+"size_"+size);
-		dir2.mkdir();
-		
-		//select suitable file name for the generated graph
-		String graphFileName = dir2.getAbsolutePath()+File.separator+"graph_"+size+"_"+no+".txt";
-		
-		try {
-			FileWriter writer = new FileWriter(graphFileName);
-			writer.write(out);
-			writer.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		return graphFileName;
-	}
+	
 	
 	//method to create subgraph in the neighbourhood of Graph.Vertex v
 	public static UndirectedGraph<Integer,Integer> getNeighbourGraph(UndirectedGraph<Integer,Integer> graph, Graph.Vertex<Integer> v){
@@ -340,7 +296,7 @@ public final class Utility {
 	public static void main(String [] args){
 //		String fileName = "matrix.txt";
 //		Utility.makeGraphFromFile(fileName);
-		generateRandomGraphFile(1500,0.9,1);
+		generateRandomGraphFile(10,0.9,1);
 		
 //		double[][] a = {{1,2,3},{4,5,6},{7,8,9}};
 //		double[][] res = matrixMultiply(a,a);

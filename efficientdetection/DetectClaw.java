@@ -18,7 +18,7 @@ public class DetectClaw {
 		try{
 			graph = Utility.makeGraphFromFile(args[0]);
 			DetectClaw d = new DetectClaw();
-			Collection<Graph.Vertex<Integer>> claw = d.detect(graph);
+			List<Graph.Vertex<Integer>> claw = d.detect(graph);
 			System.out.print(d.getResult());
 		}catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("Please provide the graph file as a command line argument");
@@ -32,8 +32,8 @@ public class DetectClaw {
 	* @param graph 		the graph to be checked for a claw
 	* @return			the vertices of the claw if found
 	*/
-	public  Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
-		Collection<Graph.Vertex<Integer>> claw = null;
+	public  List<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
+		List<Graph.Vertex<Integer>> claw = null;
 		long starttime = System.currentTimeMillis();
 		claw = phaseOne(graph);
 		long stoptime = System.currentTimeMillis();
@@ -57,7 +57,7 @@ public class DetectClaw {
 	* @param graph 		the graph to be checked
 	* @return 			the vertices of the claw if any
 	*/
-	public  Collection<Graph.Vertex<Integer>> phaseOne(UndirectedGraph<Integer,Integer> graph){
+	public  List<Graph.Vertex<Integer>> phaseOne(UndirectedGraph<Integer,Integer> graph){
 		
 		//get number of edges in graph
 		int edgeCount = 0;
@@ -78,7 +78,7 @@ public class DetectClaw {
 			if(graph.degree(v) > maxEdgeCount){ 		
 				UndirectedGraph<Integer,Integer> vNeighGraph = Utility.getNeighbourGraph(graph, v);
 				
-				Collection<Graph.Vertex<Integer>> claw = getClawVerticesFromNeighbourGraph(vNeighGraph);
+				List<Graph.Vertex<Integer>> claw = getClawVerticesFromNeighbourGraph(vNeighGraph);
 					
 				//add the central vertex to complete claw
 				claw.add(v);
@@ -96,7 +96,7 @@ public class DetectClaw {
 	* @param graph 		the graph to be checked
 	* @return 			the vertices of the claw if any
 	*/
-	public  Collection<Graph.Vertex<Integer>> phaseTwo(UndirectedGraph<Integer,Integer> graph){		
+	public  List<Graph.Vertex<Integer>> phaseTwo(UndirectedGraph<Integer,Integer> graph){		
 		//for each vertex, check if the complement of its neighbour contains a triangle
 		
 		Iterator<Graph.Vertex<Integer>> vertices = graph.vertices();
@@ -110,7 +110,7 @@ public class DetectClaw {
 			if(vNeighGraph.size()<3)
 				continue;
 			
-			Collection<Graph.Vertex<Integer>> claw = getClawVerticesFromNeighbourGraph(vNeighGraph);
+			List<Graph.Vertex<Integer>> claw = getClawVerticesFromNeighbourGraph(vNeighGraph);
 			if(claw!=null){
 				//add v to the collection
 				claw.add(v);
@@ -128,7 +128,7 @@ public class DetectClaw {
 	 * @param vNeighGraph		the neighbourhood graph to be checked
 	 * @return					the vertices if found
 	 */
-	private  Collection<Graph.Vertex<Integer>> getClawVerticesFromNeighbourGraph(UndirectedGraph<Integer,Integer> vNeighGraph){
+	private  List<Graph.Vertex<Integer>> getClawVerticesFromNeighbourGraph(UndirectedGraph<Integer,Integer> vNeighGraph){
 		//get the complement matrix of the neighbour graph
 		int[][] vncomp = vNeighGraph.getComplementMatrix();
 		
@@ -148,7 +148,7 @@ public class DetectClaw {
 		List<Graph.Vertex<Integer>> tri = (List<Vertex<Integer>>) d.detect(vncompgraph);
 		if(tri!=null){
 			//get the vertices of the main graph that correspond to the vertices of the triangle found
-			Collection<Graph.Vertex<Integer>> claw = new ArrayList<Graph.Vertex<Integer>>();
+			List<Graph.Vertex<Integer>> claw = new ArrayList<Graph.Vertex<Integer>>();
 			
 			claw.add(vimap.get(tri.get(0).getElement()));
 			claw.add(vimap.get(tri.get(1).getElement()));

@@ -26,7 +26,7 @@ public class DetectDiamond {
 			graph = Utility.makeGraphFromFile(args[0]);
 			
 			DetectDiamond d = new DetectDiamond();
-			Collection<Graph.Vertex<Integer>> diamond = d.detect(graph);
+			List<Graph.Vertex<Integer>> diamond = d.detect(graph);
 			if(diamond!=null){
 				Utility.printGraph(Utility.makeGraphFromVertexSet(graph,diamond));
 			}

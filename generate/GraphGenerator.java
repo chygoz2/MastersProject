@@ -1,20 +1,22 @@
 package generate;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.swing.JOptionPane;
 
 import efficientdetection.*;
-import efficientlisting.ListSimplicialVertex;
 import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
-import general.Graph.Vertex;
 
 public class GraphGenerator {
 	
-	public static int[][] generateDiamondFreeGraph(int n){
+	public String generateDiamondFreeGraph(int n){
 		if(n<1){
 			JOptionPane.showMessageDialog(null, "n should be greater than zero");
 			System.exit(0);
@@ -22,7 +24,7 @@ public class GraphGenerator {
 		
 		int[][] adjMatrix = new int[n][n];
 		
-		ThreadLocalRandom random = ThreadLocalRandom.current();
+		Random random = new Random(System.currentTimeMillis());
 		for(int i=0; i<n; i++){
 			for(int j=i+1; j<n; j++){
 				int rand = random.nextInt(10);
@@ -40,10 +42,11 @@ public class GraphGenerator {
 			}
 		}
 		
-		return adjMatrix;
+		String file = saveGraphToFile(adjMatrix, System.currentTimeMillis(), "diamond");
+		return file;
 	}
 	
-	public static int[][] generateTriangleFreeGraph(int n){
+	public String generateTriangleFreeGraph(int n){
 		if(n<1){
 			JOptionPane.showMessageDialog(null, "n should be greater than zero");
 			System.exit(0);
@@ -51,7 +54,7 @@ public class GraphGenerator {
 		
 		int[][] adjMatrix = new int[n][n];
 		
-		ThreadLocalRandom random = ThreadLocalRandom.current();
+		Random random = new Random(System.currentTimeMillis());
 		for(int i=0; i<n; i++){
 			for(int j=i+1; j<n; j++){
 				int rand = random.nextInt(10);
@@ -60,8 +63,8 @@ public class GraphGenerator {
 					adjMatrix[j][i] = 1;
 					
 					UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(adjMatrix);
-					List<Graph.Vertex<Integer>> triangle = (List<Vertex<Integer>>) new DetectTriangle().detect(graph);
-					if(!triangle.isEmpty()){
+					List<Graph.Vertex<Integer>> triangle = new DetectTriangle().detect(graph);
+					if(triangle!=null){
 						adjMatrix[i][j] = 0;
 						adjMatrix[j][i] = 0;
 					}
@@ -69,10 +72,11 @@ public class GraphGenerator {
 			}
 		}
 		
-		return adjMatrix;
+		String file = saveGraphToFile(adjMatrix, System.currentTimeMillis(), "triangle");
+		return file;
 	}
 	
-	public static int[][] generateK4FreeGraph(int n){
+	public String generateK4FreeGraph(int n){
 		if(n<1){
 			JOptionPane.showMessageDialog(null, "n should be greater than zero");
 			System.exit(0);
@@ -80,7 +84,7 @@ public class GraphGenerator {
 		
 		int[][] adjMatrix = new int[n][n];
 		
-		ThreadLocalRandom random = ThreadLocalRandom.current();
+		Random random = new Random(System.currentTimeMillis());
 		for(int i=0; i<n; i++){
 			for(int j=i+1; j<n; j++){
 				int rand = random.nextInt(10);
@@ -89,8 +93,8 @@ public class GraphGenerator {
 					adjMatrix[j][i] = 1;
 					
 					UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(adjMatrix);
-					List<Graph.Vertex<Integer>> k4 = (List<Vertex<Integer>>) new DetectK4().detect(graph);
-					if(!k4.isEmpty()){
+					List<Graph.Vertex<Integer>> k4 = new DetectK4().detect(graph);
+					if(k4!=null){
 						adjMatrix[i][j] = 0;
 						adjMatrix[j][i] = 0;
 					}
@@ -98,10 +102,11 @@ public class GraphGenerator {
 			}
 		}
 		
-		return adjMatrix;
+		String file = saveGraphToFile(adjMatrix, System.currentTimeMillis(), "k4");
+		return file;
 	}
 	
-	public static int[][] generateClawFreeGraph(int n){
+	public String generateClawFreeGraph(int n){
 		if(n<1){
 			JOptionPane.showMessageDialog(null, "n should be greater than zero");
 			System.exit(0);
@@ -118,7 +123,7 @@ public class GraphGenerator {
 					adjMatrix[j][i] = 1;
 					
 					UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(adjMatrix);
-					List<Graph.Vertex<Integer>> claw = (List<Vertex<Integer>>) new DetectClaw().detect(graph);
+					List<Graph.Vertex<Integer>> claw = new DetectClaw().detect(graph);
 					if(claw!=null){
 						adjMatrix[i][j] = 0;
 						adjMatrix[j][i] = 0;
@@ -127,10 +132,11 @@ public class GraphGenerator {
 			}
 		}
 		
-		return adjMatrix;
+		String file = saveGraphToFile(adjMatrix, System.currentTimeMillis(), "claw");
+		return file;
 	}
 	
-	public static int[][] generateSimplicialFreeGraph(int n){
+	public String generateKLFreeGraph(int n, int l){
 		if(n<1){
 			JOptionPane.showMessageDialog(null, "n should be greater than zero");
 			System.exit(0);
@@ -147,8 +153,8 @@ public class GraphGenerator {
 					adjMatrix[j][i] = 1;
 					
 					UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(adjMatrix);
-					List<Graph.Vertex<Integer>> v = ListSimplicialVertex.detect(graph);
-					if(!v.isEmpty()){
+					List<Graph.Vertex<Integer>> kl = new DetectKL().detect(graph,l);
+					if(kl!=null){
 						adjMatrix[i][j] = 0;
 						adjMatrix[j][i] = 0;
 					}
@@ -156,70 +162,79 @@ public class GraphGenerator {
 			}
 		}
 		
-		return adjMatrix;
+		String file = saveGraphToFile(adjMatrix, System.currentTimeMillis(), "k"+l);
+		return file;
 	}
 	
-	public static void main(String [] args){
-//		int[][] A = generateDiamondFreeGraph(20);
-//		
-//		for(int i=0;i<A.length;i++){
-//			for(int j=0; j<A.length; j++){
-//				System.out.print(A[i][j]+" ");
-//			}
-//			System.out.println();
+//	public int[][] generateSimplicialFreeGraph(int n){
+//		if(n<1){
+//			JOptionPane.showMessageDialog(null, "n should be greater than zero");
+//			System.exit(0);
 //		}
 //		
-//		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(A);
-//		Utility.saveGraphToFile(graph, 0.5, 20);
-		
-//		int[][] A = generateTriangleFreeGraph(20);
+//		int[][] adjMatrix = new int[n][n];
 //		
-//		for(int i=0;i<A.length;i++){
-//			for(int j=0; j<A.length; j++){
-//				System.out.print(A[i][j]+" ");
+//		ThreadLocalRandom random = ThreadLocalRandom.current();
+//		for(int i=0; i<n; i++){
+//			for(int j=i+1; j<n; j++){
+//				int rand = random.nextInt(10);
+//				if(rand>4){
+//					adjMatrix[i][j] = 1;
+//					adjMatrix[j][i] = 1;
+//					
+//					UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(adjMatrix);
+//					List<Graph.Vertex<Integer>> v = ListSimplicialVertex.detect(graph);
+//					if(!v.isEmpty()){
+//						adjMatrix[i][j] = 0;
+//						adjMatrix[j][i] = 0;
+//					}
+//				}
 //			}
-//			System.out.println();
 //		}
 //		
-//		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(A);
-//		Utility.saveGraphToFile(graph, 21, "triangle");
+//		return adjMatrix;
+//	}
+	
+	public String saveGraphToFile(int[][] A, long no, String type){
+		String out = "";
 		
-//		int[][] A = generateClawFreeGraph(20);
-//		
-//		for(int i=0;i<A.length;i++){
-//			for(int j=0; j<A.length; j++){
-//				System.out.print(A[i][j]+" ");
-//			}
-//			System.out.println();
-//		}
-//		
-//		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(A);
-//		Utility.saveGraphToFile(graph, 0.5, 22);
-		
-//		int[][] A = generateK4FreeGraph(20);
-//		
-//		for(int i=0;i<A.length;i++){
-//			for(int j=0; j<A.length; j++){
-//				System.out.print(A[i][j]+" ");
-//			}
-//			System.out.println();
-//		}
-//		
-//		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(A);
-//		Utility.saveGraphToFile(graph, 0.5, 23);
-		
-		int[][] A = generateSimplicialFreeGraph(5);
-		
-		for(int i=0;i<A.length;i++){
-			for(int j=0; j<A.length; j++){
-				System.out.print(A[i][j]+" ");
+		for(int i=0; i<A.length; i++){
+			for(int j=0; j<A[i].length; j++){
+				out += A[i][j]+" "; 
 			}
-			System.out.println();
+			out += String.format("%n");
+		}
+	
+		//get graph size
+		int size = A.length;
+		
+		//create folder for saving generated graphs if none exists
+		File f = new File("");
+		String path = f.getAbsolutePath();
+		String ggFolder = "generated_patternfree_graphs";
+		File dir = new File(path+File.separator+ggFolder);
+		dir.mkdir();
+		
+		//create folder for the pattern type if not existing
+		File dir3 = new File(path+File.separator+ggFolder+File.separator+type+"_free");
+		dir3.mkdir();
+		
+		//create folder for that size if not existing
+		File dir2 = new File(path+File.separator+ggFolder+File.separator+type+"_free"+File.separator+"size_"+size);
+		dir2.mkdir();
+		
+		//select suitable file name for the generated graph
+		String graphFileName = dir2.getAbsolutePath()+File.separator+"graph_"+size+"_"+no+".txt";
+		
+		try {
+			FileWriter writer = new FileWriter(graphFileName);
+			writer.write(out);
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		
-		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(A);
-		Utility.saveGraphToFile(graph, 24, "simplicial");
-//		
-		
+		return graphFileName;
 	}
+	
 }

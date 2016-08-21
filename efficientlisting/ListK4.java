@@ -17,7 +17,7 @@ public class ListK4 {
 		try{
 			graph = Utility.makeGraphFromFile(args[0]);
 			ListK4 d = new ListK4();
-			List<Collection<Vertex<Integer>>> k4s = d.detect(graph);
+			List<List<Vertex<Integer>>> k4s = d.detect(graph);
 			System.out.println("Number of k4 found: "+k4s.size());
 			System.out.print(d.getResult());
 		}catch(ArrayIndexOutOfBoundsException e){
@@ -25,14 +25,14 @@ public class ListK4 {
 		}
 	}
 	
-	public List<Collection<Graph.Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph){
+	public List<List<Graph.Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph){
 		//partition vertices
 		long start = System.currentTimeMillis();
 		List<Graph.Vertex<Integer>>[] verticesPartition = partitionVertices(graph);
 		List<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
 		List<Graph.Vertex<Integer>> highDegreeVertices = verticesPartition[1];
 		
-		List<Collection<Graph.Vertex<Integer>>> k4List = new ArrayList<Collection<Graph.Vertex<Integer>>>();
+		List<List<Graph.Vertex<Integer>>> k4List = new ArrayList<List<Graph.Vertex<Integer>>>();
 		k4List.addAll(phaseOne(graph, highDegreeVertices));
 		k4List.addAll(phaseTwo(graph, lowDegreeVertices));
 		long stop = System.currentTimeMillis();
@@ -43,9 +43,9 @@ public class ListK4 {
 		return k4List;
 	}
 	
-	public List<Collection<Graph.Vertex<Integer>>> phaseOne(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> highDegreeVertices){
+	public List<List<Graph.Vertex<Integer>>> phaseOne(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> highDegreeVertices){
 		Set<Set<Integer>> marked = new HashSet<Set<Integer>>(); //to prevent creating the same k4 more than once
-		List<Collection<Graph.Vertex<Integer>>> k4List = new ArrayList<Collection<Graph.Vertex<Integer>>>();
+		List<List<Graph.Vertex<Integer>>> k4List = new ArrayList<List<Graph.Vertex<Integer>>>();
 			
 		for(Graph.Vertex<Integer> x: highDegreeVertices){
 			//get x's neighbourhood graph
@@ -67,9 +67,9 @@ public class ListK4 {
 			UndirectedGraph<Integer,Integer> graph2 = Utility.makeGraphFromVertexSet(graph, nXList);
 
 			//get the triangles in the neighbourhood
-			List<Collection<Graph.Vertex<Integer>>> triangles = new ListTriangles().detect(graph2);
+			List<List<Graph.Vertex<Integer>>> triangles = new ListTriangles().detect(graph2);
 			
-			for(Collection<Graph.Vertex<Integer>> triangle: triangles){
+			for(List<Graph.Vertex<Integer>> triangle: triangles){
 				List<Graph.Vertex<Integer>> k4Vertices = new ArrayList<Graph.Vertex<Integer>>(); //list to store k4 vertices
 				k4Vertices.addAll(triangle);
 				k4Vertices.add(x);
@@ -91,18 +91,18 @@ public class ListK4 {
 		return k4List;
 	}
 	
-	public List<Collection<Graph.Vertex<Integer>>> phaseTwo(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> lowDegreeVertices){
+	public List<List<Graph.Vertex<Integer>>> phaseTwo(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> lowDegreeVertices){
 		Set<Set<Integer>> marked = new HashSet<Set<Integer>>(); //to prevent creating the same k4 more than once
-		List<Collection<Graph.Vertex<Integer>>> k4List = new ArrayList<Collection<Graph.Vertex<Integer>>>();
+		List<List<Graph.Vertex<Integer>>> k4List = new ArrayList<List<Graph.Vertex<Integer>>>();
 			
 		for(Graph.Vertex<Integer> x: lowDegreeVertices){
 			//get x's neighbourhood graph
 			UndirectedGraph<Integer,Integer> graph2 = Utility.getNeighbourGraph(graph, x);
 
 			//get the triangles in the neighbourhood
-			List<Collection<Graph.Vertex<Integer>>> triangles = new ListTriangles().detect(graph2);
+			List<List<Graph.Vertex<Integer>>> triangles = new ListTriangles().detect(graph2);
 			
-			for(Collection<Graph.Vertex<Integer>> triangle: triangles){
+			for(List<Graph.Vertex<Integer>> triangle: triangles){
 				List<Graph.Vertex<Integer>> k4Vertices = new ArrayList<Graph.Vertex<Integer>>(); //list to store k4 vertices
 				k4Vertices.addAll(triangle);
 				k4Vertices.add(x);

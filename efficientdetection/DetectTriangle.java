@@ -17,16 +17,16 @@ public class DetectTriangle {
 			graph = Utility.makeGraphFromFile(args[0]);
 			
 			DetectTriangle d = new DetectTriangle();
-			Collection<Graph.Vertex<Integer>> triangle = d.detect(graph);
+			List<Graph.Vertex<Integer>> triangle = d.detect(graph);
 			System.out.print(d.getResult());
 		}catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("Please provide the graph file as a command line argument");
 		}	
 	}
 	
-	public Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
+	public List<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
 		long starttime = System.currentTimeMillis();
-		Collection<Graph.Vertex<Integer>> triangle= find(graph);
+		List<Graph.Vertex<Integer>> triangle= find(graph);
 		long stoptime = System.currentTimeMillis();
 		time = ""+(stoptime-starttime);
 		
@@ -134,7 +134,7 @@ public class DetectTriangle {
 	 * @param graph 		the graph to be checked
 	 * @return				the triangle vertices found if any
 	 */
-	public Collection<Graph.Vertex<Integer>> find(UndirectedGraph<Integer,Integer> graph){
+	public List<Graph.Vertex<Integer>> find(UndirectedGraph<Integer,Integer> graph){
 		//get the adjacency matrix
 		int[][] A = graph.getAdjacencyMatrix();
 		int[][] aSquared = null; 

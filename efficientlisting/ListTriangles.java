@@ -16,7 +16,7 @@ public class ListTriangles {
 		try{
 			graph = Utility.makeGraphFromFile(args[0]);
 			ListTriangles d = new ListTriangles();
-			List<Collection<Vertex<Integer>>> tris = d.detect(graph);
+			List<List<Vertex<Integer>>> tris = d.detect(graph);
 			System.out.println("Number of triangles found: "+tris.size());
 			System.out.print(d.getResult());
 		}catch(ArrayIndexOutOfBoundsException e){
@@ -24,9 +24,9 @@ public class ListTriangles {
 		}
 	}
 	
-	public List<Collection<Graph.Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph){
+	public List<List<Graph.Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph){
 		long start = System.currentTimeMillis();
-		List<Collection<Vertex<Integer>>> triangles = find(graph);
+		List<List<Vertex<Integer>>> triangles = find(graph);
 		long stop = System.currentTimeMillis();
 		p1time = ""+(stop-start);
 		if(triangles.isEmpty()){
@@ -35,9 +35,9 @@ public class ListTriangles {
 		return triangles;
 	}
 	
-	public List<Collection<Graph.Vertex<Integer>>> find(UndirectedGraph<Integer,Integer> graph2){
+	public List<List<Graph.Vertex<Integer>>> find(UndirectedGraph<Integer,Integer> graph2){
 		UndirectedGraph<Integer,Integer> graph = graph2.clone();
-		List<Collection<Graph.Vertex<Integer>>> triangles = new ArrayList<Collection<Graph.Vertex<Integer>>>();
+		List<List<Graph.Vertex<Integer>>> triangles = new ArrayList<List<Graph.Vertex<Integer>>>();
 		
 		//sort the vertices in non increasing order of degree
 		List<Graph.Vertex<Integer>> vertices = new ArrayList<Graph.Vertex<Integer>>();

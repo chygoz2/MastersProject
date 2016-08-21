@@ -22,7 +22,7 @@ public class ListDiamonds {
 		try{
 			graph = Utility.makeGraphFromFile(args[0]);
 			ListDiamonds d = new ListDiamonds();
-			List<Collection<Vertex<Integer>>> diamonds = d.detect(graph);
+			List<List<Vertex<Integer>>> diamonds = d.detect(graph);
 			System.out.println("Number of diamonds found: "+diamonds.size());
 			System.out.print(d.getResult());
 		}catch(ArrayIndexOutOfBoundsException e){
@@ -35,9 +35,9 @@ public class ListDiamonds {
 	 * @param graph 		the graph to be checked
 	 * @return  			the list of sets of vertices which induce diamonds
 	 */
-	public List<Collection<Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph){
+	public List<List<Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph){
 		long start = System.currentTimeMillis();
-		List<Collection<Vertex<Integer>>> diamonds = find(graph);
+		List<List<Vertex<Integer>>> diamonds = find(graph);
 		long stop = System.currentTimeMillis();
 		p1time = ""+(stop-start);
 		if(diamonds.isEmpty()){
@@ -46,9 +46,9 @@ public class ListDiamonds {
 		return diamonds;
 	}
 	
-	public List<Collection<Graph.Vertex<Integer>>> find(UndirectedGraph<Integer,Integer> graph){
+	public List<List<Graph.Vertex<Integer>>> find(UndirectedGraph<Integer,Integer> graph){
 		//list of diamond vertices found
-		List<Collection<Graph.Vertex<Integer>>> diamonds = new ArrayList<Collection<Graph.Vertex<Integer>>>(); 
+		List<List<Graph.Vertex<Integer>>> diamonds = new ArrayList<List<Graph.Vertex<Integer>>>(); 
 		
 		//partition graph vertices into low and high degree vertices
 		List[] verticesPartition = partitionVertices(graph);
@@ -60,7 +60,7 @@ public class ListDiamonds {
 		Map phase1Results = phaseOne(graph);
 		long stoptime = System.currentTimeMillis();
 		
-		List<Collection<Graph.Vertex<Integer>>> p1diamonds = (List<Collection<Vertex<Integer>>>) phase1Results.get("diamonds");
+		List<List<Graph.Vertex<Integer>>> p1diamonds = (List<List<Vertex<Integer>>>) phase1Results.get("diamonds");
 		diamonds.addAll(p1diamonds);
 //		
 //		//phase two
@@ -91,7 +91,7 @@ public class ListDiamonds {
 	public Map phaseOne(UndirectedGraph<Integer,Integer> graph){
 		
 		Map phaseOneResults = new HashMap(); //map for storing the results of the phase
-		List<Collection<Graph.Vertex<Integer>>> diamonds = new ArrayList<Collection<Graph.Vertex<Integer>>>();
+		List<List<Graph.Vertex<Integer>>> diamonds = new ArrayList<List<Graph.Vertex<Integer>>>();
 		Set<Set<Integer>> seen = new HashSet<Set<Integer>>(); //to prevent creating the same diamond more than once
 		
 		//create a map for storing cliques and which vertex's neighbourhood they are in
@@ -116,10 +116,10 @@ public class ListDiamonds {
 					cliques.add(graphC); //add component to cliques list to be used in phase 2
 				}else{
 					//if component is not a clique, check if it contains a P3 and thus a diamond
-					List<Collection<Graph.Vertex<Integer>>> p3s = getP3(graphC);
+					List<List<Graph.Vertex<Integer>>> p3s = getP3(graphC);
 					
 					//if a P3 is found, then the graph contains a diamond
-					for(Collection<Graph.Vertex<Integer>> p3: p3s){
+					for(List<Graph.Vertex<Integer>> p3: p3s){
 						//produce diamonds found 
 						p3.add(v);
 
@@ -293,14 +293,14 @@ public class ListDiamonds {
 	 * @param graph 	the graph to be checked
 	 * @return 			the vertex list if found
 	 */
-	public List<Collection<Graph.Vertex<Integer>>> getP3(UndirectedGraph<Integer,Integer> graph){
+	public List<List<Graph.Vertex<Integer>>> getP3(UndirectedGraph<Integer,Integer> graph){
 		//if the no of vertices in graph is less than 3, then graph cannot have a p3
 		
 		if(graph.size()<3){
 			return null;
 		}
 		
-		List<Collection<Graph.Vertex<Integer>>> p3s = new ArrayList<Collection<Graph.Vertex<Integer>>>(); //stores vertices of p3s found
+		List<List<Graph.Vertex<Integer>>> p3s = new ArrayList<List<Graph.Vertex<Integer>>>(); //stores vertices of p3s found
 		Set<Set<Integer>> marked = new HashSet<Set<Integer>>(); //to prevent creating the same p3 more than once
 	
 		//create mapping between matrix indices and vertex

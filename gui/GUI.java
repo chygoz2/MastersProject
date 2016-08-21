@@ -1,29 +1,33 @@
 package gui;
 import java.awt.BorderLayout;
-//import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import efficientdetection.DetectClaw;
-import efficientdetection.DetectDiamond;
-import efficientdetection.DetectK4;
-import efficientdetection.DetectTriangle;
-import efficientlisting.ListSimplicialVertex;
+import efficientdetection.*;
+import efficientlisting.ListClaws;
+import efficientlisting.ListDiamonds;
+import efficientlisting.ListK4;
+import efficientlisting.ListKL;
+import efficientlisting.ListSimplicialVertices;
+import efficientlisting.ListTriangles;
 import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
 import general.Graph.Vertex;
 
-public class GUI extends JFrame implements ActionListener{
+public class GUI extends JFrame 
+		implements ActionListener, ItemListener{
 
 	private JPanel contentPane;
 	private JRadioButton diamondRadioButton;		
@@ -34,17 +38,34 @@ public class GUI extends JFrame implements ActionListener{
 	private JRadioButton kLRadioButton;
 	private JButton detectButton;
 	
+	private JRadioButton diamondRadioButton2;		
+	private JRadioButton clawRadioButton2;
+	private JRadioButton k4RadioButton2;
+	private JRadioButton simpVertexRadioButton2;
+	private JRadioButton triangleRadioButton2;
+	private JRadioButton kLRadioButton2;
+	private JButton listButton;
+	
 	private JTextField vertexCountField;
 	private JTextField edgeProbabilityField;
 	private JTextField graphNoField;
 	private JTextField selectFileField;
+	private JTextField selectFileField2;
 	
 	private JButton selectFileButton;
+	private JButton selectFileButton2;
 	private JTextArea outputArea;
 	private JButton generateButton;
 	
 	private ButtonGroup buttonGroup;
+	private ButtonGroup buttonGroup2;
+	private JPanel klPanel;
+	private JTextField sizeField;
+	
+	private JPanel klPanel2;
+	private JTextField sizeField2;
 
+	private JTabbedPane tabbedPane;
 
 	/**
 	 * Launch the application.
@@ -66,12 +87,11 @@ public class GUI extends JFrame implements ActionListener{
 	 * Create the frame.
 	 */
 	public GUI() {
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
-		setTitle("Subgraph Identification Tool");
-		setBounds(300, 100, 600, 350);
+		setTitle("Small Induced Subgraph Identification Tool");
+		setBounds(300, 100, 800, 350);
 		contentPane = new JPanel();
-		//contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(10,10));
 		
@@ -79,14 +99,17 @@ public class GUI extends JFrame implements ActionListener{
 		panel1.setLayout(new BorderLayout());
 		contentPane.add(panel1, BorderLayout.WEST);
 		
-		JTabbedPane tabbedPane = new JTabbedPane();
+		tabbedPane = new JTabbedPane();
 		JPanel detectPanel = new JPanel();
 		JPanel generatePanel = new JPanel();
+		JPanel listPanel = new JPanel();
 		tabbedPane.addTab("Detect", detectPanel);
+		tabbedPane.addTab("List", listPanel);
 		tabbedPane.addTab("Generate", generatePanel);
 		
 		panel1.add(tabbedPane);
 		
+		//for detect panel
 		detectPanel.setLayout(new GridLayout(9,2,5,5));
 		selectFileButton = new JButton("Select File");
 		detectPanel.add(selectFileButton);
@@ -121,15 +144,68 @@ public class GUI extends JFrame implements ActionListener{
 		JLabel blankLabel5 = new JLabel();
 		JLabel blankLabel6 = new JLabel();
 		JLabel blankLabel7 = new JLabel();
-		JLabel blankLabel8 = new JLabel();
+		klPanel = new JPanel();
+		klPanel.setVisible(false);
+		JLabel klLabel = new JLabel("Enter size: ");
+		sizeField = new JTextField(5);
+		klPanel.add(klLabel); klPanel.add(sizeField);
 		
 		detectPanel.add(triangleRadioButton);	detectPanel.add(blankLabel7);
 		detectPanel.add(diamondRadioButton);	detectPanel.add(blankLabel2);
 		detectPanel.add(clawRadioButton);		detectPanel.add(blankLabel3);
 		detectPanel.add(simpVertexRadioButton);	detectPanel.add(blankLabel5);
 		detectPanel.add(k4RadioButton);			detectPanel.add(blankLabel4);
-		detectPanel.add(kLRadioButton);			detectPanel.add(blankLabel8);
+		detectPanel.add(kLRadioButton);			detectPanel.add(klPanel);
 		detectPanel.add(blankLabel6);			detectPanel.add(detectButton);
+		
+		//for list panel
+		listPanel.setLayout(new GridLayout(9,2,5,5));
+		selectFileButton2 = new JButton("Select File");
+		listPanel.add(selectFileButton2);
+		selectFileField2 = new JTextField(5);
+		listPanel.add(selectFileField2);
+		
+		JLabel listTypeLabel = new JLabel("Select Listing Type");
+		JLabel blankLabel22 = new JLabel();
+		listPanel.add(listTypeLabel);
+		listPanel.add(blankLabel22);
+		
+		diamondRadioButton2 = new JRadioButton("Diamond");		
+		clawRadioButton2 = new JRadioButton("Claw");
+		k4RadioButton2 = new JRadioButton("K4");
+		simpVertexRadioButton2 = new JRadioButton("Simplicial Vertex");
+		triangleRadioButton2 = new JRadioButton("Triangle");
+		triangleRadioButton2.setSelected(true);
+		kLRadioButton2 = new JRadioButton("KL");
+		listButton = new JButton("List");
+		
+		buttonGroup2 = new ButtonGroup();
+		buttonGroup2.add(diamondRadioButton2);
+		buttonGroup2.add(clawRadioButton2);
+		buttonGroup2.add(k4RadioButton2);
+		buttonGroup2.add(simpVertexRadioButton2);
+		buttonGroup2.add(triangleRadioButton2);
+		buttonGroup2.add(kLRadioButton2);
+		
+		JLabel blankLabel12 = new JLabel();
+		JLabel blankLabel13 = new JLabel();
+		JLabel blankLabel14 = new JLabel();
+		JLabel blankLabel15 = new JLabel();
+		JLabel blankLabel16 = new JLabel();
+		JLabel blankLabel17 = new JLabel();
+		klPanel2 = new JPanel();
+		klPanel2.setVisible(false);
+		JLabel klLabel2 = new JLabel("Enter size: ");
+		sizeField2 = new JTextField(5);
+		klPanel2.add(klLabel2); klPanel2.add(sizeField2);
+		
+		listPanel.add(triangleRadioButton2);	listPanel.add(blankLabel17);
+		listPanel.add(diamondRadioButton2);		listPanel.add(blankLabel12);
+		listPanel.add(clawRadioButton2);		listPanel.add(blankLabel13);
+		listPanel.add(simpVertexRadioButton2);	listPanel.add(blankLabel15);
+		listPanel.add(k4RadioButton2);			listPanel.add(blankLabel14);
+		listPanel.add(kLRadioButton2);			listPanel.add(klPanel2);
+		listPanel.add(blankLabel16);			listPanel.add(listButton);
 		
 		JPanel panel4 = new JPanel();
 		panel4.setLayout(new BorderLayout());
@@ -173,93 +249,56 @@ public class GUI extends JFrame implements ActionListener{
 		generatePanel.add(panel7,BorderLayout.CENTER);
 		
 		detectButton.addActionListener(this);
+		listButton.addActionListener(this);
 		generateButton.addActionListener(this);
 		selectFileButton.addActionListener(this);
+		selectFileButton2.addActionListener(this);
+		kLRadioButton.addItemListener(this);
+		kLRadioButton2.addItemListener(this);
 		
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		JButton source = (JButton)e.getSource();
 		if(source.equals(detectButton)){
 			String selectedButton = getSelectedButtonText(buttonGroup);
-			
-			String fileName = selectFileField.getText();
-			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(fileName);
-			if(graph==null)
+			String fileName = selectFileField.getText().trim();
+			if(fileName.length()==0){
+				JOptionPane.showMessageDialog(null, "Please select input file");
 				return;
+			}
 			
-			Runnable r = new Runnable(){
-				@Override
-				public void run() {
-					if(selectedButton.equals("Diamond")){
-						UndirectedGraph<Integer,Integer> diamond = DetectDiamond.detect(graph);
-						if(diamond!=null){
-							Iterator<Graph.Vertex<Integer>> vertices = diamond.vertices();
-							String out = "";
-							
-							while(vertices.hasNext()){
-								out+=vertices.next().getElement()+","; 
-							}
-							out = String.format("Diamond found %n%s", out.substring(0,out.length()-1));
-							outputArea.setText(out);
-						}else{
-							outputArea.setText("Diamond not found");
-						}
-					}else if(selectedButton.equals("Claw")){
-						
-						UndirectedGraph<Integer,Integer> claw = DetectClaw.detect(graph);
-						if(claw!=null){
-							Iterator<Graph.Vertex<Integer>> vertices = claw.vertices();
-							String out = "";
-							while(vertices.hasNext()){
-								out+=vertices.next().getElement()+","; 
-							}
-							out = String.format("Claw found %n%s", out.substring(0,out.length()-1));
-							outputArea.setText(out);
-						}else
-							outputArea.setText("Claw not found");
-					}else if(selectedButton.equals("K4")){
-						List<UndirectedGraph<Integer,Integer>> k4 = DetectK4.detect(graph);
-						if(!k4.isEmpty()){
-							Iterator<Graph.Vertex<Integer>> vertices = k4.get(0).vertices();
-							String out = "";
-							while(vertices.hasNext()){
-								out+=vertices.next().getElement()+",";
-							}
-							out = String.format("K4 found %n%s", out.substring(0,out.length()-1));
-							outputArea.setText(out);
-						}else
-							outputArea.setText("K4 not found");
-					}else if(selectedButton.equals("Simplicial Vertex")){
-						List<Graph.Vertex<Integer>> simpVertex = ListSimplicialVertex.detect(graph);
-						if(!simpVertex.isEmpty()){
-							String out = simpVertex.get(0).getElement()+"";
-							out = String.format("Simplicial vertex found %n%s", out);
-							outputArea.setText(out);
-						}else
-							outputArea.setText("Simplicial vertex not found");
-					}else if(selectedButton.equals("Triangle")){
-						List<UndirectedGraph<Integer,Integer>> triangle = DetectTriangle.detect(graph);
-						if(triangle!=null){
-							Iterator<Graph.Vertex<Integer>> vertices = triangle.get(0).vertices();
-							String out = "";
-							while(vertices.hasNext()){
-								out+=vertices.next().getElement()+",";
-							}
-							out = String.format("Triangle found %n%s", out.substring(0,out.length()-1));
-							outputArea.setText(out);
-						}else
-							outputArea.setText("Triangle not found");
-					}			
-				}
-				
-			};
-			new Thread(r).start();
-		}else if(source.equals(generateButton)){
+			String r = Utility.validateInput(fileName);
+			if(r!=null){
+				JOptionPane.showMessageDialog(null, r);
+				return;
+			}
+			outputArea.setText("Detecting...");
+			DetectWorker w = new DetectWorker(selectedButton,fileName);
+			w.execute();
 			
-		}else if(source.equals(selectFileButton)){
+		}else if(source.equals(listButton)){
+			String selectedButton = getSelectedButtonText(buttonGroup2);
+			String fileName = selectFileField2.getText().trim();
+			if(fileName.length()==0){
+				JOptionPane.showMessageDialog(null, "Please select input file");
+				return;
+			}
+			String r = Utility.validateInput(fileName);
+			if(r!=null){
+				JOptionPane.showMessageDialog(null, r);
+				return;
+			}
+			outputArea.setText("Listing...");
+			ListWorker w = new ListWorker(selectedButton,fileName);
+			w.execute();
+			
+		}
+		else if(source.equals(generateButton)){
+			
+		}
+		else if(source.equals(selectFileButton)){
 			JFileChooser chooser = new JFileChooser();
 			chooser.setCurrentDirectory(new File(new File("").getAbsolutePath()));
 		    FileNameExtensionFilter filter = new FileNameExtensionFilter(
@@ -267,15 +306,22 @@ public class GUI extends JFrame implements ActionListener{
 		    chooser.setFileFilter(filter);
 		    int returnVal = chooser.showOpenDialog(getParent());
 		    if(returnVal == JFileChooser.APPROVE_OPTION) {
-		      
-
 		       String name = chooser.getCurrentDirectory().getAbsolutePath()+File.separator+chooser.getSelectedFile().getName();
 		       selectFileField.setText(name);
 		    }
-
-			
 		}
-		
+		else if(source.equals(selectFileButton2)){
+			JFileChooser chooser = new JFileChooser();
+			chooser.setCurrentDirectory(new File(new File("").getAbsolutePath()));
+		    FileNameExtensionFilter filter = new FileNameExtensionFilter(
+		        "txt files", "txt");
+		    chooser.setFileFilter(filter);
+		    int returnVal = chooser.showOpenDialog(getParent());
+		    if(returnVal == JFileChooser.APPROVE_OPTION) {
+		       String name = chooser.getCurrentDirectory().getAbsolutePath()+File.separator+chooser.getSelectedFile().getName();
+		       selectFileField2.setText(name);
+		    }
+		}
 	}
 	
 	public String getSelectedButtonText(ButtonGroup buttonGroup) {
@@ -290,5 +336,260 @@ public class GUI extends JFrame implements ActionListener{
 
         return null;
     }
+	
+	public String printList(List<Graph.Vertex<Integer>> list){
+		String out = "";
 
+		for(Graph.Vertex<Integer> v:list){
+			out+=v.getElement()+","; 
+		}
+		out = out.substring(0,out.length()-1);
+		return out;
+	}
+	
+	public int getTotalTime(String s){
+		String[] tokens = s.split("[ ]+");
+		int time = 0;
+		int limit = tokens[tokens.length-2].equals("not") ? tokens.length-2: tokens.length-1;
+		for(int i=0; i<limit; i++){
+			if(!tokens[i].equals("-"))
+				time += Integer.parseInt(tokens[i]);
+		}
+		return time;
+	}
+	
+	public class DetectWorker extends SwingWorker<String,Void>{
+
+		private String type;
+		private String filename;
+		
+		private DetectWorker(String type, String filename){
+			this.type = type;
+			this.filename = filename;
+		}
+		
+		@Override
+		protected String doInBackground() throws Exception {			
+			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(filename);
+			if(graph==null)
+				return null;
+			
+			String out = "";
+			if(type.equals("Diamond")){
+				DetectDiamond d = new DetectDiamond();
+				List<Graph.Vertex<Integer>> diamond = d.detect(graph);
+				if(diamond!=null){
+					out = printList(diamond);
+					out = String.format("Diamond found%nVertices: %s%n", out);
+					out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+				}else{
+					out = String.format("Diamond not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+				}
+			}else if(type.equals("Claw")){
+				
+				DetectClaw d = new DetectClaw();
+				List<Graph.Vertex<Integer>> claw = d.detect(graph);
+				if(claw!=null){
+					out = printList(claw);
+					out = String.format("Claw found%nVertices: %s%n", out);
+					out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+				}else{
+					out = String.format("Claw not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+				}
+			}else if(type.equals("K4")){
+				DetectK4 d = new DetectK4();
+				List<Graph.Vertex<Integer>> k4 = d.detect(graph);
+				if(k4!=null){
+					out = printList(k4);
+					out = String.format("K4 found%nVertices: %s%n", out);
+					out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+				}else{
+					out = String.format("K4 not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+				}
+			}else if(type.equals("Simplicial Vertex")){
+				DetectSimplicialVertex d = new DetectSimplicialVertex();
+				Graph.Vertex<Integer> simpVertex = d.detect(graph);
+				if(simpVertex!=null){
+					out = String.format("Simplicial vertex found%nOne such vertex: %s%n", simpVertex.getElement());
+					out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+					return out;
+				}else{
+					out = String.format("Simplicial vertex not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+				}
+			}else if(type.equals("Triangle")){
+				DetectTriangle d = new DetectTriangle();
+				List<Graph.Vertex<Integer>> triangle = d.detect(graph);
+				if(triangle!=null){
+					out = printList(triangle);
+					out = String.format("Triangle found%nVertices: %s%n", out);
+					out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+				}else{
+					out = String.format("Triangle not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+				}
+			}else if(type.equals("KL")){
+				try{
+					DetectKL d = new DetectKL();
+					int l = Integer.parseInt(sizeField.getText().trim());
+					List<Graph.Vertex<Integer>> kl = d.detect(graph, l);
+					if(kl!=null){
+						out = printList(kl);
+						out = String.format("K"+l+" found%nVertices: %s%n", out);
+						out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+					}else{
+						out = String.format("K"+l+" not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+					}
+				}catch(NumberFormatException e){
+					out = "The size entered is not an integer";
+				}
+			}
+			return out;
+		}
+
+		@Override
+		protected void done() {
+			String out = "";
+			try {
+				out = get();
+			} catch (InterruptedException | ExecutionException e) {
+				e.printStackTrace();
+			}
+			outputArea.setText(out);
+		}	
+	}
+	
+	private class ListWorker extends SwingWorker<String,Void>{
+
+		private String type;
+		private String filename;
+		
+		private ListWorker(String type, String filename){
+			this.type = type;
+			this.filename = filename;
+		}
+		
+		@Override
+		protected String doInBackground() throws Exception {
+			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(filename);
+			if(graph==null)
+				return null;
+			
+			String out = "";
+			if(type.equals("Diamond")){
+				ListDiamonds d = new ListDiamonds();
+				List<List<Vertex<Integer>>> diamonds = d.detect(graph);
+				if(!diamonds.isEmpty()){
+					for(List<Graph.Vertex<Integer>> diamond: diamonds){
+						out += printList(diamond)+"\n";
+					}
+					out = String.format("Diamond found%nVertices:%n%s", out);
+					out += String.format("Number of diamonds found: %d%n", diamonds.size());
+					out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+				}else{
+					out = String.format("Diamond not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+				}
+			}else if(type.equals("Claw")){
+				ListClaws d = new ListClaws();
+				List<List<Vertex<Integer>>> claws = d.detect(graph);
+				if(!claws.isEmpty()){
+					for(List<Graph.Vertex<Integer>> claw: claws){
+						out += printList(claw)+"\n";
+					}
+					out = String.format("Claw found%nVertices:%n%s", out);
+					out += String.format("Number of claws found: %d%n", claws.size());
+					out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+					System.out.println(out);
+				}else{
+					out = String.format("Claw not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+				}
+			}else if(type.equals("K4")){
+				ListK4 d = new ListK4();
+				List<List<Vertex<Integer>>> k4s = d.detect(graph);
+				if(!k4s.isEmpty()){
+					for(List<Graph.Vertex<Integer>> k4: k4s){
+						out += printList(k4)+"\n";
+					}
+					out = String.format("K4 found%nVertices:%n%s", out);
+					out += String.format("Number of K4s found: %d%n", k4s.size());
+					out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+				}else{
+					out = String.format("K4 not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+				}
+			}else if(type.equals("Simplicial Vertex")){
+				ListSimplicialVertices d = new ListSimplicialVertices();
+				List<Graph.Vertex<Integer>> simpVertex = d.detect(graph);
+				if(!simpVertex.isEmpty()){
+					out = printList(simpVertex);
+					out = String.format("Simplicial vertices found%nVertices: %s%n", out);
+					out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+				}else{
+					out = String.format("Simplicial vertices not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+				}
+			}else if(type.equals("Triangle")){
+				ListTriangles d = new ListTriangles();
+				List<List<Vertex<Integer>>> triangles = d.detect(graph);
+				if(!triangles.isEmpty()){
+					for(List<Graph.Vertex<Integer>> triangle: triangles){
+						out += printList(triangle)+"\n";
+					}
+					out = String.format("Triangle found%nVertices:%n%s", out);
+					out += String.format("Number of triangles found: %d%n", triangles.size());
+					out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+				}else{
+					out = String.format("Triangle not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+				}
+			}else if(type.equals("KL")){
+				try{
+					int l = Integer.parseInt(sizeField2.getText().trim());
+					ListKL d = new ListKL();
+					List<List<Vertex<Integer>>> kls = d.detect(graph, l);
+					if(!kls.isEmpty()){
+						out = "";
+						for(List<Graph.Vertex<Integer>> kl: kls){
+							out += printList(kl)+"\n";
+						}
+						out = String.format("K"+l+" found%nVertices:%n%s", out);
+						out += String.format("Number of K"+l+"s found: %d%n", kls.size());
+						out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+					}else{
+						out = String.format("K"+l+" not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+					}
+				}catch(NumberFormatException e){
+					out = "The size entered is not an integer";
+				}
+			}
+			return out;
+		}
+
+		@Override
+		protected void done() {
+			String out = "";
+			try {
+				out = get();
+			} catch (InterruptedException | ExecutionException e) {
+				e.printStackTrace();
+			}
+			outputArea.setText(out);
+		}	
+	}
+
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+		JRadioButton source = (JRadioButton) e.getItem();
+		if(source.equals(kLRadioButton)){
+			if(e.getStateChange()==ItemEvent.SELECTED){
+				klPanel.setVisible(true);
+			}
+			else{
+				klPanel.setVisible(false);
+			}
+		}
+		else if(source.equals(kLRadioButton2)){
+			if(e.getStateChange()==ItemEvent.SELECTED){
+				klPanel2.setVisible(true);
+			}
+			else{
+				klPanel2.setVisible(false);
+			}
+		}
+	}
 }
