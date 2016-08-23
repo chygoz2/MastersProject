@@ -35,7 +35,7 @@ public class ListDiamondsTest {
 	 */
 	@Test
 	public void testDetect() {
-		List<Collection<Graph.Vertex<Integer>>> actualResult = new ListDiamonds().detect(graph);
+		List<List<Vertex<Integer>>> actualResult = new ListDiamonds().detect(graph);
 		int[][] expectedResult = {{0,1,2,4},{0,2,3,4}}; //expected result should have 3 triangles 
 															//with the specified vertex elements
 		

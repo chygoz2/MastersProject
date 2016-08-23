@@ -1,6 +1,7 @@
 /DetectDiamond.class
 *.class
 generated_graphs/
+generated_patternfree_graphs/
 results/
 .settings
 .project

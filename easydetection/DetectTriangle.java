@@ -17,7 +17,7 @@ public class DetectTriangle {
 			long a = System.currentTimeMillis();
 			Thread t = new Thread(new Runnable(){
 				public void run(){
-					Collection<Graph.Vertex<Integer>> triangle = d.detect(graph);
+					List<Graph.Vertex<Integer>> triangle = d.detect(graph);
 				}
 			});
 			t.start();
@@ -39,9 +39,9 @@ public class DetectTriangle {
 		}catch(InterruptedException e){}
 	}
 	
-	public Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
+	public List<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
 		long starttime = System.currentTimeMillis();
-		Collection<Graph.Vertex<Integer>> triangle= find(graph);
+		List<Graph.Vertex<Integer>> triangle= find(graph);
 		long stoptime = System.currentTimeMillis();
 		time = ""+(stoptime-starttime);
 		
@@ -51,7 +51,7 @@ public class DetectTriangle {
 		return triangle;
 	}
 	
-	public static Collection<Graph.Vertex<Integer>> find(UndirectedGraph<Integer,Integer> graph){
+	public static List<Graph.Vertex<Integer>> find(UndirectedGraph<Integer,Integer> graph){
 		
 		//for each edge in graph, check if each vertex has an edge between it and the 
 		//vertices at the edge
@@ -84,6 +84,34 @@ public class DetectTriangle {
 		
 		return null;
 	}
+	
+//	public static List<Graph.Vertex<Integer>> find(UndirectedGraph<Integer,Integer> graph){
+//		
+//		//check if a triangle is found for any three vertices
+//		Iterator<Graph.Vertex<Integer>> vit1 = graph.vertices();
+//		while(vit1.hasNext()){
+//			Graph.Vertex<Integer> v1 = vit1.next();
+//			
+//			Iterator<Graph.Vertex<Integer>> vit2 = graph.vertices();
+//			while(vit2.hasNext()){
+//				Graph.Vertex<Integer> v2 = vit2.next();
+//				
+//				Iterator<Graph.Vertex<Integer>> vit3 = graph.vertices();
+//				while(vit3.hasNext()){
+//					Graph.Vertex<Integer> v3 = vit3.next();
+//					
+//					if(graph.containsEdge(v1, v2) && graph.containsEdge(v2, v3) && graph.containsEdge(v1, v3)){
+//						List<Graph.Vertex<Integer>> tri = new ArrayList<Graph.Vertex<Integer>>();
+//						tri.add(v1);
+//						tri.add(v2);
+//						tri.add(v3);
+//						return tri;
+//					}
+//				}
+//			}
+//		}
+//		return null;
+//	}
 	
 	public String getResult(){
 		String result = String.format("%-10s%-10s", time,found);

@@ -221,7 +221,47 @@ public final class Utility {
 		
 	}
 	
+	public String saveGraphToFile(int[][] A, long no, String type){
+		String out = "";
+		
+		for(int i=0; i<A.length; i++){
+			for(int j=0; j<A[i].length; j++){
+				out += A[i][j]+" "; 
+			}
+			out += String.format("%n");
+		}
 	
+		//get graph size
+		int size = A.length;
+		
+		//create folder for saving generated graphs if none exists
+		File f = new File("");
+		String path = f.getAbsolutePath();
+		String ggFolder = "generated_patternfree_graphs";
+		File dir = new File(path+File.separator+ggFolder);
+		dir.mkdir();
+		
+		//create folder for the pattern type if not existing
+		File dir3 = new File(path+File.separator+ggFolder+File.separator+type+"_free");
+		dir3.mkdir();
+		
+		//create folder for that size if not existing
+		File dir2 = new File(path+File.separator+ggFolder+File.separator+type+"_free"+File.separator+"size_"+size);
+		dir2.mkdir();
+		
+		//select suitable file name for the generated graph
+		String graphFileName = dir2.getAbsolutePath()+File.separator+"graph_"+size+"_"+no+".txt";
+		
+		try {
+			FileWriter writer = new FileWriter(graphFileName);
+			writer.write(out);
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return graphFileName;
+	}
 	
 	//method to create subgraph in the neighbourhood of Graph.Vertex v
 	public static UndirectedGraph<Integer,Integer> getNeighbourGraph(UndirectedGraph<Integer,Integer> graph, Graph.Vertex<Integer> v){
@@ -285,21 +325,46 @@ public final class Utility {
 		if (a[0].length != b.length) 
 			throw new MatrixException(1);
        
-        int[][] result = new int[a.length][b[0].length];
-        for (int i = 0; i < a.length; i++)
-            for (int j = 0; j < b[i].length; j++)
-                for (int k = 0; k < a[i].length; k++)
-                    result[i][j] += a[i][k] * b[k][j];
+        int[][] result = new int[a.length][b[0].length];		
+		for(int i = 0; i < a.length; i++) {
+		    int[] ira = a[i];
+		    int[] irc = result[i];
+		    for(int k = 0; k < a.length; k++) {
+		        int[] krb = b[k];
+		        int ikA = ira[k];
+		        for(int j = 0; j < a.length; j++) {
+		            irc[j] += ikA * krb[j];
+		        }
+		    }
+		}
         return result;
 	}
 	
 	public static void main(String [] args){
 //		String fileName = "matrix.txt";
 //		Utility.makeGraphFromFile(fileName);
-		generateRandomGraphFile(10,0.9,1);
+//		generateRandomGraphFile(10,0.9,1);
 		
-//		double[][] a = {{1,2,3},{4,5,6},{7,8,9}};
-//		double[][] res = matrixMultiply(a,a);
+//		int[][] a = {{1,2,3,3},{4,5,6,6},{7,8,9,9},{10,11,12,13}};
+		Random r = new Random(System.currentTimeMillis());
+		int n = 512;
+		int[][] a = new int[n][n];
+		for(int i=0; i<a.length; i++){
+			for(int j=0; j<a.length; j++){
+				int no = r.nextInt(1000);
+				a[i][j] = no;
+			}
+		}
+		int[][] res = null;
+		try {
+			long start = System.currentTimeMillis();
+			res = multiplyMatrix(a,a);
+			long stop= System.currentTimeMillis();
+			System.out.println("Time taken: " + (stop-start));
+		} catch (MatrixException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 //		for(int i=0; i<res.length; i++){
 //			for(int j=0; j<res[i].length; j++){
 //				System.out.print((int)res[i][j]+" ");

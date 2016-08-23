@@ -1,13 +1,7 @@
 package generate;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
-
-import javax.swing.JOptionPane;
 
 import efficientdetection.*;
 import general.Graph;
@@ -16,12 +10,7 @@ import general.Utility;
 
 public class GraphGenerator {
 	
-	public String generateDiamondFreeGraph(int n){
-		if(n<1){
-			JOptionPane.showMessageDialog(null, "n should be greater than zero");
-			System.exit(0);
-		}
-		
+	public String generateDiamondFreeGraph(int n){		
 		int[][] adjMatrix = new int[n][n];
 		
 		Random random = new Random(System.currentTimeMillis());
@@ -42,16 +31,11 @@ public class GraphGenerator {
 			}
 		}
 		
-		String file = saveGraphToFile(adjMatrix, System.currentTimeMillis(), "diamond");
+		String file = new Utility().saveGraphToFile(adjMatrix, System.currentTimeMillis(), "diamond");
 		return file;
 	}
 	
 	public String generateTriangleFreeGraph(int n){
-		if(n<1){
-			JOptionPane.showMessageDialog(null, "n should be greater than zero");
-			System.exit(0);
-		}
-		
 		int[][] adjMatrix = new int[n][n];
 		
 		Random random = new Random(System.currentTimeMillis());
@@ -72,16 +56,11 @@ public class GraphGenerator {
 			}
 		}
 		
-		String file = saveGraphToFile(adjMatrix, System.currentTimeMillis(), "triangle");
+		String file = new Utility().saveGraphToFile(adjMatrix, System.currentTimeMillis(), "triangle");
 		return file;
 	}
 	
 	public String generateK4FreeGraph(int n){
-		if(n<1){
-			JOptionPane.showMessageDialog(null, "n should be greater than zero");
-			System.exit(0);
-		}
-		
 		int[][] adjMatrix = new int[n][n];
 		
 		Random random = new Random(System.currentTimeMillis());
@@ -102,19 +81,14 @@ public class GraphGenerator {
 			}
 		}
 		
-		String file = saveGraphToFile(adjMatrix, System.currentTimeMillis(), "k4");
+		String file = new Utility().saveGraphToFile(adjMatrix, System.currentTimeMillis(), "k4");
 		return file;
 	}
 	
 	public String generateClawFreeGraph(int n){
-		if(n<1){
-			JOptionPane.showMessageDialog(null, "n should be greater than zero");
-			System.exit(0);
-		}
-		
 		int[][] adjMatrix = new int[n][n];
 		
-		ThreadLocalRandom random = ThreadLocalRandom.current();
+		Random random = new Random(System.currentTimeMillis());
 		for(int i=0; i<n; i++){
 			for(int j=i+1; j<n; j++){
 				int rand = random.nextInt(10);
@@ -132,19 +106,14 @@ public class GraphGenerator {
 			}
 		}
 		
-		String file = saveGraphToFile(adjMatrix, System.currentTimeMillis(), "claw");
+		String file = new Utility().saveGraphToFile(adjMatrix, System.currentTimeMillis(), "claw");
 		return file;
 	}
 	
 	public String generateKLFreeGraph(int n, int l){
-		if(n<1){
-			JOptionPane.showMessageDialog(null, "n should be greater than zero");
-			System.exit(0);
-		}
-		
 		int[][] adjMatrix = new int[n][n];
 		
-		ThreadLocalRandom random = ThreadLocalRandom.current();
+		Random random = new Random(System.currentTimeMillis());
 		for(int i=0; i<n; i++){
 			for(int j=i+1; j<n; j++){
 				int rand = random.nextInt(10);
@@ -162,7 +131,7 @@ public class GraphGenerator {
 			}
 		}
 		
-		String file = saveGraphToFile(adjMatrix, System.currentTimeMillis(), "k"+l);
+		String file = new Utility().saveGraphToFile(adjMatrix, System.currentTimeMillis(), "k"+l);
 		return file;
 	}
 	
@@ -194,47 +163,5 @@ public class GraphGenerator {
 //		
 //		return adjMatrix;
 //	}
-	
-	public String saveGraphToFile(int[][] A, long no, String type){
-		String out = "";
-		
-		for(int i=0; i<A.length; i++){
-			for(int j=0; j<A[i].length; j++){
-				out += A[i][j]+" "; 
-			}
-			out += String.format("%n");
-		}
-	
-		//get graph size
-		int size = A.length;
-		
-		//create folder for saving generated graphs if none exists
-		File f = new File("");
-		String path = f.getAbsolutePath();
-		String ggFolder = "generated_patternfree_graphs";
-		File dir = new File(path+File.separator+ggFolder);
-		dir.mkdir();
-		
-		//create folder for the pattern type if not existing
-		File dir3 = new File(path+File.separator+ggFolder+File.separator+type+"_free");
-		dir3.mkdir();
-		
-		//create folder for that size if not existing
-		File dir2 = new File(path+File.separator+ggFolder+File.separator+type+"_free"+File.separator+"size_"+size);
-		dir2.mkdir();
-		
-		//select suitable file name for the generated graph
-		String graphFileName = dir2.getAbsolutePath()+File.separator+"graph_"+size+"_"+no+".txt";
-		
-		try {
-			FileWriter writer = new FileWriter(graphFileName);
-			writer.write(out);
-			writer.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		return graphFileName;
-	}
 	
 }

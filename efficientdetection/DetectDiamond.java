@@ -15,10 +15,12 @@ import java.io.*;
  *
  */
 public class DetectDiamond {
-	private String p1time = "-";
-	private String p2time = "-";
-	private String p3time = "-";
-	private String found = "found";
+	
+	//instance variables
+	private String p1time = "-"; //measures time taken for phase one to execute
+	private String p2time = "-"; //measures time taken for phase two to execute
+	private String p3time = "-"; //measures time taken for phase three to execute
+	private String found = "found"; //stores whether a diamond was found or now
 	
 	public static void main(String [] args) throws IOException{
 		try{
@@ -27,9 +29,7 @@ public class DetectDiamond {
 			
 			DetectDiamond d = new DetectDiamond();
 			List<Graph.Vertex<Integer>> diamond = d.detect(graph);
-			if(diamond!=null){
-				Utility.printGraph(Utility.makeGraphFromVertexSet(graph,diamond));
-			}
+			Utility.printGraph(Utility.makeGraphFromVertexSet(graph, diamond));
 			System.out.print(d.getResult());
 		}catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("Please provide the graph file as a command line argument");
@@ -37,7 +37,7 @@ public class DetectDiamond {
 	}
 	
 	/**
-	 * method to detect and return an induced subgraph isomorphic with a diamond
+	 * method to detect and return a diamond in a graph
 	 * @param graph 		the graph to be checked
 	 * @return  			the diamond subgraph
 	 */
@@ -80,7 +80,7 @@ public class DetectDiamond {
 	}
 	
 	/**
-	 * method that checks a graph for a diamond by checking if the diamond has a low degree vertex in it
+	 * method that checks a graph for a diamond by checking for a diamond with a low degree vertex in it
 	 * @param lowDegreeVertices 	a list of low degree vertices of the graph
 	 * @param graph 				the graph to be checked
 	 * @return 						a map object containing a diamond if found, as well as a collection of cliques mapped to each low degree
@@ -106,7 +106,7 @@ public class DetectDiamond {
 			//check if each component is a clique
 			for(UndirectedGraph<Integer,Integer> graphC: graph2Comps){
 				boolean isClique = checkIfClique(graphC);
-				//System.out.println("Is clique? "+isClique);
+				
 				if(isClique){
 					cliques.add(graphC); //add component to cliques list to be used in phase 2
 				}else{
@@ -135,8 +135,8 @@ public class DetectDiamond {
 	
 	/**
 	 * method that checks for the presence of a diamond subgraph in a graph.
-	 * Method works by checking each clique of each low degree vertex to see if the condition
-	 * described by Kloks et al. is satisfied.
+	 * Method works by checking each clique of each low degree vertex for the presence of a common
+	 * neighbour outside the closed neighbourhood of each low degree vertex
 	 * @param cliques 		the mapping of cliques to low degree vertices
 	 * @param graph 		the graph to be checked
 	 * @return 				a diamond subgraph vertices if found
@@ -146,13 +146,16 @@ public class DetectDiamond {
 		
 		//get adjacency matrix of graph
 		int[][] A = graph.getAdjacencyMatrix();
+		
+		//compute the square of the adjacency matrix
 		int[][] squareA;
 		try {
 			squareA = Utility.multiplyMatrix(A, A);
 		} catch (MatrixException e) {
 			return null;
 		}
-//	
+
+		//get the cliques belonging to each low degree vertex
 		Set<Integer> vertexKeys = cliques.keySet();
 
 		here:
@@ -160,7 +163,7 @@ public class DetectDiamond {
 			//for each low degree vertex, get its cliques
 			List<UndirectedGraph<Integer,Integer>> cliqs = (List<UndirectedGraph<Integer,Integer>>)cliques.get(lowVertex);
 			for(UndirectedGraph<Integer,Integer> cliq: cliqs){
-				//for each clique, perform the check
+				
 				Iterator<Graph.Edge<Integer>> edgeIt = cliq.edges();
 				while(edgeIt.hasNext()){
 					//get pair in clique(as vertices at edges)
@@ -171,34 +174,30 @@ public class DetectDiamond {
 					//get ids of y and z
 					int yId = (int) y.getElement();
 					int zId = (int) z.getElement();
-					
-					//perform check 
+				
 					if(squareA[yId][zId] > cliq.size()-1){ //then y and z have a common neighbor
 						//outside the closed neighbourhood of x and hence a diamond can found
-						//get y's and z's neighbours from the main graph and put them in a set
 						Iterator<Graph.Vertex<Integer>> yIt = graph.neighbours(graph.getVertexWithElement(yId));
-						List<Graph.Vertex<Integer>> yNeigh = new ArrayList<Graph.Vertex<Integer>>();
+						
 						while(yIt.hasNext()){
 							Graph.Vertex<Integer> s = yIt.next();
-							if(s.getElement() != lowVertex)
-								yNeigh.add(s);
-						}
-						
-						Iterator<Graph.Vertex<Integer>> zIt = graph.neighbours(graph.getVertexWithElement(zId));
-						List<Graph.Vertex<Integer>> zNeigh = new ArrayList<Graph.Vertex<Integer>>();
-						while(zIt.hasNext()){
-							Graph.Vertex<Integer> s = zIt.next();
-							if(s.getElement() != lowVertex)
-								zNeigh.add(s);
-						}
-						 
-						//and then find the intersection of both sets to find vertices common in y and z's neighbourhood
-						yNeigh.retainAll(zNeigh); //yNeigh now contains vertices common to both y and z 
-						
-						//create a diamond and return it
-						diamond = new ArrayList<Graph.Vertex<Integer>>();
-						diamond.add(graph.getVertexWithElement(lowVertex));diamond.add(y);diamond.add(z);diamond.add((Graph.Vertex<Integer>) yNeigh.get(0));
-						break here;
+							if(s.getElement() != lowVertex){ //we don't want to add the vertex that the clique belongs to
+								Iterator<Graph.Vertex<Integer>> zIt = graph.neighbours(graph.getVertexWithElement(zId));
+								while(zIt.hasNext()){
+									Graph.Vertex<Integer> t = zIt.next();
+									if(t.getElement() != lowVertex) //we don't want to add the vertex that the clique belongs to
+										if(s.getElement()==t.getElement()){
+											//create a diamond and return it
+											diamond = new ArrayList<Graph.Vertex<Integer>>();
+											diamond.add(graph.getVertexWithElement(lowVertex));
+											diamond.add(y);
+											diamond.add(z);
+											diamond.add(s);
+											break here;
+										}
+								}
+							}
+						} 
 					}
 				}
 			}
@@ -207,7 +206,7 @@ public class DetectDiamond {
 	}
 	
 	/**
-	 * method that checks if a graph contains a diamond subgraph. It works by removing all low
+	 * method that checks if a graph contains a diamond. It works by removing all low
 	 * degree vertices from the graph and then applying phaseOne method to the resulting graph
 	 * @param graph					the graph to be checked
 	 * @param lowDegreeVertices 	a list of low degree vertices
@@ -215,7 +214,6 @@ public class DetectDiamond {
 	 */
 	public  List<Graph.Vertex<Integer>> phaseThree(UndirectedGraph<Integer,Integer> graph2, List<Graph.Vertex<Integer>> lowDegreeVertices){
 		//remove low degree vertices from graph G
-		
 		UndirectedGraph<Integer,Integer> graph = graph2.clone();
 		for(Graph.Vertex<Integer> v: lowDegreeVertices){
 			graph.removeVertex(graph.getVertexWithElement(v.getElement()));
@@ -246,6 +244,7 @@ public class DetectDiamond {
 	 * @return 			the result of the check. 
 	 */
 	private  boolean checkIfClique(UndirectedGraph<Integer,Integer> graph){
+		//for a clique, the number of edges = (n*(n-1)/2) where n is the number of vertices
 		int edgeCount = graph.getEdgeCount();
 		int reqCount = (graph.size()*(graph.size()-1))/2;
 		if(edgeCount==reqCount){
@@ -272,15 +271,17 @@ public class DetectDiamond {
 			//do a breadth first search on each vertex of graph in search for a P3
 			//stop once a p3 has been found
 			List<Graph.Vertex<Integer>> bfVertices = graph.breadthFirstTraversal(v);
-			Graph.Vertex<Integer> v1 = bfVertices.get(0);
-			Graph.Vertex<Integer> v2 = bfVertices.get(1);
-			Graph.Vertex<Integer> v3 = bfVertices.get(2);
-			
-			if(!(graph.containsEdge(v1, v2) && graph.containsEdge(v2, v3) &&
-					graph.containsEdge(v1, v3))){
-				List<Graph.Vertex<Integer>> vert = new ArrayList<Graph.Vertex<Integer>>();
-				vert.add(v1); vert.add(v2); vert.add(v3);
-				return vert;
+			if(bfVertices.size()> 2){
+				Graph.Vertex<Integer> v1 = bfVertices.get(0);
+				Graph.Vertex<Integer> v2 = bfVertices.get(1);
+				Graph.Vertex<Integer> v3 = bfVertices.get(2);
+				
+				if(!(graph.containsEdge(v1, v2) && graph.containsEdge(v2, v3) &&
+						graph.containsEdge(v1, v3))){
+					List<Graph.Vertex<Integer>> vert = new ArrayList<Graph.Vertex<Integer>>();
+					vert.add(v1); vert.add(v2); vert.add(v3);
+					return vert;
+				}
 			}
 		}
 	
@@ -288,52 +289,10 @@ public class DetectDiamond {
 	}
 	
 	/**
-	 * method that checks if a P3 is present in a graph and returns the vertices of the P3
-	 * @param graph 	the graph to be checked
-	 * @return 			the vertex list if found
+	 * method to partition the vertices into low degree vertices and high degree vertices
+	 * @param graph		the graph whose vertices are to be partitioned
+	 * @return			the partitions
 	 */
-//	private List<Graph.Vertex<Integer>> checkP3InComponent(UndirectedGraph<Integer,Integer> graph){
-//		//if the no of vertices in graph is less than 3, then graph cannot have a p3
-//		
-//		if(graph.size()<3){
-//			return null;
-//		}
-//		
-//		//create mapping between matrix indices and vertex
-//		List<Graph.Vertex<Integer>> vertexIndexMap = new ArrayList<Graph.Vertex<Integer>>();
-//		Iterator<Graph.Vertex<Integer>> vIt = graph.vertices(); //gets the vertex iterator
-//		while(vIt.hasNext()){
-//			vertexIndexMap.add(vIt.next());
-//		}
-//		
-//		int[][] A = graph.getAdjacencyMatrix();
-//		int[][] A2;
-//		try {
-//			A2 = Utility.multiplyMatrix(A, A);
-//		} catch (MatrixException e) {
-//			return null;
-//		}
-//		
-//		//look for a path of length 2 in A2
-//		for(int i=0; i<A2.length;i++){
-//			for(int j=i+1; j<A2.length;j++){
-//				if((int)A2[i][j]>0 && (int)A[i][j]==0){ //then a P3 is found
-//					//look for third vertex
-//					for(int k=0; k<A.length;k++){
-//						if(k!=i && k!= j && ((int)A[k][i] == 1) && ((int)A[k][j] == 1)){
-//							List<Graph.Vertex<Integer>> vert = new ArrayList<Graph.Vertex<Integer>>();
-//							vert.add(vertexIndexMap.get(i)); vert.add(vertexIndexMap.get(j)); vert.add(vertexIndexMap.get(k));
-//							return vert;
-//						}
-//					}
-//				}
-//			}
-//		}
-//	
-//		return null;
-//	}
-	
-	//method to partition the vertices into low degree vertices and high degree vertices
 	public  List<Graph.Vertex<Integer>>[] partitionVertices(UndirectedGraph<Integer,Integer> graph){
 		List<Graph.Vertex<Integer>>[] vertices = new List[2];
 		vertices[0] = new ArrayList<Graph.Vertex<Integer>>();
@@ -344,7 +303,6 @@ public class DetectDiamond {
 		
 		//get number of edges
 		int noOfEdges = graph.getEdgeCount();
-		
 
 		//calculate D for Vertex partitioning
 		double D = Math.sqrt(noOfEdges);
@@ -360,6 +318,10 @@ public class DetectDiamond {
 		return vertices;
 	}
 	
+	/**
+	 * method to return the time taken for the detection and the result
+	 * @return		the result for analysis
+	 */
 	public  String getResult(){
 		String result = String.format("%-10s%-10s%-10s%-10s", p1time,p2time,p3time,found);
 		return result;

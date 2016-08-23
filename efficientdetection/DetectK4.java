@@ -5,11 +5,17 @@ import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
 
+/**
+ * class that detects the presence of a K4 in a graph
+ * @author Chigozie Ekwonu
+ *
+ */
 public class DetectK4 {
 	
-	private  String p1time = "-";
-	private  String p2time = "-";
-	private  String found = "found";
+	//instance variables
+	private  String p1time = "-"; //measures time taken for phase one to execute
+	private  String p2time = "-"; //measures time taken for phase two to execute
+	private  String found = "found"; //stores outcome of the test
 	
 	public static void main(String [] args){
 		try{
@@ -24,20 +30,27 @@ public class DetectK4 {
 		}
 	}
 	
-	public  List<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){		
+	/**
+	 * method to detect a K4. Calls phaseOne and phaseTwo methods 
+	 * @param graph			the graph to be checked
+	 * @return				the vertices of the k4 if found
+	 */
+	public  List<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){	
+		//partition vertices into low and high degree vertices
 		List<Graph.Vertex<Integer>>[] verticesPartition = partitionVertices(graph);
-		
 		List<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
 		List<Graph.Vertex<Integer>> highDegreeVertices = verticesPartition[1];
 		
 		List<Graph.Vertex<Integer>> k4 = null;
 		
+		//measure time taken for phase one to execute
 		long starttime = System.currentTimeMillis();
 		k4 = phaseOne(graph, highDegreeVertices);
 		long stoptime = System.currentTimeMillis();
 		p1time = ""+(stoptime-starttime);
 		
 		if(k4==null){
+			//measure time taken for phase two to execute
 			starttime = System.currentTimeMillis();
 			k4 = phaseTwo(graph, lowDegreeVertices);
 			stoptime = System.currentTimeMillis();
@@ -49,8 +62,16 @@ public class DetectK4 {
 		return k4;
 	}
 	
+	/**
+	 * method to check for a k4 in a graph by checking for a k4 made up of high degree vertices only
+	 * @param graph					the graph to be checked
+	 * @param highDegreeVertices	the list of high degree vertices
+	 * @return						the vertices of the K4 if found
+	 */
 	public  List<Graph.Vertex<Integer>> phaseOne(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> highDegreeVertices){
 			
+		//check the intersection of the neighbourhood vertices of each high degree vertex and the
+		//high degree vertices 
 		for(Graph.Vertex<Integer> x: highDegreeVertices){
 			//get x's neighbourhood graph
 			Iterator<Graph.Vertex<Integer>> nXIter = graph.neighbours(x);
@@ -73,7 +94,7 @@ public class DetectK4 {
 			//get a triangle in the neighbourhood
 			DetectTriangle d = new DetectTriangle();
 			List<Graph.Vertex<Integer>> triangle = d.detect(graph2);
-			if(triangle!=null){
+			if(triangle!=null){ //if triangle is found
 				List<Graph.Vertex<Integer>> k4Vertices = new ArrayList<Graph.Vertex<Integer>>(); //list to store k4 vertices
 				k4Vertices.addAll(triangle);
 				k4Vertices.add(x);
@@ -85,6 +106,12 @@ public class DetectK4 {
 		return null;
 	}
 	
+	/**
+	 * method to check for a k4 by looking for a k4 with at least one low degree vertex
+	 * @param graph					the graph to be checked	
+	 * @param lowDegreeVertices		the list of low degree vertices
+	 * @return						the vertices of the k4 if found
+	 */
 	public  List<Graph.Vertex<Integer>> phaseTwo(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> lowDegreeVertices){
 			
 		for(Graph.Vertex<Integer> x: lowDegreeVertices){
@@ -118,7 +145,6 @@ public class DetectK4 {
 		//get number of edges
 		int noOfEdges = graph.getEdgeCount();
 		
-
 		//calculate D for Graph.Vertex partitioning
 		double D = Math.sqrt(noOfEdges);
 		
@@ -133,6 +159,10 @@ public class DetectK4 {
 		return vertices;
 	}
 	
+	/**
+	 * method to return the time taken for the detection and the result
+	 * @return		the result for analysis
+	 */
 	public  String getResult(){
 		String result = String.format("%-10s%-10s%-10s", p1time,p2time,found);
 		return result;

@@ -15,12 +15,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import efficientdetection.*;
-import efficientlisting.ListClaws;
-import efficientlisting.ListDiamonds;
-import efficientlisting.ListK4;
-import efficientlisting.ListKL;
-import efficientlisting.ListSimplicialVertices;
-import efficientlisting.ListTriangles;
+import efficientlisting.*;
 import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
@@ -287,48 +282,92 @@ public class GUI extends JFrame
 		if(source.equals(detectButton)){
 			String selectedButton = getSelectedButtonText(buttonGroup);
 			String fileName = selectFileField.getText().trim();
-			if(fileName.length()==0){
-				JOptionPane.showMessageDialog(null, "Please select input file");
+			int l=0;
+			try{
+				if(fileName.length()==0){
+					JOptionPane.showMessageDialog(null, "Please select input file");
+					return;
+				}
+				String r = Utility.validateInput(fileName);
+				if(r!=null){
+					JOptionPane.showMessageDialog(null, r);
+					return;
+				}
+				if(selectedButton.equals("KL")){
+					String s = sizeField.getText().trim();
+					if(s.length()==0){
+						JOptionPane.showMessageDialog(null, "Please enter size of the complete subgraph to be listed");
+						return;
+					}
+					l = Integer.parseInt(s);
+					if(l<1){
+						JOptionPane.showMessageDialog(null, "Size of the complete subgraph should be greater than 0");
+						return;
+					}
+				}
+				outputArea.setText(outputArea.getText()+"Detecting...\n");
+				DetectWorker w = new DetectWorker(selectedButton,fileName,l);
+				w.execute();
+			}catch(NumberFormatException f){
+				JOptionPane.showMessageDialog(null, "The size of the complete subgraph entered is not an integer");
 				return;
 			}
-			
-			String r = Utility.validateInput(fileName);
-			if(r!=null){
-				JOptionPane.showMessageDialog(null, r);
-				return;
-			}
-			outputArea.setText(outputArea.getText()+"Detecting...\n");
-			DetectWorker w = new DetectWorker(selectedButton,fileName);
-			w.execute();
 			
 		}else if(source.equals(listButton)){
 			String selectedButton = getSelectedButtonText(buttonGroup2);
 			String fileName = selectFileField2.getText().trim();
-			if(fileName.length()==0){
-				JOptionPane.showMessageDialog(null, "Please select input file");
+			int l=0;
+			try{
+				if(fileName.length()==0){
+					JOptionPane.showMessageDialog(null, "Please select input file");
+					return;
+				}
+				String r = Utility.validateInput(fileName);
+				if(r!=null){
+					JOptionPane.showMessageDialog(null, r);
+					return;
+				}
+				if(selectedButton.equals("KL")){
+					String s = sizeField2.getText().trim();
+					if(s.length()==0){
+						JOptionPane.showMessageDialog(null, "Please enter size of the complete subgraph to be listed");
+						return;
+					}
+					l = Integer.parseInt(s);
+					if(l<1){
+						JOptionPane.showMessageDialog(null, "Size of the complete subgraph should be greater than 0");
+						return;
+					}
+				}
+				outputArea.setText(outputArea.getText()+"Listing...\n");
+				ListWorker w = new ListWorker(selectedButton,fileName,l);
+				w.execute();
+			}catch(NumberFormatException f){
+				JOptionPane.showMessageDialog(null, "The size of the complete subgraph entered is not an integer");
 				return;
 			}
-			String r = Utility.validateInput(fileName);
-			if(r!=null){
-				JOptionPane.showMessageDialog(null, r);
-				return;
-			}
-			outputArea.setText(outputArea.getText()+"Listing...\n");
-			ListWorker w = new ListWorker(selectedButton,fileName);
-			w.execute();
 		}
 		else if(source.equals(generateButton)){
 			String selectedButton = getSelectedButtonText(buttonGroup3);
-			int n = 0;
+			int n = 0, l=0;
 			try{
 				n = Integer.parseInt(vertexCountField.getText().trim());
+				String s = sizeField3.getText().trim();
+				if(s.length()>0)
+					l = Integer.parseInt(s);
+				if(n<1){
+					JOptionPane.showMessageDialog(null, "Number of vertices should be greater than zero");
+				}else if(l<1 && selectedButton.equals("KL-free")){
+					JOptionPane.showMessageDialog(null, "Size of complete subgraph should be greater than zero");
+				}else{
+					outputArea.setText(outputArea.getText()+"Generating...\n");
+					GenerateWorker w = new GenerateWorker(selectedButton,n,l);
+					w.execute();
+				}
 			}catch(NumberFormatException f){
 				JOptionPane.showMessageDialog(null, "The size entered is not an integer");
 				return;
 			}
-			outputArea.setText(outputArea.getText()+"Generating...\n");
-			GenerateWorker w = new GenerateWorker(selectedButton,n);
-			w.execute();
 		}
 		else if(source.equals(selectFileButton)){
 			JFileChooser chooser = new JFileChooser();
@@ -394,10 +433,12 @@ public class GUI extends JFrame
 
 		private String type;
 		private String filename;
+		private int l;
 		
-		private DetectWorker(String type, String filename){
+		private DetectWorker(String type, String filename, int l){
 			this.type = type;
 			this.filename = filename;
+			this.l = l;
 		}
 		
 		@Override
@@ -459,19 +500,14 @@ public class GUI extends JFrame
 					out = String.format("Triangle not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
 				}
 			}else if(type.equals("KL")){
-				try{
-					DetectKL d = new DetectKL();
-					int l = Integer.parseInt(sizeField.getText().trim());
-					List<Graph.Vertex<Integer>> kl = d.detect(graph, l);
-					if(kl!=null){
-						out = printList(kl);
-						out = String.format("K"+l+" found%nVertices: %s%n", out);
-						out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-					}else{
-						out = String.format("K"+l+" not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-					}
-				}catch(NumberFormatException e){
-					out = "The size entered is not an integer";
+				DetectKL d = new DetectKL();
+				List<Graph.Vertex<Integer>> kl = d.detect(graph, l);
+				if(kl!=null){
+					out = printList(kl);
+					out = String.format("K"+l+" found%nVertices: %s%n", out);
+					out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+				}else{
+					out = String.format("K"+l+" not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
 				}
 			}
 			return out;
@@ -493,10 +529,12 @@ public class GUI extends JFrame
 
 		private String type;
 		private String filename;
+		private int l;
 		
-		private ListWorker(String type, String filename){
+		private ListWorker(String type, String filename, int l){
 			this.type = type;
 			this.filename = filename;
+			this.l = l;
 		}
 		
 		@Override
@@ -570,23 +608,18 @@ public class GUI extends JFrame
 					out = String.format("Triangle not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
 				}
 			}else if(type.equals("KL")){
-				try{
-					int l = Integer.parseInt(sizeField2.getText().trim());
-					ListKL d = new ListKL();
-					List<List<Vertex<Integer>>> kls = d.detect(graph, l);
-					if(!kls.isEmpty()){
-						out = "";
-						for(List<Graph.Vertex<Integer>> kl: kls){
-							out += printList(kl)+"\n";
-						}
-						out = String.format("K"+l+" found%nVertices:%n%s", out);
-						out += String.format("Number of K"+l+"s found: %d%n", kls.size());
-						out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-					}else{
-						out = String.format("K"+l+" not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+				ListKL d = new ListKL();
+				List<List<Vertex<Integer>>> kls = d.detect(graph, l);
+				if(!kls.isEmpty()){
+					out = "";
+					for(List<Graph.Vertex<Integer>> kl: kls){
+						out += printList(kl)+"\n";
 					}
-				}catch(NumberFormatException e){
-					out = "The size entered is not an integer";
+					out = String.format("K"+l+" found%nVertices:%n%s", out);
+					out += String.format("Number of K"+l+"s found: %d%n", kls.size());
+					out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+				}else{
+					out = String.format("K"+l+" not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
 				}
 			}
 			return out;
@@ -608,10 +641,12 @@ public class GUI extends JFrame
 
 		private String type;
 		private int n;
+		private int l;
 		
-		private GenerateWorker(String type, int n){
+		private GenerateWorker(String type, int n, int l){
 			this.type = type;
 			this.n = n;
+			this.l = l;
 		}
 		
 		@Override
@@ -632,7 +667,6 @@ public class GUI extends JFrame
 				out = String.format("Name of graph file: %s", filename);
 			}else if(type.equals("KL-free")){
 				try{
-					int l = Integer.parseInt(sizeField3.getText().trim());
 					String filename = g.generateKLFreeGraph(n,l);
 					out = String.format("Name of graph file: %s", filename);
 				}catch(NumberFormatException e){
@@ -663,6 +697,7 @@ public class GUI extends JFrame
 			}
 			else{
 				klPanel.setVisible(false);
+				sizeField.setText("");
 			}
 		}
 		else if(source.equals(kLRadioButton2)){
@@ -671,6 +706,7 @@ public class GUI extends JFrame
 			}
 			else{
 				klPanel2.setVisible(false);
+				sizeField2.setText("");
 			}
 		}
 		else if(source.equals(klFreeButton)){
@@ -679,6 +715,7 @@ public class GUI extends JFrame
 			}
 			else{
 				klPanel3.setVisible(false);
+				sizeField3.setText("");
 			}
 		}
 	}

@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import efficientlisting.ListClaws;
 import general.*;
+import general.Graph.Vertex;
 
 /**
  * @author Chigozie Ekwonu
@@ -31,7 +32,7 @@ public class ListClawsTest {
 	 */
 	@Test
 	public void testDetect() {
-		List<Collection<Graph.Vertex<Integer>>> actualResult = new ListClaws().detect(graph);
+		List<List<Vertex<Integer>>> actualResult = new ListClaws().detect(graph);
 		int[][] expectedResult = {{0,1,2,3},{2,3,4,6},{2,3,4,5}}; //expected result should have 3 claws 
 															//with the specified vertex elements
 		

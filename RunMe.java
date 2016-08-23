@@ -116,16 +116,20 @@ public class Runme {
 									System.out.print("> ");
 									input = sc.nextLine();
 									int l = Integer.parseInt(input);
-									DetectKL d = new DetectKL();
-									List<Graph.Vertex<Integer>> kl = d.detect(graph, l);
-									if(kl!=null){
-										String out = printList(kl);
-										out = String.format("K"+l+" found%nVertices: %s%n", out);
-										out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-										System.out.println(out);
+									if(l<1){
+										System.out.println("Size of induced subgraph should be greater than zero");
 									}else{
-										String out = String.format("K"+l+" not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-										System.out.println(out);
+										DetectKL d = new DetectKL();
+										List<Graph.Vertex<Integer>> kl = d.detect(graph, l);
+										if(kl!=null){
+											String out = printList(kl);
+											out = String.format("K"+l+" found%nVertices: %s%n", out);
+											out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+											System.out.println(out);
+										}else{
+											String out = String.format("K"+l+" not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+											System.out.println(out);
+										}
 									}
 								}catch(NumberFormatException e){
 									System.out.println("Value entered is not an integer");
@@ -243,20 +247,25 @@ public class Runme {
 									System.out.print("> ");
 									input = sc.nextLine();
 									int l = Integer.parseInt(input);
-									ListKL d = new ListKL();
-									List<List<Vertex<Integer>>> kls = d.detect(graph, l);
-									if(!kls.isEmpty()){
-										String out = "";
-										for(List<Graph.Vertex<Integer>> kl: kls){
-											out += printList(kl)+"\n";
+									if(l<1){
+										System.out.println("Size of graph induced subgraph should be greater than zero");
+									}
+									else{
+										ListKL d = new ListKL();
+										List<List<Vertex<Integer>>> kls = d.detect(graph, l);
+										if(!kls.isEmpty()){
+											String out = "";
+											for(List<Graph.Vertex<Integer>> kl: kls){
+												out += printList(kl)+"\n";
+											}
+											out = String.format("K"+l+" found%nVertices:%n%s", out);
+											out += String.format("Number of K"+l+"s found: %d%n", kls.size());
+											out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+											System.out.println(out);
+										}else{
+											String out = String.format("K"+l+" not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
+											System.out.println(out);
 										}
-										out = String.format("K"+l+" found%nVertices:%n%s", out);
-										out += String.format("Number of K"+l+"s found: %d%n", kls.size());
-										out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-										System.out.println(out);
-									}else{
-										String out = String.format("K"+l+" not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-										System.out.println(out);
 									}
 								}catch(NumberFormatException e){
 									System.out.println("Value entered is not an integer");
@@ -279,41 +288,48 @@ public class Runme {
 				if(allowed.contains(words[1])){
 					try{
 						int n = Integer.parseInt(words[2]);
-						if (words[1].equals("triangle")) {
-							String filename = g.generateTriangleFreeGraph(n);
-							String out = String.format("Name of graph file: %s", filename);
-							System.out.println(out);
-						}
-		
-						else if (words[1].equals("claw")) {
-							String filename = g.generateClawFreeGraph(n);
-							String out = String.format("Name of graph file: %s", filename);
-							System.out.println(out);
-						}
-		
-						else if (words[1].equals("diamond")) {
-							String filename = g.generateDiamondFreeGraph(n);
-							String out = String.format("Name of graph file: %s", filename);
-							System.out.println(out);
-						}
-		
-						else if (words[1].equals("k4")) {
-							String filename = g.generateK4FreeGraph(n);
-							String out = String.format("Name of graph file: %s", filename);
-							System.out.println(out);
-						}
-						else if (words[1].equals("kl")) {
-							try{
-								System.out.println("Please enter size of complete subgraph");
-								System.out.print("> ");
-								input = sc.nextLine();
-								int l = Integer.parseInt(input);
-								
+						if(n<1){
+							System.out.println("Size of graph should be greater than zero");
+						}else{
+							if (words[1].equals("triangle")) {
 								String filename = g.generateTriangleFreeGraph(n);
 								String out = String.format("Name of graph file: %s", filename);
 								System.out.println(out);
-							}catch(NumberFormatException e){
-								System.out.println("Value entered is not an integer");
+							}
+			
+							else if (words[1].equals("claw")) {
+								String filename = g.generateClawFreeGraph(n);
+								String out = String.format("Name of graph file: %s", filename);
+								System.out.println(out);
+							}
+			
+							else if (words[1].equals("diamond")) {
+								String filename = g.generateDiamondFreeGraph(n);
+								String out = String.format("Name of graph file: %s", filename);
+								System.out.println(out);
+							}
+			
+							else if (words[1].equals("k4")) {
+								String filename = g.generateK4FreeGraph(n);
+								String out = String.format("Name of graph file: %s", filename);
+								System.out.println(out);
+							}
+							else if (words[1].equals("kl")) {
+								try{
+									System.out.println("Please enter size of complete subgraph");
+									System.out.print("> ");
+									input = sc.nextLine();
+									int l = Integer.parseInt(input);
+									if(l<1){
+										System.out.println("Size of graph induced subgraph should be greater than zero");
+									}else{
+										String filename = g.generateKLFreeGraph(n,l);
+										String out = String.format("Name of graph file: %s", filename);
+										System.out.println(out);
+									}
+								}catch(NumberFormatException e){
+									System.out.println("Value entered is not an integer");
+								}
 							}
 						}
 					}catch(NumberFormatException e){

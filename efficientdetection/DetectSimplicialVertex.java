@@ -6,11 +6,17 @@ import general.MatrixException;
 import general.UndirectedGraph;
 import general.Utility;
 
+/**
+ * class to detect the presence of a simplicial vertex in a graph
+ * @author Chigozie Ekwonu
+ *
+ */
 public class DetectSimplicialVertex {
 	
-	private  String p1time = "-";
-	private  String p2time = "-";
-	private  String found = "found";
+	//instance variables
+	private  String p1time = "-"; //measures time taken to execute phase one
+	private  String p2time = "-"; //measures time taken to execute phase two
+	private  String found = "found"; //stores results of the operation
 	
 	public static void main(String [] args){
 		try{
@@ -25,19 +31,28 @@ public class DetectSimplicialVertex {
 		}
 	}
 	
+	/**
+	 * method that combines phase one and phase two to detect a simplicial vertex in a graph
+	 * @param graph		the graph to be checked
+	 * @return			a simplicial vertex if found
+	 */
 	public  Graph.Vertex<Integer> detect(UndirectedGraph<Integer,Integer> graph){
+		
+		//partition vertices into low and high degree
 		List[] verticesPartition = partitionVertices(graph);
 		Graph.Vertex<Integer> simplicialVertex = null;
 		
 		List<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
 		List<Graph.Vertex<Integer>> highDegreeVertices = verticesPartition[1];
 		
+		//measure execution time of phase one
 		long starttime = System.currentTimeMillis();
 		simplicialVertex = phaseOne(graph, lowDegreeVertices);
 		long stoptime = System.currentTimeMillis();
 		p1time = ""+(stoptime-starttime);
 		
 		if(simplicialVertex==null){
+			//measure execution time of phase two
 			starttime = System.currentTimeMillis();
 			simplicialVertex = phaseTwo(graph, lowDegreeVertices, highDegreeVertices);
 			stoptime = System.currentTimeMillis();
@@ -51,12 +66,20 @@ public class DetectSimplicialVertex {
 		
 	}
 	
+	/**
+	 * method to detect a simplicial vertex in a graph. Looks for simplicial vertices of low degree
+	 * @param graph					the graph to be checked
+	 * @param lowDegreeVertices		list of low degree vertices
+	 * @return						a simplicial vertex if found
+	 */
 	public  Graph.Vertex<Integer> phaseOne(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> lowDegreeVertices){
+		
 		for(Graph.Vertex<Integer> v: lowDegreeVertices){
 			if(graph.degree(v) > 0){
 				//get the neighbours of v
 				Iterator<Graph.Vertex<Integer>> vNeigh1 = graph.neighbours(v);
 				
+				//check if every pair of its neighbours is adjacent
 				boolean isSimplicial = true;
 				
 				here:
@@ -83,10 +106,18 @@ public class DetectSimplicialVertex {
 		return null;
 	}
 	
+	/**
+	 * method to check the presence of a simplicial vertices of high degree whose neighbours
+	 * are also high degree verticesin a graph
+	 * @param graph2				the graph to be checked
+	 * @param lowDegreeVertices		the list of low degree vertices
+	 * @param highDegreeVertices	the list of high degree vertices
+	 * @return						a simplicial vertex if found
+	 */
 	public  Graph.Vertex<Integer> phaseTwo(UndirectedGraph<Integer,Integer> graph2, Collection<Graph.Vertex<Integer>> lowDegreeVertices, Collection<Graph.Vertex<Integer>> highDegreeVertices){
 		UndirectedGraph<Integer,Integer> graph = graph2.clone();
 		
-		//marked high degree vertices that have a low degree neighbour
+		//mark high degree vertices that have a low degree neighbour
 		List<Graph.Vertex<Integer>> markedVertices = new ArrayList<Graph.Vertex<Integer>>();
 		
 		for(Graph.Vertex<Integer> v: highDegreeVertices){
@@ -166,7 +197,11 @@ public class DetectSimplicialVertex {
 		return null;
 	}
 	
-	//method to partition the vertices into low degree vertices and high degree vertices
+	/**
+	 * method to partition the vertices into low degree vertices and high degree vertices
+	 * @param graph		the graph whose vertices are to be partitioned
+	 * @return			the partitions
+	 */
 	public  List<Graph.Vertex<Integer>>[] partitionVertices(UndirectedGraph<Integer,Integer> graph){
 		List<Graph.Vertex<Integer>>[] vertices = new List[2];
 		vertices[0] = new ArrayList<Graph.Vertex<Integer>>();
@@ -178,10 +213,8 @@ public class DetectSimplicialVertex {
 		//get number of edges
 		int noOfEdges = graph.getEdgeCount();
 		
-
-		//calculate D for Graph.Vertex partitioning
-		//double alpha = 2.376; //constant from Coppersmith-Winograd matrix multiplication algorithm
-		double alpha = 3;
+		//calculate D for Vertex partitioning
+		double alpha = 3; //from standard matrix multiplication
 		double pow = (alpha-1)/(alpha+1);
 		double D = Math.pow(noOfEdges, pow);
 		
@@ -196,6 +229,10 @@ public class DetectSimplicialVertex {
 		return vertices;
 	}
 	
+	/**
+	 * method to return the time taken for the detection and the result
+	 * @return		the result for analysis
+	 */
 	public  String getResult(){
 		String result = String.format("%-10s%-10s%-10s", p1time,p2time,found);
 		return result;

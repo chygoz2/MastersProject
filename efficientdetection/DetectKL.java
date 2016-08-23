@@ -4,11 +4,17 @@ import java.util.*;
 import efficientlisting.ListTriangles;
 import general.*;
 
+/**
+ * class that detects the presence of a complete subgraph of a given size
+ * @author Chigozie Ekwonu
+ *
+ */
 public class DetectKL {
 	
-	private String p1Time = "-";
-	private String p2Time = "-";
-	private  String found = "found";
+	//instance variables
+	private String p1Time = "-"; //measures time taken for phase one to execute
+	private String p2Time = "-"; //measures time taken for phase two to execute
+	private  String found = "found"; //stores whether the complete subgraph was found
 	
 	public static void main(String [] args){
 		try{
@@ -23,18 +29,27 @@ public class DetectKL {
 		}
 	}
 	
+	/**
+	 * method that calls phase one and phase two methods to detect for a Kl subgraph
+	 * @param graph			the graph to be checked
+	 * @param l				the size of the complete subgraph to be found
+	 * @return				the vertices of the complete subgraph if found
+	 */
 	public  List<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph, int l){
 		
+		//partition vertices into low and high degree vertices
 		List<Graph.Vertex<Integer>>[] verticesPartition = partitionVertices(graph, l);
 		List<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
 		List<Graph.Vertex<Integer>> highDegreeVertices = verticesPartition[1];
 		
+		//measure time taken for phase one
 		long starttime = System.currentTimeMillis();
 		List<Graph.Vertex<Integer>> kl = phaseOne(graph, l, lowDegreeVertices);
 		long stoptime = System.currentTimeMillis();
 		p1Time = ""+(stoptime-starttime);
 		
 		if(kl==null){
+			//measure time taken for phase two
 			starttime = System.currentTimeMillis();
 			kl = phaseTwo(graph, l, highDegreeVertices);
 			stoptime = System.currentTimeMillis();
@@ -47,12 +62,24 @@ public class DetectKL {
 		return kl;
 	}
 	
+	/**
+	 * method to detect a Kl in a graph. Looks for a Kl that has at least one low degree vertex
+	 * @param graph					the graph to be checked
+	 * @param l						the size of the subgraph to be detected
+	 * @param lowDegreeVertices		the list of low degree vertices
+	 * @return						the vertices of the complete subgraph if found
+	 */
 	public List<Graph.Vertex<Integer>> phaseOne(UndirectedGraph<Integer,Integer> graph, int l, Collection<Graph.Vertex<Integer>> lowDegreeVertices){
 		List<Graph.Vertex<Integer>> kl = null;
 		for(Graph.Vertex<Integer> v: lowDegreeVertices){
+			//if l = 1, return the vertex
+			if (l==1){
+				kl = new ArrayList<Graph.Vertex<Integer>>();
+				kl.add(v);
+				return kl;
+			}
 			//get the neighbour graph of V and check if it contains a K(l-1)
 			UndirectedGraph<Integer,Integer> vn = Utility.getNeighbourGraph(graph, v);
-			
 			List<List<Graph.Vertex<Integer>>> kls = find(vn, (l-1));
 			if(!kls.isEmpty()){
 				kl = kls.get(0);
@@ -63,6 +90,13 @@ public class DetectKL {
 		return kl;
 	}
 	
+	/**
+	 * method to detect a Kl. Looks for a Kl that consists of only high degree vertices
+	 * @param graph					the graph to be checked
+	 * @param l						the size of the complete subgraph to be detected
+	 * @param highDegreeVertices	the list of high degree vertices
+	 * @return						the vertices of the complete subgraph if found	
+	 */	
 	public List<Graph.Vertex<Integer>> phaseTwo(UndirectedGraph<Integer,Integer> graph, int l, Collection<Graph.Vertex<Integer>> highDegreeVertices){
 		//make a graph from all high degree vertices
 		UndirectedGraph<Integer,Integer> graph2 = Utility.makeGraphFromVertexSet(graph, highDegreeVertices);
@@ -160,17 +194,15 @@ public class DetectKL {
 					
 					//get the common neighbours of source and destination
 					List<Graph.Vertex<Integer>> commonNeighbours = new ArrayList<Graph.Vertex<Integer>>();
-					List<Graph.Vertex<Integer>> sourceNeighbours = new ArrayList<Graph.Vertex<Integer>>();
 					Iterator<Graph.Vertex<Integer>> sNIt = graph.neighbours(source);
 					while(sNIt.hasNext()){
-						sourceNeighbours.add(sNIt.next());
-					}
-					
-					Iterator<Graph.Vertex<Integer>> dNIt = graph.neighbours(destination);
-					while(dNIt.hasNext()){
-						Graph.Vertex<Integer> nv = dNIt.next();
-						if(sourceNeighbours.contains(nv)){
-							commonNeighbours.add(nv);
+						Graph.Vertex<Integer> sv = sNIt.next();
+						Iterator<Graph.Vertex<Integer>> dNIt = graph.neighbours(destination);
+						while(dNIt.hasNext()){
+							Graph.Vertex<Integer> nv = dNIt.next();
+							if(sv.getElement()==nv.getElement()){
+								commonNeighbours.add(nv);
+							}
 						}
 					}
 					
@@ -182,7 +214,7 @@ public class DetectKL {
 					//check if nXY has a K(l-2)
 					List<List<Graph.Vertex<Integer>>> kqList = find(nXY,l-2);
 					for(List<Graph.Vertex<Integer>> kq: kqList){
-						Set<Integer> hh = new HashSet<Integer>(); //to store elements of the K(l-1) vertices
+						Set<Integer> hh = new HashSet<Integer>(); //to store elements of the K(l-2) vertices
 						
 						List<Graph.Vertex<Integer>> kqPlusVertices = new ArrayList<Graph.Vertex<Integer>>();
 						kqPlusVertices.add(source); //add source
@@ -197,7 +229,7 @@ public class DetectKL {
 							hh.add(v.getElement());
 						}
 						
-						//check in the marked list for an entry that contains all 3 vertex elements
+						//check in the marked list for an entry that contains all vertex elements
 						boolean contains = marked.add(hh);
 						
 						if(contains){
@@ -210,7 +242,7 @@ public class DetectKL {
 			else if(r==0){				
 				//create auxiliary graph H
 				UndirectedGraph<Integer,Integer> H = new UndirectedGraph<Integer,Integer>();
-				//get Kq graphs
+				//get Kq subgraphs
 				List<List<Graph.Vertex<Integer>>> kqList = find(graph,q);
 				
 				//need a means of mapping which vertex of H corresponds to which set of Kq vertices in G
@@ -250,22 +282,26 @@ public class DetectKL {
 							//that only one edge is added to H for each K2q found in G.
 				Iterator<Graph.Vertex<Integer>> vIt1 = H.vertices();
 				while(vIt1.hasNext()){
-					Graph.Vertex<Integer> vOne = vIt1.next();
+					Graph.Vertex<Integer> vOne = vIt1.next(); //get one vertex in H
 					Integer vOneElement = vOne.getElement();
 					Iterator<Graph.Vertex<Integer>> vIt2 = H.vertices();
 					
 					while(vIt2.hasNext()){
-						Graph.Vertex<Integer> vTwo = vIt2.next();
+						Graph.Vertex<Integer> vTwo = vIt2.next(); //get another vertex in H
 						Integer vTwoElement = vTwo.getElement();
-						if(vOneElement!=vTwoElement){
+						if(vOneElement!=vTwoElement){ //we don't want to create a self-loop
 							Set<Integer> corrGVertices = new HashSet<Integer>();
+							//get corresponding G vertices of the two H vertices
 							Set<Integer> vOneCorrVertices = hToGMapping.get(vOneElement);
 							Set<Integer> vTwoCorrVertices = hToGMapping.get(vTwoElement);
-							corrGVertices.addAll(vOneCorrVertices);
+							//add corresponding G vertices of the two H vertices into set
+							corrGVertices.addAll(vOneCorrVertices); 
 							corrGVertices.addAll(vTwoCorrVertices);
 							
-							if(ssfound.add(corrGVertices)){
+							if(ssfound.add(corrGVertices)){ //if the edge hasn't been added before
 								for(Set<Integer> innerSet: k2qvertexset){
+									//if there exists a complete subgraph of size 2q in G, then add an edge between the 
+									//corresponding vertices in H
 									if(innerSet.size()==corrGVertices.size() && innerSet.containsAll(corrGVertices)){
 										if(!H.containsEdge(H.getVertexWithElement(vOneElement), H.getVertexWithElement(vTwoElement))){
 											H.addEdge(H.getVertexWithElement(vOneElement), H.getVertexWithElement(vTwoElement));
@@ -311,7 +347,12 @@ public class DetectKL {
 		return klList;
 	}
 	
-	//method to partition the vertices into low degree vertices and high degree vertices
+	/**
+	 * method to partition the vertices into low degree vertices and high degree vertices
+	 * @param graph			the graph to be partitioned
+	 * @param l				the size of the complete subgraph to be detected
+	 * @return				the vertices of the subgraph if found
+	 */
 	public  List<Graph.Vertex<Integer>>[] partitionVertices(UndirectedGraph<Integer,Integer> graph, int l){
 		List<Graph.Vertex<Integer>>[] vertices = new List[2];
 		vertices[0] = new ArrayList<Graph.Vertex<Integer>>();
@@ -322,9 +363,7 @@ public class DetectKL {
 		
 		//get number of edges
 		int noOfEdges = graph.getEdgeCount();
-				
-		
-
+					
 		//calculate D for Vertex partitioning
 		double D = 0;
 		if(l%3==0)
@@ -348,6 +387,10 @@ public class DetectKL {
 		return vertices;
 	}
 	
+	/**
+	 * method to return the time taken for the detection and the result
+	 * @return		the result for analysis
+	 */
 	public  String getResult(){
 		String result = String.format("%-10s%-10s%-10s", p1Time,p2Time,found);
 		return result;
