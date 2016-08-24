@@ -9,15 +9,20 @@ import efficientdetection.*;
 import efficientlisting.*;
 import general.*;
 import general.Graph.Vertex;
-import generate.GraphGenerator;
+import generate.PatternFreeGraphGenerator;
 import gui.GUI;
 
-public class Runme {
+public class RunMe {
 	public static void main(String[] args){
-		String operationvalues = "Possible values for operation_type: help, detect, list, generate, quit, gui, test";
-		String detectionValues = "Possible values for detection_type: triangle, claw, k4, kl, simplicial, diamond";
+		String operationvalues = "Possible values for [operation_class]: help, detect, list, generate, quit, gui, test";
+		String detectionValues = "Possible values for [operation_class_type]: triangle, claw, k4, kl, simplicial, diamond";
+		String optionValues = "[option] could be the graph file relative location (for detect and list operations) "
+				+ "				or graph size (for generate operation)";
 		String info = "Please enter commands in the form: "
-				+ "[operation_type] [detection_type] [graph_file]";
+				+ "[operation_class] [operation_class_type] [option]";
+		String errorMessage = "You entered fewer arguments than required.\n"
+				+ "Arguments should be in the form\n"
+				+ "[operation_class] [operation_class_type] [option]";
 		System.out.println(info);
 		System.out.println(operationvalues);
 		System.out.println(detectionValues);
@@ -30,9 +35,7 @@ public class Runme {
 		while(!words[0].equals("quit")){
 			if(words[0].equals("detect")){
 				if(words.length < 3){
-					System.out.println("You entered fewer arguments than required.");
-					System.out.println("Arguments should be in the form");
-					System.out.println("[operation_type] [detection_type] [graph_file]");
+					System.out.println(errorMessage);
 				}else{
 					String path = words[2];
 					File fr= new File(path);
@@ -145,9 +148,7 @@ public class Runme {
 			}
 			else if(words[0].equals("list")){
 				if(words.length < 3){
-					System.out.println("You entered fewer arguments than required.");
-					System.out.println("Arguments should be in the form");
-					System.out.println("[operation_type] [detection_or_listing_type] [graph_file]");
+					System.out.println(errorMessage);
 				}else{
 					String path = words[2];
 					File fr= new File(path);
@@ -280,64 +281,68 @@ public class Runme {
 				}
 			}
 			else if(words[0].equals("generate")){
-				GraphGenerator g = new GraphGenerator();
-				List<String> allowed = new ArrayList<String>();
-				allowed.add("triangle"); allowed.add("claw"); allowed.add("diamond");
-				allowed.add("k4"); allowed.add("kl");
+				if(words.length < 3){
+					System.out.println(errorMessage);
+				}else{
+					PatternFreeGraphGenerator g = new PatternFreeGraphGenerator();
+					List<String> allowed = new ArrayList<String>();
+					allowed.add("triangle"); allowed.add("claw"); allowed.add("diamond");
+					allowed.add("k4"); allowed.add("kl");
+					
+					if(allowed.contains(words[1])){
+						try{
+							int n = Integer.parseInt(words[2]);
+							if(n<1){
+								System.out.println("Size of graph should be greater than zero");
+							}else{
+								if (words[1].equals("triangle")) {
+									String filename = g.generateTriangleFreeGraph(n);
+									String out = String.format("Name of graph file: %s", filename);
+									System.out.println(out);
+								}
 				
-				if(allowed.contains(words[1])){
-					try{
-						int n = Integer.parseInt(words[2]);
-						if(n<1){
-							System.out.println("Size of graph should be greater than zero");
-						}else{
-							if (words[1].equals("triangle")) {
-								String filename = g.generateTriangleFreeGraph(n);
-								String out = String.format("Name of graph file: %s", filename);
-								System.out.println(out);
-							}
-			
-							else if (words[1].equals("claw")) {
-								String filename = g.generateClawFreeGraph(n);
-								String out = String.format("Name of graph file: %s", filename);
-								System.out.println(out);
-							}
-			
-							else if (words[1].equals("diamond")) {
-								String filename = g.generateDiamondFreeGraph(n);
-								String out = String.format("Name of graph file: %s", filename);
-								System.out.println(out);
-							}
-			
-							else if (words[1].equals("k4")) {
-								String filename = g.generateK4FreeGraph(n);
-								String out = String.format("Name of graph file: %s", filename);
-								System.out.println(out);
-							}
-							else if (words[1].equals("kl")) {
-								try{
-									System.out.println("Please enter size of complete subgraph");
-									System.out.print("> ");
-									input = sc.nextLine();
-									int l = Integer.parseInt(input);
-									if(l<1){
-										System.out.println("Size of graph induced subgraph should be greater than zero");
-									}else{
-										String filename = g.generateKLFreeGraph(n,l);
-										String out = String.format("Name of graph file: %s", filename);
-										System.out.println(out);
+								else if (words[1].equals("claw")) {
+									String filename = g.generateClawFreeGraph(n);
+									String out = String.format("Name of graph file: %s", filename);
+									System.out.println(out);
+								}
+				
+								else if (words[1].equals("diamond")) {
+									String filename = g.generateDiamondFreeGraph(n);
+									String out = String.format("Name of graph file: %s", filename);
+									System.out.println(out);
+								}
+				
+								else if (words[1].equals("k4")) {
+									String filename = g.generateK4FreeGraph(n);
+									String out = String.format("Name of graph file: %s", filename);
+									System.out.println(out);
+								}
+								else if (words[1].equals("kl")) {
+									try{
+										System.out.println("Please enter size of complete subgraph");
+										System.out.print("> ");
+										input = sc.nextLine();
+										int l = Integer.parseInt(input);
+										if(l<1){
+											System.out.println("Size of graph induced subgraph should be greater than zero");
+										}else{
+											String filename = g.generateKLFreeGraph(n,l);
+											String out = String.format("Name of graph file: %s", filename);
+											System.out.println(out);
+										}
+									}catch(NumberFormatException e){
+										System.out.println("Value entered is not an integer");
 									}
-								}catch(NumberFormatException e){
-									System.out.println("Value entered is not an integer");
 								}
 							}
+						}catch(NumberFormatException e){
+							System.out.println("Value entered is not an integer");
 						}
-					}catch(NumberFormatException e){
-						System.out.println("Value entered is not an integer");
+					}else{
+						System.out.println("For generation operation, the second argument should be among: "
+								+ "diamond, claw, triangle, k4, kl");
 					}
-				}else{
-					System.out.println("For generation operation, the second argument should be among: "
-							+ "diamond, claw, triangle, k4, kl");
 				}
 			}
 			else if(words[0].equals("test")){
@@ -370,6 +375,9 @@ public class Runme {
 			words = input.split("[ ]+");
 		}
 		sc.close();
+		if(words[0].equals("quit")){
+			System.exit(0);
+		}
 	}
 
 	public static String printList(List<Graph.Vertex<Integer>> list){

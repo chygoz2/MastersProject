@@ -9,18 +9,11 @@ import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import efficientdetection.*;
-import efficientlisting.*;
 import general.Graph;
-import general.UndirectedGraph;
 import general.Utility;
-import general.Graph.Vertex;
-import generate.GraphGenerator;
 
 public class GUI extends JFrame 
 		implements ActionListener, ItemListener{
@@ -306,7 +299,7 @@ public class GUI extends JFrame
 					}
 				}
 				outputArea.setText(outputArea.getText()+"Detecting...\n");
-				DetectWorker w = new DetectWorker(selectedButton,fileName,l);
+				DetectWorker w = new DetectWorker(selectedButton,fileName,l, outputArea);
 				w.execute();
 			}catch(NumberFormatException f){
 				JOptionPane.showMessageDialog(null, "The size of the complete subgraph entered is not an integer");
@@ -340,7 +333,7 @@ public class GUI extends JFrame
 					}
 				}
 				outputArea.setText(outputArea.getText()+"Listing...\n");
-				ListWorker w = new ListWorker(selectedButton,fileName,l);
+				ListWorker w = new ListWorker(selectedButton,fileName,l,outputArea);
 				w.execute();
 			}catch(NumberFormatException f){
 				JOptionPane.showMessageDialog(null, "The size of the complete subgraph entered is not an integer");
@@ -361,7 +354,7 @@ public class GUI extends JFrame
 					JOptionPane.showMessageDialog(null, "Size of complete subgraph should be greater than zero");
 				}else{
 					outputArea.setText(outputArea.getText()+"Generating...\n");
-					GenerateWorker w = new GenerateWorker(selectedButton,n,l);
+					GenerateWorker w = new GenerateWorker(selectedButton,n,l,outputArea);
 					w.execute();
 				}
 			}catch(NumberFormatException f){
@@ -427,265 +420,6 @@ public class GUI extends JFrame
 				time += Integer.parseInt(tokens[i]);
 		}
 		return time;
-	}
-	
-	public class DetectWorker extends SwingWorker<String,Void>{
-
-		private String type;
-		private String filename;
-		private int l;
-		
-		private DetectWorker(String type, String filename, int l){
-			this.type = type;
-			this.filename = filename;
-			this.l = l;
-		}
-		
-		@Override
-		protected String doInBackground() throws Exception {			
-			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(filename);
-			if(graph==null)
-				return null;
-			
-			String out = "";
-			if(type.equals("Diamond")){
-				DetectDiamond d = new DetectDiamond();
-				List<Graph.Vertex<Integer>> diamond = d.detect(graph);
-				if(diamond!=null){
-					out = printList(diamond);
-					out = String.format("Diamond found%nVertices: %s%n", out);
-					out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-				}else{
-					out = String.format("Diamond not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-				}
-			}else if(type.equals("Claw")){
-				
-				DetectClaw d = new DetectClaw();
-				List<Graph.Vertex<Integer>> claw = d.detect(graph);
-				if(claw!=null){
-					out = printList(claw);
-					out = String.format("Claw found%nVertices: %s%n", out);
-					out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-				}else{
-					out = String.format("Claw not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-				}
-			}else if(type.equals("K4")){
-				DetectK4 d = new DetectK4();
-				List<Graph.Vertex<Integer>> k4 = d.detect(graph);
-				if(k4!=null){
-					out = printList(k4);
-					out = String.format("K4 found%nVertices: %s%n", out);
-					out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-				}else{
-					out = String.format("K4 not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-				}
-			}else if(type.equals("Simplicial Vertex")){
-				DetectSimplicialVertex d = new DetectSimplicialVertex();
-				Graph.Vertex<Integer> simpVertex = d.detect(graph);
-				if(simpVertex!=null){
-					out = String.format("Simplicial vertex found%nOne such vertex: %s%n", simpVertex.getElement());
-					out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-					return out;
-				}else{
-					out = String.format("Simplicial vertex not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-				}
-			}else if(type.equals("Triangle")){
-				DetectTriangle d = new DetectTriangle();
-				List<Graph.Vertex<Integer>> triangle = d.detect(graph);
-				if(triangle!=null){
-					out = printList(triangle);
-					out = String.format("Triangle found%nVertices: %s%n", out);
-					out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-				}else{
-					out = String.format("Triangle not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-				}
-			}else if(type.equals("KL")){
-				DetectKL d = new DetectKL();
-				List<Graph.Vertex<Integer>> kl = d.detect(graph, l);
-				if(kl!=null){
-					out = printList(kl);
-					out = String.format("K"+l+" found%nVertices: %s%n", out);
-					out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-				}else{
-					out = String.format("K"+l+" not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-				}
-			}
-			return out;
-		}
-
-		@Override
-		protected void done() {
-			String out = "";
-			try {
-				out = get();
-			} catch (InterruptedException | ExecutionException e) {
-				e.printStackTrace();
-			}
-			outputArea.setText(outputArea.getText()+out+"\n\n");
-		}	
-	}
-	
-	private class ListWorker extends SwingWorker<String,Void>{
-
-		private String type;
-		private String filename;
-		private int l;
-		
-		private ListWorker(String type, String filename, int l){
-			this.type = type;
-			this.filename = filename;
-			this.l = l;
-		}
-		
-		@Override
-		protected String doInBackground() throws Exception {
-			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(filename);
-			if(graph==null)
-				return null;
-			
-			String out = "";
-			if(type.equals("Diamond")){
-				ListDiamonds d = new ListDiamonds();
-				List<List<Vertex<Integer>>> diamonds = d.detect(graph);
-				if(!diamonds.isEmpty()){
-					for(List<Graph.Vertex<Integer>> diamond: diamonds){
-						out += printList(diamond)+"\n";
-					}
-					out = String.format("Diamond found%nVertices:%n%s", out);
-					out += String.format("Number of diamonds found: %d%n", diamonds.size());
-					out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-				}else{
-					out = String.format("Diamond not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-				}
-			}else if(type.equals("Claw")){
-				ListClaws d = new ListClaws();
-				List<List<Vertex<Integer>>> claws = d.detect(graph);
-				if(!claws.isEmpty()){
-					for(List<Graph.Vertex<Integer>> claw: claws){
-						out += printList(claw)+"\n";
-					}
-					out = String.format("Claw found%nVertices:%n%s", out);
-					out += String.format("Number of claws found: %d%n", claws.size());
-					out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-					System.out.println(out);
-				}else{
-					out = String.format("Claw not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-				}
-			}else if(type.equals("K4")){
-				ListK4 d = new ListK4();
-				List<List<Vertex<Integer>>> k4s = d.detect(graph);
-				if(!k4s.isEmpty()){
-					for(List<Graph.Vertex<Integer>> k4: k4s){
-						out += printList(k4)+"\n";
-					}
-					out = String.format("K4 found%nVertices:%n%s", out);
-					out += String.format("Number of K4s found: %d%n", k4s.size());
-					out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-				}else{
-					out = String.format("K4 not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-				}
-			}else if(type.equals("Simplicial Vertex")){
-				ListSimplicialVertices d = new ListSimplicialVertices();
-				List<Graph.Vertex<Integer>> simpVertex = d.detect(graph);
-				if(!simpVertex.isEmpty()){
-					out = printList(simpVertex);
-					out = String.format("Simplicial vertices found%nVertices: %s%n", out);
-					out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-				}else{
-					out = String.format("Simplicial vertices not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-				}
-			}else if(type.equals("Triangle")){
-				ListTriangles d = new ListTriangles();
-				List<List<Vertex<Integer>>> triangles = d.detect(graph);
-				if(!triangles.isEmpty()){
-					for(List<Graph.Vertex<Integer>> triangle: triangles){
-						out += printList(triangle)+"\n";
-					}
-					out = String.format("Triangle found%nVertices:%n%s", out);
-					out += String.format("Number of triangles found: %d%n", triangles.size());
-					out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-				}else{
-					out = String.format("Triangle not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-				}
-			}else if(type.equals("KL")){
-				ListKL d = new ListKL();
-				List<List<Vertex<Integer>>> kls = d.detect(graph, l);
-				if(!kls.isEmpty()){
-					out = "";
-					for(List<Graph.Vertex<Integer>> kl: kls){
-						out += printList(kl)+"\n";
-					}
-					out = String.format("K"+l+" found%nVertices:%n%s", out);
-					out += String.format("Number of K"+l+"s found: %d%n", kls.size());
-					out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-				}else{
-					out = String.format("K"+l+" not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-				}
-			}
-			return out;
-		}
-
-		@Override
-		protected void done() {
-			String out = "";
-			try {
-				out = get();
-			} catch (InterruptedException | ExecutionException e) {
-				e.printStackTrace();
-			}
-			outputArea.setText(outputArea.getText()+out+"\n\n");
-		}	
-	}
-	
-	private class GenerateWorker extends SwingWorker<String,Void>{
-
-		private String type;
-		private int n;
-		private int l;
-		
-		private GenerateWorker(String type, int n, int l){
-			this.type = type;
-			this.n = n;
-			this.l = l;
-		}
-		
-		@Override
-		protected String doInBackground() throws Exception {
-			String out = "";
-			GraphGenerator g = new GraphGenerator();
-			if(type.equals("Diamond-free")){
-				String filename = g.generateDiamondFreeGraph(n);
-				out = String.format("Name of graph file: %s", filename);
-			}else if(type.equals("Claw-free")){
-				String filename = g.generateClawFreeGraph(n);
-				out = String.format("Name of graph file: %s", filename);
-			}else if(type.equals("K4-free")){
-				String filename = g.generateK4FreeGraph(n);
-				out = String.format("Name of graph file: %s", filename);
-			}else if(type.equals("Triangle-free")){
-				String filename = g.generateTriangleFreeGraph(n);
-				out = String.format("Name of graph file: %s", filename);
-			}else if(type.equals("KL-free")){
-				try{
-					String filename = g.generateKLFreeGraph(n,l);
-					out = String.format("Name of graph file: %s", filename);
-				}catch(NumberFormatException e){
-					JOptionPane.showMessageDialog(null, "The size entered is not an integer");
-				}
-			}
-			return out;
-		}
-
-		@Override
-		protected void done() {
-			String out = "";
-			try {
-				out = get();
-			} catch (InterruptedException | ExecutionException e) {
-				e.printStackTrace();
-			}
-			outputArea.setText(outputArea.getText()+out+"\n\n");
-		}	
 	}
 
 	@Override

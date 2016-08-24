@@ -29,7 +29,6 @@ public class DetectDiamond {
 			
 			DetectDiamond d = new DetectDiamond();
 			List<Graph.Vertex<Integer>> diamond = d.detect(graph);
-			Utility.printGraph(Utility.makeGraphFromVertexSet(graph, diamond));
 			System.out.print(d.getResult());
 		}catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("Please provide the graph file as a command line argument");

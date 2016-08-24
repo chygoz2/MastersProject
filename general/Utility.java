@@ -347,18 +347,19 @@ public final class Utility {
 		
 //		int[][] a = {{1,2,3,3},{4,5,6,6},{7,8,9,9},{10,11,12,13}};
 		Random r = new Random(System.currentTimeMillis());
-		int n = 512;
+		int n = 1000;
 		int[][] a = new int[n][n];
+		int[][] b = new int[n][n];
 		for(int i=0; i<a.length; i++){
 			for(int j=0; j<a.length; j++){
-				int no = r.nextInt(1000);
-				a[i][j] = no;
+				a[i][j] = r.nextInt(10000);
+				b[i][j] = r.nextInt(10000);
 			}
 		}
 		int[][] res = null;
 		try {
 			long start = System.currentTimeMillis();
-			res = multiplyMatrix(a,a);
+			res = multiplyMatrix(a,b);
 			long stop= System.currentTimeMillis();
 			System.out.println("Time taken: " + (stop-start));
 		} catch (MatrixException e) {

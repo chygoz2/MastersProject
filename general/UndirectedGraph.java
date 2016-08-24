@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Queue;
+import java.util.Set;
 import java.util.Stack;
 
 import general.Graph.Edge;
@@ -40,8 +41,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 	public boolean containsEdge(Vertex<E> v0, Vertex<E> v1) {
 		if(degree(v0) > degree(v1)){
 			List<Edge<A>> neighbours = ((UnVertex)v0).neighbours;
-			for(Edge<A> edge1: neighbours){
-				UnEdge edge = (UnEdge)edge1;
+			for(Edge<A> edge: neighbours){
 				if(edge.getSource().equals(v1) && edge.getDestination().equals(v0) ||
 						edge.getSource().equals(v0) && edge.getDestination().equals(v1)){
 					return true;
@@ -50,8 +50,7 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		}
 		else{
 			List<Edge<A>> neighbours = ((UnVertex)v1).neighbours;
-			for(Edge<A> edge1: neighbours){
-				UnEdge edge = (UnEdge)edge1;
+			for(Edge<A> edge: neighbours){
 				if(edge.getSource().equals(v1) && edge.getDestination().equals(v0) ||
 						edge.getSource().equals(v0) && edge.getDestination().equals(v1)){
 					return true;
@@ -104,6 +103,9 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 	public void removeVertex(Vertex<E> v) {		
 		if(v==null)
 			throw new NullPointerException();
+		Set<E> keys = vertexElementMap.keySet();
+		if(!keys.contains(v.getElement()))
+			throw new NoSuchElementException();
 		//remove all edges that connect to vertex v	
 		Iterator<Edge<A>> it = connectingEdges(v);
 		while(it.hasNext()){
@@ -273,16 +275,6 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 			i++; j = 0;
 		}
 		return C;
-	}
-	
-	public void printAdjacencyMatrix(){
-		int[][] A = this.getAdjacencyMatrix();
-		for(int i=0; i<A.length; i++){
-			for(int j=0; j<A[i].length; j++){
-				System.out.print((int)A[i][j]+" ");
-			}
-			System.out.println();
-		}
 	}
 	
 	public Vertex<E> getVertexWithElement(int i){

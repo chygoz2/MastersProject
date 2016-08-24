@@ -8,7 +8,7 @@ import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
 
-public class GraphGenerator {
+public class PatternFreeGraphGenerator {
 	
 	public String generateDiamondFreeGraph(int n){		
 		int[][] adjMatrix = new int[n][n];
