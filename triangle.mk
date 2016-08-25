@@ -10,5 +10,5 @@ triangle: $(foreach i, $(INSTANCES), $(RESULTSDIR)/efficient_triangle_detection_
 
 $(RESULTSDIR)/efficient_triangle_detection_result/%:
 	mkdir -p $(RESULTSDIR)/efficient_triangle_detection_result
-	$(JVM) efficientdetection/DetectTriangle $(GRAPHDIR)/$* | tee $(RESULTSDIR)/efficient_triangle_detection_result/$*
+	$(JVM) efficient.detection.DetectTriangle $(GRAPHDIR)/$* | tee $(RESULTSDIR)/efficient_triangle_detection_result/$*
 

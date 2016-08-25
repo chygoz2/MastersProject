@@ -3,7 +3,9 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-//import javax.swing.JOptionPane;
+import exception.GraphFileReaderException;
+import exception.MatrixException;
+
 
 public final class Utility {
 	
@@ -25,12 +27,11 @@ public final class Utility {
 		return null;
 	}
 	
-	public static UndirectedGraph<Integer,Integer> makeGraphFromFile(String fileName){
+	public static UndirectedGraph<Integer,Integer> makeGraphFromFile(String fileName) throws GraphFileReaderException{
 	
 		String r = validateInput(fileName);
 		if(r!=null){
-			System.out.println(r);
-			return null;
+			throw new GraphFileReaderException(r);
 		}
 		
 		FileReader reader = null;
@@ -56,10 +57,8 @@ public final class Utility {
 		for(int i=0; i<vertexCount; i++){
 			String[] stringI = lines.get(i).split("[ ]+");
 			if(stringI.length != vertexCount){
-//				JOptionPane.showMessageDialog(null, "The number of columns in file do not match the required Vertex count");
-				System.out.println("The number of columns in file do not match the required Vertex count");
 				scanner.close();
-				return null;
+				throw new GraphFileReaderException("The number of columns in file do not match the required Vertex count");
 			}
 			for(int j=i+1; j<vertexCount; j++){
 				adjMatrix[i][j] = Integer.parseInt(stringI[j]);
@@ -94,9 +93,8 @@ public final class Utility {
 			for(int j=i+1; j<v; j++){
 				double rand = random.nextDouble();
 				if(rand<p){
-//					graph.addEdge(vertices[i], vertices[j]);
 					adjMatrix[i][j] = 1;
-					adjMatrix[j][i] = 1;
+					adjMatrix[j][i] = adjMatrix[i][j];
 				}
 			}
 		}
@@ -179,19 +177,20 @@ public final class Utility {
 
 	public static void generateRandomGraphFile(int v, double p, int no){
 		for(int i=1; i<=no; i++){
+			System.out.printf("Generating graph_%d_%.1f_%d%n",v,p,no);
 			int[][] A = makeRandomGraph(v,p);
 			saveGraphToFile(A,p,i);
 		}
 	}
 	
 	public static void saveGraphToFile(int[][] A, double p, int no){
-		String out = "";
+		StringBuilder out = new StringBuilder();
 		
 		for(int i=0; i<A.length; i++){
 			for(int j=0; j<A[i].length; j++){
-				out += A[i][j]+" "; 
+				out.append(A[i][j]+" ");
 			}
-			out += String.format("%n");
+			out.append("\n");
 		}
 	
 		//get graph size
@@ -213,22 +212,21 @@ public final class Utility {
 		
 		try {
 			FileWriter writer = new FileWriter(graphFileName);
-			writer.write(out);
+			writer.write(out.toString());
 			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	public String saveGraphToFile(int[][] A, long no, String type){
-		String out = "";
+		StringBuilder out = new StringBuilder();
 		
 		for(int i=0; i<A.length; i++){
 			for(int j=0; j<A[i].length; j++){
-				out += A[i][j]+" "; 
+				out.append(A[i][j]+" ");
 			}
-			out += String.format("%n");
+			out.append("\n");
 		}
 	
 		//get graph size
@@ -254,7 +252,7 @@ public final class Utility {
 		
 		try {
 			FileWriter writer = new FileWriter(graphFileName);
-			writer.write(out);
+			writer.write(out.toString());
 			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();

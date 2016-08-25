@@ -1,12 +1,22 @@
 import java.awt.EventQueue;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
 
-import efficientdetection.*;
-import efficientlisting.*;
+import efficient.detection.DetectClaw;
+import efficient.detection.DetectDiamond;
+import efficient.detection.DetectK4;
+import efficient.detection.DetectKL;
+import efficient.detection.DetectSimplicialVertex;
+import efficient.detection.DetectTriangle;
+import efficient.listing.ListClaws;
+import efficient.listing.ListDiamonds;
+import efficient.listing.ListK4;
+import efficient.listing.ListKL;
+import efficient.listing.ListSimplicialVertices;
+import efficient.listing.ListTriangles;
+import exception.GraphFileReaderException;
 import general.*;
 import general.Graph.Vertex;
 import generate.PatternFreeGraphGenerator;
@@ -39,11 +49,15 @@ public class RunMe {
 				}else{
 					String path = words[2];
 					File fr= new File(path);
-					System.out.println(path);
 					if(!fr.exists())
 						System.out.println("File not found");
 					else{	
-						UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(path);
+						UndirectedGraph<Integer, Integer> graph = null;
+						try {
+							graph = Utility.makeGraphFromFile(path);
+						} catch (GraphFileReaderException e1) {
+							System.out.println(e1.getError());
+						}
 						if(graph!=null){
 							if (words[1].equals("triangle")) {
 								DetectTriangle d = new DetectTriangle();
@@ -155,7 +169,12 @@ public class RunMe {
 					if(!fr.exists())
 						System.out.println("File not found");
 					else{	
-						UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(path);
+						UndirectedGraph<Integer, Integer> graph = null;
+						try {
+							graph = Utility.makeGraphFromFile(path);
+						} catch (GraphFileReaderException e1) {
+							e1.getError();
+						}
 						if(graph!=null){
 							if (words[1].equals("triangle")) {
 								ListTriangles d = new ListTriangles();

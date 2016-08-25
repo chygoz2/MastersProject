@@ -10,4 +10,4 @@ k4: $(foreach i, $(INSTANCES), $(RESULTSDIR)/bruteforce_k4_detection_result/$(i)
 
 $(RESULTSDIR)/bruteforce_k4_detection_result/%:
 	mkdir -p $(RESULTSDIR)/bruteforce_k4_detection_result
-	$(JVM) easydetection/DetectK4 $(GRAPHDIR)/$* | tee $(RESULTSDIR)/bruteforce_k4_detection_result/$*
+	$(JVM) bruteforce.detection.DetectK4 $(GRAPHDIR)/$* | tee $(RESULTSDIR)/bruteforce_k4_detection_result/$*

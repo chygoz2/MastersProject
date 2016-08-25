@@ -10,4 +10,4 @@ diamond: $(foreach i, $(INSTANCES), $(RESULTSDIR)/bruteforce_diamond_detection_r
 
 $(RESULTSDIR)/bruteforce_diamond_detection_result/%:
 	mkdir -p $(RESULTSDIR)/bruteforce_diamond_detection_result
-	$(JVM) easydetection/DetectDiamond $(GRAPHDIR)/$* | tee $(RESULTSDIR)/bruteforce_diamond_detection_result/$*
+	$(JVM) bruteforce.detection.DetectDiamond $(GRAPHDIR)/$* | tee $(RESULTSDIR)/bruteforce_diamond_detection_result/$*

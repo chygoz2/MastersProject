@@ -10,4 +10,4 @@ claw: $(foreach i, $(INSTANCES), $(RESULTSDIR)/bruteforce_claw_detection_result/
 
 $(RESULTSDIR)/bruteforce_claw_detection_result/%:
 	mkdir -p $(RESULTSDIR)/bruteforce_claw_detection_result
-	$(JVM) easydetection/DetectClaw $(GRAPHDIR)/$* | tee $(RESULTSDIR)/bruteforce_claw_detection_result/$*
+	$(JVM) bruteforce.detection.DetectClaw $(GRAPHDIR)/$* | tee $(RESULTSDIR)/bruteforce_claw_detection_result/$*

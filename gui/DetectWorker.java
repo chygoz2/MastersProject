@@ -4,14 +4,16 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JEditorPane;
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
-import efficientdetection.DetectClaw;
-import efficientdetection.DetectDiamond;
-import efficientdetection.DetectK4;
-import efficientdetection.DetectKL;
-import efficientdetection.DetectSimplicialVertex;
-import efficientdetection.DetectTriangle;
+import efficient.detection.DetectClaw;
+import efficient.detection.DetectDiamond;
+import efficient.detection.DetectK4;
+import efficient.detection.DetectKL;
+import efficient.detection.DetectSimplicialVertex;
+import efficient.detection.DetectTriangle;
+import exception.GraphFileReaderException;
 import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
@@ -31,8 +33,14 @@ public class DetectWorker extends SwingWorker<String,Void>{
 	}
 	
 	@Override
-	protected String doInBackground() throws Exception {			
-		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(filename);
+	protected String doInBackground() {			
+		UndirectedGraph<Integer, Integer> graph = null;
+		try {
+			graph = Utility.makeGraphFromFile(filename);
+		} catch (GraphFileReaderException e) {
+			JOptionPane.showMessageDialog(null, e.getError());
+		}
+		
 		if(graph==null)
 			return null;
 		

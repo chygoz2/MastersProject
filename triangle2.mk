@@ -10,5 +10,5 @@ triangle: $(foreach i, $(INSTANCES), $(RESULTSDIR)/bruteforce_triangle_detection
 
 $(RESULTSDIR)/bruteforce_triangle_detection_result/%:
 	mkdir -p $(RESULTSDIR)/bruteforce_triangle_detection_result
-	$(JVM) easydetection/DetectTriangle $(GRAPHDIR)/$* | tee $(RESULTSDIR)/bruteforce_triangle_detection_result/$*
+	$(JVM) bruteforce.detection.DetectTriangle $(GRAPHDIR)/$* | tee $(RESULTSDIR)/bruteforce_triangle_detection_result/$*
 

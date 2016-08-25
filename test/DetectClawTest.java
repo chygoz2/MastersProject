@@ -10,7 +10,8 @@ import java.util.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import efficientdetection.*;
+import efficient.detection.DetectClaw;
+import exception.GraphFileReaderException;
 import general.*;
 import general.Graph.Vertex;
 
@@ -22,13 +23,13 @@ public class DetectClawTest {
 	UndirectedGraph<Integer,Integer> graph;
 
 	@Before
-	public void before(){
+	public void before() throws GraphFileReaderException{
 		String fileName = "test\\testdata\\clawtestdata.txt";
 		graph = Utility.makeGraphFromFile(fileName);
 	}
 	
 	/**
-	 * Test method for {@link efficientdetection.DetectTriangle#detect(general.UndirectedGraph)}.
+	 * Test method for {@link efficient.detection.DetectTriangle#detect(general.UndirectedGraph)}.
 	 */
 	@Test
 	public void testDetect() {
@@ -45,7 +46,7 @@ public class DetectClawTest {
 	}
 
 	/**
-	 * Test method for {@link efficientdetection.DetectTriangle#phaseOne(general.UndirectedGraph, java.util.List)}.
+	 * Test method for {@link efficient.detection.DetectTriangle#phaseOne(general.UndirectedGraph, java.util.List)}.
 	 */
 	@Test
 	public void testPhaseOne() {
@@ -54,7 +55,7 @@ public class DetectClawTest {
 	}
 
 	/**
-	 * Test method for {@link efficientdetection.DetectTriangle#phaseTwo(general.UndirectedGraph, java.util.List)}.
+	 * Test method for {@link efficient.detection.DetectTriangle#phaseTwo(general.UndirectedGraph, java.util.List)}.
 	 */
 	@Test
 	public void testPhaseTwo() {

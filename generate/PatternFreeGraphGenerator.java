@@ -3,7 +3,11 @@ package generate;
 import java.util.List;
 import java.util.Random;
 
-import efficientdetection.*;
+import efficient.detection.DetectClaw;
+import efficient.detection.DetectDiamond;
+import efficient.detection.DetectK4;
+import efficient.detection.DetectKL;
+import efficient.detection.DetectTriangle;
 import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;

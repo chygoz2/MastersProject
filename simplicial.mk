@@ -10,4 +10,4 @@ simplicial: $(foreach i, $(INSTANCES), $(RESULTSDIR)/efficient_simplicial_detect
 
 $(RESULTSDIR)/efficient_simplicial_detection_result/%:
 	mkdir -p $(RESULTSDIR)/efficient_simplicial_detection_result
-	$(JVM) efficientdetection/DetectSimplicialVertex $(GRAPHDIR)/$* | tee $(RESULTSDIR)/efficient_simplicial_detection_result/$*
+	$(JVM) efficient.detection.DetectSimplicialVertex $(GRAPHDIR)/$* | tee $(RESULTSDIR)/efficient_simplicial_detection_result/$*

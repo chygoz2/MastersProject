@@ -10,4 +10,4 @@ claw: $(foreach i, $(INSTANCES), $(RESULTSDIR)/efficient_claw_detection_result/$
 
 $(RESULTSDIR)/efficient_claw_detection_result/%:
 	mkdir -p $(RESULTSDIR)/efficient_claw_detection_result
-	$(JVM) efficientdetection/DetectClaw $(GRAPHDIR)/$* | tee $(RESULTSDIR)/efficient_claw_detection_result/$*
+	$(JVM) efficient.detection.DetectClaw $(GRAPHDIR)/$* | tee $(RESULTSDIR)/efficient_claw_detection_result/$*

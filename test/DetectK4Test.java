@@ -8,7 +8,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import efficientdetection.DetectK4;
+import efficient.detection.DetectK4;
+import exception.GraphFileReaderException;
 import general.Graph;
 import general.Graph.Vertex;
 import general.UndirectedGraph;
@@ -20,7 +21,7 @@ public class DetectK4Test {
 	List<Graph.Vertex<Integer>> lowDegreeVertices, highDegreeVertices;
 
 	@Before
-	public void before(){
+	public void before() throws GraphFileReaderException{
 		String fileName = "test\\testdata\\k4testdata.txt";
 		graph = Utility.makeGraphFromFile(fileName);
 		lowDegreeVertices = new DetectK4().partitionVertices(graph)[0];

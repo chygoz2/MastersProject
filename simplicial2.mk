@@ -10,4 +10,4 @@ simplicial: $(foreach i, $(INSTANCES), $(RESULTSDIR)/bruteforce_simplicial_detec
 
 $(RESULTSDIR)/bruteforce_simplicial_detection_result/%:
 	mkdir -p $(RESULTSDIR)/bruteforce_simplicial_detection_result
-	$(JVM) easydetection/DetectSimplicialVertex $(GRAPHDIR)/$* | tee $(RESULTSDIR)/bruteforce_simplicial_detection_result/$*
+	$(JVM) bruteforce.detection.DetectSimplicialVertex $(GRAPHDIR)/$* | tee $(RESULTSDIR)/bruteforce_simplicial_detection_result/$*

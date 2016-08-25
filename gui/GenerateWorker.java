@@ -23,7 +23,7 @@ public class GenerateWorker extends SwingWorker<String,Void>{
 	}
 	
 	@Override
-	protected String doInBackground() throws Exception {
+	protected String doInBackground() {
 		String out = "";
 		PatternFreeGraphGenerator g = new PatternFreeGraphGenerator();
 		if(type.equals("Diamond-free")){

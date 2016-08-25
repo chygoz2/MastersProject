@@ -4,14 +4,16 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JEditorPane;
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
-import efficientlisting.ListClaws;
-import efficientlisting.ListDiamonds;
-import efficientlisting.ListK4;
-import efficientlisting.ListKL;
-import efficientlisting.ListSimplicialVertices;
-import efficientlisting.ListTriangles;
+import efficient.listing.ListClaws;
+import efficient.listing.ListDiamonds;
+import efficient.listing.ListK4;
+import efficient.listing.ListKL;
+import efficient.listing.ListSimplicialVertices;
+import efficient.listing.ListTriangles;
+import exception.GraphFileReaderException;
 import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
@@ -32,8 +34,13 @@ public class ListWorker extends SwingWorker<String,Void>{
 	}
 	
 	@Override
-	protected String doInBackground() throws Exception {
-		UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(filename);
+	protected String doInBackground() {
+		UndirectedGraph<Integer, Integer> graph = null;
+		try {
+			graph = Utility.makeGraphFromFile(filename);
+		} catch (GraphFileReaderException e) {
+			JOptionPane.showMessageDialog(null, e.getError());
+		}
 		if(graph==null)
 			return null;
 		

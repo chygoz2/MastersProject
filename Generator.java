@@ -46,7 +46,7 @@ public class Generator
 
 		for (int i = 0; i != size; i++)
 		{
-			for (int j = i; j != size; j++)
+			for (int j = i+1; j != size; j++)
 			{
 				double r = Math.random();
 				if (r <= density)
@@ -98,7 +98,8 @@ public class Generator
 		double densityRounded = ((Number) density).doubleValue();
 		String topDir = "./generated_graphs";
 		String sizeDir = "./generated_graphs/size_" + size + "/";
-		String fname = "./generated_graphs/size_" + size + "/" + "graph_" + size + "_" + df.format(densityRounded) + "_" + label + ".txt";
+//		String fname = "./generated_graphs/size_" + size + "/" + "graph_" + size + "_" + df.format(densityRounded) + "_" + label + ".txt";
+		String fname = "./generated_graphs/" + "graph_" + size + "_" + df.format(densityRounded) + "_" + label + ".txt";
 
 		// String fname = "graph_" + size + "_" + df.format(densityRounded) + "_" + label + ".txt";
 

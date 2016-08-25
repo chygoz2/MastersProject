@@ -3,6 +3,8 @@ package test;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -11,166 +13,132 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import efficientdetection.DetectClaw;
-import efficientdetection.DetectDiamond;
-import efficientdetection.DetectK4;
-import efficientdetection.DetectKL;
-import efficientdetection.DetectSimplicialVertex;
-import efficientdetection.DetectTriangle;
+import efficient.detection.DetectClaw;
+import efficient.detection.DetectDiamond;
+import efficient.detection.DetectK4;
+import efficient.detection.DetectKL;
+import efficient.detection.DetectSimplicialVertex;
+import efficient.detection.DetectTriangle;
+import exception.GraphFileReaderException;
 import general.UndirectedGraph;
 import general.Utility;
 
 public class Evaluator2 {
-	static boolean done;
-	static int start=0, end=0, no=0;
 
 	public static void main(String[] args) {
 		String generateGraphs = "";
+		String rundetection = "";
+		int start=0, end=0, no=0, density=0;
 		if(args.length>0){
-			start = Integer.parseInt(args[0]);
-			end = Integer.parseInt(args[1]);
-			no = Integer.parseInt(args[2]); 
-			generateGraphs = args[3];
+			try{
+				start = Integer.parseInt(args[0]);
+				end = Integer.parseInt(args[1]);
+				density = Integer.parseInt(args[2]);
+				no = Integer.parseInt(args[3]); 
+				generateGraphs = args[4];
+				rundetection = args[5];
+			}catch(ArrayIndexOutOfBoundsException e){
+//				System.out.println("Run detection argument not entered");
+			}
 		}
 		
-		ThreadPoolExecutor executor2 = null;
-		
 		if(generateGraphs.equals("gg")){
-			System.out.print("Generating graphs\n");
-			BlockingQueue<Runnable> blockingQueue2 = new ArrayBlockingQueue<Runnable>(20);
+			generateRandomGraphs(start, end, density, no);
+		}
+		
+		if(rundetection.equals("rd")){
+			BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<Runnable>(4);
 	
-			executor2 = new ThreadPoolExecutor(20,
-					20, 60000, TimeUnit.MILLISECONDS, blockingQueue2);
+			ThreadPoolExecutor executor = new ThreadPoolExecutor(4,
+					4, 60000, TimeUnit.MILLISECONDS, blockingQueue);
 	
-			executor2.setRejectedExecutionHandler(new RejectedExecutionHandler() {
+			executor.setRejectedExecutionHandler(new RejectedExecutionHandler() {
 				@Override
 				public void rejectedExecution(Runnable r,
 						ThreadPoolExecutor executor) {
-//					System.out.println(r.toString() + " Rejected");
+					System.out.println(r.toString() + " Rejected");
 					//            	System.out.print(".");
 					try {
 						Thread.sleep(5);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-//					System.out.println("Trying "+ r.toString() + " again");
+					System.out.println("Trying "+ r.toString() + " again");
 					//                System.out.print(".");
 					executor.execute(r);
 				}
 			});
 	
 			// Let start all core threads initially
-			executor2.prestartAllCoreThreads();
+			executor.prestartAllCoreThreads();
 	
 			int i=1;
-			//generate random graphs
-			for(int j=start; j<=end; j++){
-				Runnable r = new GraphGenerator(j,i++,no);
-				executor2.execute(r);
+			long star = System.currentTimeMillis();
+			System.out.println("Reading graphs");
+			List<String> graphs = getGeneratedFiles();
+			System.out.println("Done");
+	
+	
+			i = 1;
+			System.out.println("Running diamond detection");
+			//run detect diamond tests
+			for(String graph: graphs){
+				Runnable r = new DetectDiamondRunner(graph,i++);
+				executor.execute(r);
 			}
+	
+//			i = 1;
+//			System.out.println("Running claw detection");
+//			//run detect claw tests
+//			for(String graph: graphs){
+//				Runnable r = new DetectClawRunner(graph,i++);
+//				executor.execute(r);
+//			}
+//	
+//			i = 1;
+//			System.out.println("Running k4 detection");
+//			//run detect K4 tests
+//			for(String graph: graphs){
+//				Runnable r = new DetectK4Runner(graph,i++);
+//				executor.execute(r);
+//			}
+//	
+//			//run detect Kl tests
+//			for(String graph: graphs){
+//				Runnable r = new DetectKLRunner(graph,i++);
+//				executor.execute(r);
+//			}
+//	
+//			i = 1;
+//			System.out.println("Running simplicial detection");
+//			//run detect simplicial tests
+//			for(String graph: graphs){
+//				Runnable r = new DetectSimplicialRunner(graph,i++);
+//				executor.execute(r);
+//			}
+//			
+//			System.out.println("Running triangle detection");
+//			//run detect triangle tests
+//			for(String graph: graphs){
+//				Runnable r = new DetectTriangleRunner(graph,i++);
+//				executor.execute(r);
+//			}
+			executor.shutdown();
 			
-			executor2.shutdown();
-		}
-		if(executor2!=null){
-			while(!executor2.isTerminated()){
+			while(!executor.isTerminated()){
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
+			
+//			CombineResults combiner = new CombineResults();
+//			combiner.start();
+//			
+//			long stop = System.currentTimeMillis();
+//			System.out.println("Time taken: "+(stop-star));
 		}
-		 
-		BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<Runnable>(20);
-
-		ThreadPoolExecutor executor = new ThreadPoolExecutor(20,
-				20, 60000, TimeUnit.MILLISECONDS, blockingQueue);
-
-		executor.setRejectedExecutionHandler(new RejectedExecutionHandler() {
-			@Override
-			public void rejectedExecution(Runnable r,
-					ThreadPoolExecutor executor) {
-				System.out.println(r.toString() + " Rejected");
-				//            	System.out.print(".");
-				try {
-					Thread.sleep(5);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				System.out.println("Trying "+ r.toString() + " again");
-				//                System.out.print(".");
-				executor.execute(r);
-			}
-		});
-
-		// Let start all core threads initially
-		executor.prestartAllCoreThreads();
-
-		int i=1;
-		long star = System.currentTimeMillis();
-		System.out.println("Reading graphs");
-		List<String> graphs = getGeneratedFiles();
-		System.out.println("Done");
-
-		System.out.println("Running triangle detection");
-		//run detect triangle tests
-		for(String graph: graphs){
-			Runnable r = new DetectTriangleRunner(graph,i++);
-			executor.execute(r);
-		}
-
-		i = 1;
-		System.out.println("Running diamond detection");
-		//run detect diamond tests
-		for(String graph: graphs){
-			Runnable r = new DetectDiamondRunner(graph,i++);
-			executor.execute(r);
-		}
-
-		i = 1;
-		System.out.println("Running claw detection");
-		//run detect claw tests
-		for(String graph: graphs){
-			Runnable r = new DetectClawRunner(graph,i++);
-			executor.execute(r);
-		}
-
-		i = 1;
-		System.out.println("Running k4 detection");
-		//run detect K4 tests
-		for(String graph: graphs){
-			Runnable r = new DetectK4Runner(graph,i++);
-			executor.execute(r);
-		}
-
-		//run detect Kl tests
-		for(String graph: graphs){
-			Runnable r = new DetectKLRunner(graph,i++);
-			executor.execute(r);
-		}
-
-		i = 1;
-		System.out.println("Running simplicial detection");
-		//run detect simplicial tests
-		for(String graph: graphs){
-			Runnable r = new DetectSimplicialRunner(graph,i++);
-			executor.execute(r);
-		}
-		executor.shutdown();
-		
-		while(!executor.isTerminated()){
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		CombineResults combiner = new CombineResults();
-		combiner.start();
-		
-		long stop = System.currentTimeMillis();
-		System.out.println("Time taken: "+(stop-star));
 	
 	}
 
@@ -188,7 +156,13 @@ public class Evaluator2 {
 			//			System.out.print(".");
 			String output = String.format("%-30s%-12s%s%n", "File name","Graph size","Result");
 
-			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(gname);
+			UndirectedGraph<Integer, Integer> graph = null;
+			try {
+				graph = Utility.makeGraphFromFile(gname);
+			} catch (GraphFileReaderException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			DetectTriangle d = new DetectTriangle();
 			d.detect(graph);
 			String result = d.getResult();
@@ -219,7 +193,13 @@ public class Evaluator2 {
 			//			System.out.print(".");
 			String output = String.format("%-30s%-12s%s%n", "File name","Graph size","Result");
 
-			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(gname);
+			UndirectedGraph<Integer, Integer> graph = null;
+			try {
+				graph = Utility.makeGraphFromFile(gname);
+			} catch (GraphFileReaderException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			DetectK4 d = new DetectK4();
 			d.detect(graph);
 			String result = d.getResult();
@@ -250,7 +230,13 @@ public class Evaluator2 {
 			//			System.out.print(".");
 			String output = String.format("%-30s%-12s%s%n", "File name","Graph size","Result");
 
-			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(gname);
+			UndirectedGraph<Integer, Integer> graph = null;
+			try {
+				graph = Utility.makeGraphFromFile(gname);
+			} catch (GraphFileReaderException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			DetectKL d = new DetectKL();
 			d.detect(graph,5);
 			String result = d.getResult();
@@ -281,7 +267,13 @@ public class Evaluator2 {
 			//			System.out.print(".");
 			String output = String.format("%-30s%-12s%s%n", "File name","Graph size","Result");
 
-			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(gname);
+			UndirectedGraph<Integer, Integer> graph = null;
+			try {
+				graph = Utility.makeGraphFromFile(gname);
+			} catch (GraphFileReaderException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			DetectClaw d = new DetectClaw();
 			d.detect(graph);
 			String result = d.getResult();
@@ -312,7 +304,13 @@ public class Evaluator2 {
 			//			System.out.print(".");
 			String output = String.format("%-30s%-12s%s%n", "File name","Graph size","Result");
 
-			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(gname);
+			UndirectedGraph<Integer, Integer> graph = null;
+			try {
+				graph = Utility.makeGraphFromFile(gname);
+			} catch (GraphFileReaderException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			DetectSimplicialVertex d = new DetectSimplicialVertex();
 			d.detect(graph);
 			String result = d.getResult();
@@ -347,7 +345,13 @@ public class Evaluator2 {
 			//			System.out.print(".");
 			String output = String.format("%-30s%-12s%s%n", "File name","Graph size","Result");
 
-			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(gname);
+			UndirectedGraph<Integer, Integer> graph = null;
+			try {
+				graph = Utility.makeGraphFromFile(gname);
+			} catch (GraphFileReaderException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			DetectDiamond d = new DetectDiamond();
 			d.detect(graph);
 			String result = d.getResult();
@@ -403,6 +407,25 @@ public class Evaluator2 {
 	}
 
 	public static List<String> getGeneratedFiles(){
+//		List<String> graphs = new ArrayList<String>();
+//		File file = new File("");
+//		String path = file.getAbsolutePath();
+//
+//		//enter generated graphs folder
+//		String ggFolder = "generated_graphs";
+//		File dir = new File(path+File.separator+ggFolder);
+//
+//		String[] graphFolders = dir.list();
+//		for(String s: graphFolders){
+//			//enter each graph size folder and print out the graph files in it
+//			File dir2 = new File(path+File.separator+ggFolder+File.separator+s);
+//			String[] graphFiles = dir2.list();
+//			for(String t: graphFiles){
+//				String graphFileName = dir2.getAbsolutePath()+File.separator+t;
+//				graphs.add(graphFileName);
+//			}
+//		}
+		
 		List<String> graphs = new ArrayList<String>();
 		File file = new File("");
 		String path = file.getAbsolutePath();
@@ -412,14 +435,10 @@ public class Evaluator2 {
 		File dir = new File(path+File.separator+ggFolder);
 
 		String[] graphFolders = dir.list();
-		for(String s: graphFolders){
-			//enter each graph size folder and print out the graph files in it
-			File dir2 = new File(path+File.separator+ggFolder+File.separator+s);
-			String[] graphFiles = dir2.list();
-			for(String t: graphFiles){
-				String graphFileName = dir2.getAbsolutePath()+File.separator+t;
-				graphs.add(graphFileName);
-			}
+		
+		for(String t: graphFolders){
+			String graphFileName = dir.getAbsolutePath()+File.separator+t;
+			graphs.add(graphFileName);
 		}
 
 		return graphs;
@@ -430,15 +449,18 @@ public class Evaluator2 {
 	 * @param vmax		the maximum number of vertices 
 	 * @param no		the number of graphs for each graph size
 	 */
-	public static void generateRandomGraphs(int vmin, int vmax, int no){
+	public static void generateRandomGraphs(int vmin, int vmax, int density,int no){
+		double d = 1/(double)density;
+		d = Math.round(d*10)/10.0;
 		for(int v=vmin; v<=vmax; v++){
-			for(double p=0.1; p<=1; p+=0.1){
-				if(p<=0.9)
-					Utility.generateRandomGraphFile(v, Math.round(p*10)/10.0, no);
-				else
-					Utility.generateRandomGraphFile(v, Math.round(p*10)/10.0, 1);
+			for(double p=d; p<=1.0; p+=d){
+				if(p<=0.9){
+					Utility.generateRandomGraphFile(v, p, no);
+				}
+				else{
+					Utility.generateRandomGraphFile(v, p, 1);
+				}
 			}
 		}
-		done = true;
 	}
 }

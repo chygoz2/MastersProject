@@ -10,8 +10,8 @@ import java.util.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import efficientdetection.*;
-import efficientlisting.ListTriangles;
+import efficient.listing.ListTriangles;
+import exception.GraphFileReaderException;
 import general.*;
 import general.Graph.Vertex;
 
@@ -24,14 +24,14 @@ public class ListTrianglesTest {
 //	List<Graph.Vertex<Integer>> lowDegreeVertices;
 
 	@Before
-	public void before(){
+	public void before() throws GraphFileReaderException{
 		String fileName = "test\\testdata\\triangletestdata.txt";
 		graph = Utility.makeGraphFromFile(fileName);
 //		lowDegreeVertices = Utility.partitionVertices(graph)[0];
 	}
 	
 	/**
-	 * Test method for {@link efficientdetection.DetectTriangle#detect(general.UndirectedGraph)}.
+	 * Test method for {@link efficient.detection.DetectTriangle#detect(general.UndirectedGraph)}.
 	 */
 	@Test
 	public void testDetect() {

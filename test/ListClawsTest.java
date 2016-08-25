@@ -10,7 +10,8 @@ import java.util.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import efficientlisting.ListClaws;
+import efficient.listing.ListClaws;
+import exception.GraphFileReaderException;
 import general.*;
 import general.Graph.Vertex;
 
@@ -22,13 +23,13 @@ public class ListClawsTest {
 	UndirectedGraph<Integer,Integer> graph;
 
 	@Before
-	public void before(){
+	public void before() throws GraphFileReaderException{
 		String fileName = "test\\testdata\\clawtestdata.txt";
 		graph = Utility.makeGraphFromFile(fileName);
 	}
 	
 	/**
-	 * Test method for {@link efficientdetection.DetectTriangle#detect(general.UndirectedGraph)}.
+	 * Test method for {@link efficient.detection.DetectTriangle#detect(general.UndirectedGraph)}.
 	 */
 	@Test
 	public void testDetect() {

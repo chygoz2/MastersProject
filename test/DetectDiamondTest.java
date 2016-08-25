@@ -8,7 +8,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import efficientdetection.DetectDiamond;
+import efficient.detection.DetectDiamond;
+import exception.GraphFileReaderException;
 import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
@@ -19,7 +20,7 @@ public class DetectDiamondTest {
 	List<Graph.Vertex<Integer>> lowDegreeVertices;
 
 	@Before
-	public void before(){
+	public void before() throws GraphFileReaderException{
 		String fileName = "test\\testdata\\diamondtestdata.txt";
 		graph = Utility.makeGraphFromFile(fileName);
 		lowDegreeVertices = new DetectDiamond().partitionVertices(graph)[0];

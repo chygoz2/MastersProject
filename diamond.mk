@@ -10,4 +10,4 @@ diamond: $(foreach i, $(INSTANCES), $(RESULTSDIR)/efficient_diamond_detection_re
 
 $(RESULTSDIR)/efficient_diamond_detection_result/%:
 	mkdir -p $(RESULTSDIR)/efficient_diamond_detection_result
-	$(JVM) efficientdetection/DetectDiamond $(GRAPHDIR)/$* | tee $(RESULTSDIR)/efficient_diamond_detection_result/$*
+	$(JVM) efficient.detection.DetectDiamond $(GRAPHDIR)/$* | tee $(RESULTSDIR)/efficient_diamond_detection_result/$*

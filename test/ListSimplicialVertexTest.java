@@ -8,7 +8,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import efficientlisting.ListSimplicialVertices;
+import efficient.listing.ListSimplicialVertices;
+import exception.GraphFileReaderException;
 import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
@@ -18,7 +19,7 @@ public class ListSimplicialVertexTest {
 	List<Graph.Vertex<Integer>> lowDegreeVertices, highDegreeVertices;
 	
 	@Before
-	public void before(){
+	public void before() throws GraphFileReaderException{
 		String fileName = "test\\testdata\\simplicialtestdata.txt";
 		graph = Utility.makeGraphFromFile(fileName);
 		lowDegreeVertices = new ListSimplicialVertices().partitionVertices(graph)[0];
