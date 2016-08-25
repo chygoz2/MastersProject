@@ -27,7 +27,7 @@ public class RunMe {
 		String operationvalues = "Possible values for [operation_class]: help, detect, list, generate, quit, gui, test";
 		String detectionValues = "Possible values for [operation_class_type]: triangle, claw, k4, kl, simplicial, diamond";
 		String optionValues = "[option] could be the graph file relative location (for detect and list operations) "
-				+ "				or graph size (for generate operation)";
+				+ "or graph size (for generate operation)";
 		String info = "Please enter commands in the form: "
 				+ "[operation_class] [operation_class_type] [option]";
 		String errorMessage = "You entered fewer arguments than required.\n"
@@ -36,6 +36,7 @@ public class RunMe {
 		System.out.println(info);
 		System.out.println(operationvalues);
 		System.out.println(detectionValues);
+		System.out.println(optionValues);
 		Scanner sc = new Scanner(System.in);
 
 		System.out.print("> ");

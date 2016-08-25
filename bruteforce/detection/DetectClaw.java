@@ -29,7 +29,7 @@ public class DetectClaw {
 			});
 			t.start();
 			while(!t.isInterrupted() && t.isAlive()){
-				long timeout = 120000; //timeout of 2 minutes
+				long timeout = 30000; //timeout of 30 seconds
 				long b = System.currentTimeMillis();
 				if((b-a)>timeout){
 					d.found = "timed out";
