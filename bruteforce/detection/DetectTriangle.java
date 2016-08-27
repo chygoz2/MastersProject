@@ -103,13 +103,14 @@ public class DetectTriangle {
 //				Iterator<Graph.Vertex<Integer>> vit3 = graph.vertices();
 //				while(vit3.hasNext()){
 //					Graph.Vertex<Integer> v3 = vit3.next();
-//					
-//					if(graph.containsEdge(v1, v2) && graph.containsEdge(v2, v3) && graph.containsEdge(v1, v3)){
-//						List<Graph.Vertex<Integer>> tri = new ArrayList<Graph.Vertex<Integer>>();
-//						tri.add(v1);
-//						tri.add(v2);
-//						tri.add(v3);
-//						return tri;
+//					if(!v1.equals(v2) && !v1.equals(v3) && !v2.equals(v3)){
+//						if(graph.containsEdge(v1, v2) && graph.containsEdge(v2, v3) && graph.containsEdge(v1, v3)){
+//							List<Graph.Vertex<Integer>> tri = new ArrayList<Graph.Vertex<Integer>>();
+//							tri.add(v1);
+//							tri.add(v2);
+//							tri.add(v3);
+//							return tri;
+//						}
 //					}
 //				}
 //			}

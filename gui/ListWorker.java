@@ -19,7 +19,7 @@ import general.UndirectedGraph;
 import general.Utility;
 import general.Graph.Vertex;
 
-public class ListWorker extends SwingWorker<String,Void>{
+public class ListWorker extends SwingWorker<String,String>{
 
 	private String type;
 	private String filename;
@@ -44,6 +44,7 @@ public class ListWorker extends SwingWorker<String,Void>{
 		if(graph==null)
 			return null;
 		
+		publish("Listing...\n");
 		String out = "";
 		if(type.equals("Diamond")){
 			ListDiamonds d = new ListDiamonds();
@@ -126,15 +127,23 @@ public class ListWorker extends SwingWorker<String,Void>{
 		return out;
 	}
 
+	protected void process(List<String> data){
+		String s = data.get(data.size()-1);
+		outputArea.setText(outputArea.getText()+s);
+	}
+	
 	@Override
 	protected void done() {
-		String out = "";
+		String out = null;
 		try {
 			out = get();
-		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
+		} catch (InterruptedException e) {
+			outputArea.setText(outputArea.getText() + "Execution was interrupted\n\n");
+		} catch (ExecutionException e) {
+			outputArea.setText(outputArea.getText() + "Error occured while executing\n\n");
 		}
-		outputArea.setText(outputArea.getText()+out+"\n\n");
+		if(out!=null)
+			outputArea.setText(outputArea.getText()+out+"\n\n");
 	}	
 	
 	public String printList(List<Graph.Vertex<Integer>> list){

@@ -281,11 +281,6 @@ public class GUI extends JFrame
 					JOptionPane.showMessageDialog(null, "Please select input file");
 					return;
 				}
-				String r = Utility.validateInput(fileName);
-				if(r!=null){
-					JOptionPane.showMessageDialog(null, r);
-					return;
-				}
 				if(selectedButton.equals("KL")){
 					String s = sizeField.getText().trim();
 					if(s.length()==0){
@@ -298,7 +293,7 @@ public class GUI extends JFrame
 						return;
 					}
 				}
-				outputArea.setText(outputArea.getText()+"Detecting...\n");
+				
 				DetectWorker w = new DetectWorker(selectedButton,fileName,l, outputArea);
 				w.execute();
 			}catch(NumberFormatException f){
@@ -315,11 +310,6 @@ public class GUI extends JFrame
 					JOptionPane.showMessageDialog(null, "Please select input file");
 					return;
 				}
-				String r = Utility.validateInput(fileName);
-				if(r!=null){
-					JOptionPane.showMessageDialog(null, r);
-					return;
-				}
 				if(selectedButton.equals("KL")){
 					String s = sizeField2.getText().trim();
 					if(s.length()==0){
@@ -332,7 +322,6 @@ public class GUI extends JFrame
 						return;
 					}
 				}
-				outputArea.setText(outputArea.getText()+"Listing...\n");
 				ListWorker w = new ListWorker(selectedButton,fileName,l,outputArea);
 				w.execute();
 			}catch(NumberFormatException f){
@@ -353,7 +342,7 @@ public class GUI extends JFrame
 				}else if(l<1 && selectedButton.equals("KL-free")){
 					JOptionPane.showMessageDialog(null, "Size of complete subgraph should be greater than zero");
 				}else{
-					outputArea.setText(outputArea.getText()+"Generating...\n");
+					
 					GenerateWorker w = new GenerateWorker(selectedButton,n,l,outputArea);
 					w.execute();
 				}

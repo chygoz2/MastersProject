@@ -1,5 +1,6 @@
 package gui;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.JEditorPane;
@@ -8,7 +9,7 @@ import javax.swing.SwingWorker;
 
 import generate.PatternFreeGraphGenerator;
 
-public class GenerateWorker extends SwingWorker<String,Void>{
+public class GenerateWorker extends SwingWorker<String,String>{
 
 	private String type;
 	private int n;
@@ -24,6 +25,7 @@ public class GenerateWorker extends SwingWorker<String,Void>{
 	
 	@Override
 	protected String doInBackground() {
+		publish("Generating...\n");
 		String out = "";
 		PatternFreeGraphGenerator g = new PatternFreeGraphGenerator();
 		if(type.equals("Diamond-free")){
@@ -49,14 +51,20 @@ public class GenerateWorker extends SwingWorker<String,Void>{
 		return out;
 	}
 
+	protected void process(List<String> data){
+		String s = data.get(data.size()-1);
+		outputArea.setText(outputArea.getText()+s);
+	}
+	
 	@Override
 	protected void done() {
-		String out = "";
+		String out = null;
 		try {
 			out = get();
 		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
+			outputArea.setText(outputArea.getText() + "Error occured while executing\n\n");
 		}
-		outputArea.setText(outputArea.getText()+out+"\n\n");
-	}	
+		if(out!=null)
+			outputArea.setText(outputArea.getText()+out+"\n\n");
+	}
 }

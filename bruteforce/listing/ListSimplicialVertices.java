@@ -14,8 +14,8 @@ import general.Graph.Vertex;
 
 public class ListSimplicialVertices {
 	
-	private String p1time = "-";
-	private String found = "found";
+	private  String p1time = "-";
+	private  int found = 0;
 	
 	public static void main(String [] args){
 		UndirectedGraph<Integer,Integer> graph = null;
@@ -23,7 +23,6 @@ public class ListSimplicialVertices {
 			graph = Utility.makeGraphFromFile(args[0]);
 			ListSimplicialVertices d = new ListSimplicialVertices();
 			Collection<Vertex<Integer>> svs = d.detect(graph);
-			System.out.println("Number of simplicial vertices found: "+svs.size());
 			System.out.print(d.getResult());
 		}catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("Please provide the graph file as a command line argument");
@@ -38,8 +37,7 @@ public class ListSimplicialVertices {
 		long end = System.currentTimeMillis();
 		p1time = ""+(end-start);
 		
-		if(s.isEmpty())
-			found = "not found";
+		found = s.size();
 		return s;
 	}
 	
@@ -82,13 +80,12 @@ public class ListSimplicialVertices {
 		return simplicialVertices;
 	}
 	
+	/**
+	*	method to return the time taken to run the listing	
+	*	and the number of simplicial vertices found
+	*/
 	public String getResult(){
-		String result = String.format("%-10s%-10s", p1time,found);
+		String result = String.format("%-10s%10d", p1time,found);
 		return result;
-	}
-	
-	public  void resetResult(){
-		p1time = "-";
-		found = "found";
 	}
 }

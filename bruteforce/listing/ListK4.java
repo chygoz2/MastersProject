@@ -17,7 +17,7 @@ import general.Graph.Vertex;
 public class ListK4 {
 	
 	private  String p1time = "-";
-	private  String found = "found";
+	private  int found = 0;
 	
 	public static void main(String [] args) throws IOException{
 		UndirectedGraph<Integer,Integer> graph = null;
@@ -25,7 +25,6 @@ public class ListK4 {
 			graph = Utility.makeGraphFromFile(args[0]);
 			ListK4 d = new ListK4();
 			List<Collection<Vertex<Integer>>> k4s = d.detect(graph);
-			System.out.println("Number of k4 found: "+k4s.size());
 			System.out.print(d.getResult());
 		}catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("Please provide the graph file as a command line argument");
@@ -74,18 +73,16 @@ public class ListK4 {
 		}
 		long stop = System.currentTimeMillis();
 		p1time = ""+(stop-start);
-		if(k4List.isEmpty()){
-			found = "not found";
-		}
+		found = k4List.size();
 		return k4List;
 	}
 	
 	/**
 	*	method to return the time taken to run the listing	
-	*	and whether a k4 was found or not
+	*	and the number of K4s found
 	*/
 	public String getResult(){
-		String result = String.format("%-10s%-10s", p1time,found);
+		String result = String.format("%-10s%10d", p1time,found);
 		return result;
 	}
 }

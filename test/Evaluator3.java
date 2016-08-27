@@ -3,8 +3,6 @@ package test;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -413,25 +411,5 @@ public class Evaluator3 {
 		}
 
 		return graphs;
-	}
-
-	/**
-	 * method to generate random graphs
-	 * @param vmax		the maximum number of vertices 
-	 * @param no		the number of graphs for each graph size
-	 */
-	public static void generateRandomGraphs(int vmin, int vmax, int no, int density){
-		double d = 1/(double)density;
-		DecimalFormat df = new DecimalFormat("#.#");
-		df.setRoundingMode(RoundingMode.FLOOR);
-		for(int v=vmin; v<=vmax; v++){
-			for(double p=d; p<=1; p+=d){
-				if(p<=0.9)
-					Utility.generateRandomGraphFile(v, Math.round(p*10)/10.0, no);
-				else
-					Utility.generateRandomGraphFile(v, Math.round(p*10)/10.0, 1);
-			}
-		}
-		done = true;
 	}
 }

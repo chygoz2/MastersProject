@@ -22,6 +22,7 @@ import efficient.detection.DetectTriangle;
 import exception.GraphFileReaderException;
 import general.UndirectedGraph;
 import general.Utility;
+import generate.RandomGraphGenerator;
 
 public class Evaluator2 {
 
@@ -43,7 +44,7 @@ public class Evaluator2 {
 		}
 		
 		if(generateGraphs.equals("gg")){
-			generateRandomGraphs(start, end, density, no);
+			RandomGraphGenerator.generate(start, end, density, no);
 		}
 		
 		if(rundetection.equals("rd")){
@@ -363,30 +364,6 @@ public class Evaluator2 {
 		}
 	}
 
-	public static class GraphGenerator implements Runnable{
-		private int start,name,no;
-
-		GraphGenerator(int start,int name,int no){
-			this.start = start;
-			this.name = name;
-			this.no = no;
-		}
-
-		public String toString(){
-			return name+"";
-		}
-
-		public void run(){
-			for(double p=0.1; p<=1; p+=0.1){
-				System.out.println("Generating size "+start+" graph with p= "+p);
-				if(p<=0.9)
-					Utility.generateRandomGraphFile(start, Math.round(p*10)/10.0, no);
-				else
-					Utility.generateRandomGraphFile(start, Math.round(p*10)/10.0, 1);
-			}
-		}
-	}
-
 	public static void saveResultToFile(String result, String filename, String graphname){
 		File f = new File("");
 		String path = f.getAbsolutePath();
@@ -442,25 +419,5 @@ public class Evaluator2 {
 		}
 
 		return graphs;
-	}
-
-	/**
-	 * method to generate random graphs
-	 * @param vmax		the maximum number of vertices 
-	 * @param no		the number of graphs for each graph size
-	 */
-	public static void generateRandomGraphs(int vmin, int vmax, int density,int no){
-		double d = 1/(double)density;
-		d = Math.round(d*10)/10.0;
-		for(int v=vmin; v<=vmax; v++){
-			for(double p=d; p<=1.0; p+=d){
-				if(p<=0.9){
-					Utility.generateRandomGraphFile(v, p, no);
-				}
-				else{
-					Utility.generateRandomGraphFile(v, p, 1);
-				}
-			}
-		}
 	}
 }

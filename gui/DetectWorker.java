@@ -18,7 +18,7 @@ import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
 
-public class DetectWorker extends SwingWorker<String,Void>{
+public class DetectWorker extends SwingWorker<String,String>{
 
 	private String type;
 	private String filename;
@@ -44,6 +44,7 @@ public class DetectWorker extends SwingWorker<String,Void>{
 		if(graph==null)
 			return null;
 		
+		publish("Detecting...\n");
 		String out = "";
 		if(type.equals("Diamond")){
 			DetectDiamond d = new DetectDiamond();
@@ -109,16 +110,22 @@ public class DetectWorker extends SwingWorker<String,Void>{
 		}
 		return out;
 	}
+	
+	protected void process(List<String> data){
+		String s = data.get(data.size()-1);
+		outputArea.setText(outputArea.getText()+s);
+	}
 
 	@Override
 	protected void done() {
-		String out = "";
+		String out = null;
 		try {
 			out = get();
 		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
+			outputArea.setText(outputArea.getText() + "Error occured while executing\n\n");
 		}
-		outputArea.setText(outputArea.getText()+out+"\n\n");
+		if(out!=null)
+			outputArea.setText(outputArea.getText()+out+"\n\n");
 	}	
 	
 	public String printList(List<Graph.Vertex<Integer>> list){

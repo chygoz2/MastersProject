@@ -5,6 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import exception.GraphFileReaderException;
 import exception.MatrixException;
+import generate.RandomGraphGenerator;
 
 
 public final class Utility {
@@ -61,8 +62,15 @@ public final class Utility {
 				throw new GraphFileReaderException("The number of columns in file do not match the required Vertex count");
 			}
 			for(int j=i+1; j<vertexCount; j++){
-				adjMatrix[i][j] = Integer.parseInt(stringI[j]);
-				adjMatrix[j][i] = Integer.parseInt(stringI[j]);
+				try{
+					int val = Integer.parseInt(stringI[j]);
+					if(val>1 || val<0)
+						throw new GraphFileReaderException("Entries in the graph file should consist of zeros and ones only");
+					adjMatrix[i][j] = val;
+					adjMatrix[j][i] = val;
+				}catch(NumberFormatException e){
+					throw new GraphFileReaderException("Entries in the graph file should consist of zeros and ones only");
+				}
 			}
 		}
 		
@@ -78,30 +86,6 @@ public final class Utility {
 		return graph;
 	}
 	
-	public static int[][] makeRandomGraph(int v, double p){
-		if(p<0.0 || p>1.0){
-//			JOptionPane.showMessageDialog(null, "Edge probability should be between 0 and 1");
-			System.out.println("Edge probability should be between 0 and 1");
-			System.exit(0);
-		}
-		
-		int[][] adjMatrix = new int[v][v];
-		
-		//add the edges with given edge probability
-		ThreadLocalRandom random = ThreadLocalRandom.current();
-		for(int i=0; i<v; i++){
-			for(int j=i+1; j<v; j++){
-				double rand = random.nextDouble();
-				if(rand<p){
-					adjMatrix[i][j] = 1;
-					adjMatrix[j][i] = adjMatrix[i][j];
-				}
-			}
-		}
-		
-		return adjMatrix;
-	}
-	
 	public static UndirectedGraph<Integer,Integer> makeGraphFromAdjacencyMatrix(int[][] adjMatrix){
 		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
 		Graph.Vertex<Integer>[] vertices = new Graph.Vertex[adjMatrix.length];
@@ -110,7 +94,6 @@ public final class Utility {
 		for(int i=0; i<adjMatrix.length; i++){
 			vertices[i] = graph.addVertex(i);
 		}
-		
 		
 		//add the edges
 		for(int i=0; i<adjMatrix.length; i++){
@@ -138,11 +121,7 @@ public final class Utility {
 					Graph.Vertex<Integer> nOne = g1.getVertexWithElement(one.getElement());
 					Graph.Vertex<Integer> nTwo = g1.getVertexWithElement(two.getElement());
 					
-					if(graph.containsEdge(graph.getVertexWithElement(one.getElement()),graph.getVertexWithElement(two.getElement()))){
-//						if(!g1.containsEdge(nOne,nTwo)){
-//							g1.addEdge(nOne, nTwo);
-//						}
-						
+					if(graph.containsEdge(graph.getVertexWithElement(one.getElement()),graph.getVertexWithElement(two.getElement()))){			
 						if(nOne.getElement()< nTwo.getElement())
 							g1.addEdge(nOne, nTwo);
 					}
@@ -150,41 +129,12 @@ public final class Utility {
 			}
 		}
 		
-		
-		
-		
-//		Iterator<Graph.Vertex<Integer>> vIt = g1.vertices();
-//		while(vIt.hasNext()){
-//			Iterator<Graph.Vertex<Integer>> vIt2 = g1.vertices();
-//			Graph.Vertex<Integer> one = vIt.next();
-//			while(vIt2.hasNext()){
-//				Graph.Vertex<Integer> two = vIt2.next();
-//				if((int)two.getElement()!=(int)(one.getElement())){
-//					Graph.Vertex<Integer> nOne = graph.getVertexWithElement(one.getElement());
-//					Graph.Vertex<Integer> nTwo = graph.getVertexWithElement(two.getElement());
-//					
-//					if(graph.containsEdge(nOne, nTwo)){
-//						if(!g1.containsEdge(one,two)){
-//							g1.addEdge(one, two);
-//						}
-//					}
-//				}
-//			}
-//		}
-		
 		return g1;
-	}
-
-	public static void generateRandomGraphFile(int v, double p, int no){
-		for(int i=1; i<=no; i++){
-			System.out.printf("Generating graph_%d_%.1f_%d%n",v,p,no);
-			int[][] A = makeRandomGraph(v,p);
-			saveGraphToFile(A,p,i);
-		}
 	}
 	
 	public static void saveGraphToFile(int[][] A, double p, int no){
 		StringBuilder out = new StringBuilder();
+		String pp = String.format("%.1f", p); 
 		
 		for(int i=0; i<A.length; i++){
 			for(int j=0; j<A[i].length; j++){
@@ -199,7 +149,7 @@ public final class Utility {
 		//create folder for saving generated graphs if none exists
 		File f = new File("");
 		String path = f.getAbsolutePath();
-		String ggFolder = "generated_graphs";
+		String ggFolder = "generated_graphs2";
 		File dir = new File(path+File.separator+ggFolder);
 		dir.mkdir();
 		
@@ -208,7 +158,7 @@ public final class Utility {
 		dir2.mkdir();
 		
 		//select suitable file name for the generated graph
-		String graphFileName = dir2.getAbsolutePath()+File.separator+"graph_"+size+"_"+p+"_"+no+".txt";
+		String graphFileName = dir2.getAbsolutePath()+File.separator+"graph_"+size+"_"+pp+"_"+no+".txt";
 		
 		try {
 			FileWriter writer = new FileWriter(graphFileName);

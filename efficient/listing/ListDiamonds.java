@@ -16,7 +16,7 @@ import java.io.*;
  */
 public class ListDiamonds {
 	private  String p1time = "-";
-	private  String found = "found";
+	private  int found = 0;
 	
 	public static void main(String [] args) throws IOException{
 		UndirectedGraph<Integer,Integer> graph = null;
@@ -24,7 +24,6 @@ public class ListDiamonds {
 			graph = Utility.makeGraphFromFile(args[0]);
 			ListDiamonds d = new ListDiamonds();
 			List<List<Vertex<Integer>>> diamonds = d.detect(graph);
-			System.out.println("Number of diamonds found: "+diamonds.size());
 			System.out.print(d.getResult());
 		}catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("Please provide the graph file as a command line argument");
@@ -43,9 +42,7 @@ public class ListDiamonds {
 		List<List<Vertex<Integer>>> diamonds = find(graph);
 		long stop = System.currentTimeMillis();
 		p1time = ""+(stop-start);
-		if(diamonds.isEmpty()){
-			found = "not found";
-		}
+		found = diamonds.size();
 		return diamonds;
 	}
 	
@@ -349,23 +346,6 @@ public class ListDiamonds {
 		return p3s;
 	}
 	
-//	private class VertexComparator implements Comparator<Graph.Vertex<Integer>>{
-//		
-//		private UndirectedGraph<Integer,Integer> graph;
-//		
-//		public VertexComparator(UndirectedGraph<Integer,Integer> g){
-//			this.graph = g;
-//		}
-//
-//		@Override
-//		public int compare(Graph.Vertex<Integer> v1, Graph.Vertex<Integer> v2) {
-//			Integer d1 = graph.degree(v1);
-//			Integer d2 = graph.degree(v2);
-//			
-//			return -1 *(d1.compareTo(d2));
-//		}
-//	}
-	
 	//method to partition the vertices into low degree vertices and high degree vertices
 	public List<Graph.Vertex<Integer>>[] partitionVertices(UndirectedGraph<Integer,Integer> graph){
 		List<Graph.Vertex<Integer>>[] vertices = new List[2];
@@ -394,10 +374,10 @@ public class ListDiamonds {
 	
 	/**
 	*	method to return the time taken to run the listing	
-	*	and whether a diamond was found or not
+	*	and the number of diamonds found
 	*/
 	public String getResult(){
-		String result = String.format("%-10s%-10s", p1time,found);
+		String result = String.format("%-10s%10d", p1time,found);
 		return result;
 	}
 }

@@ -21,9 +21,6 @@ public class DetectDiamond {
 			Thread t = new Thread(new Runnable(){
 				public void run(){
 					Collection<Graph.Vertex<Integer>> diamond = d.detect(graph);
-					if(diamond!=null){
-						Utility.printGraph(Utility.makeGraphFromVertexSet(graph,diamond));
-					}
 				}
 			});
 			t.start();

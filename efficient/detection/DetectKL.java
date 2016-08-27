@@ -4,6 +4,7 @@ import java.util.*;
 import efficient.listing.ListTriangles;
 import exception.GraphFileReaderException;
 import general.*;
+import general.Graph.Vertex;
 
 /**
  * class that detects the presence of a complete subgraph of a given size
@@ -23,8 +24,13 @@ public class DetectKL {
 			graph = Utility.makeGraphFromFile(args[0]);
 			
 			DetectKL d = new DetectKL();
-			List<Graph.Vertex<Integer>> kl = d.detect(graph,7);
-			System.out.print(d.getResult());
+			if(args.length>1){
+				int l = Integer.parseInt(args[1]);
+				List<Graph.Vertex<Integer>> kl = d.detect(graph,l);
+				System.out.print(d.getResult());
+			}else{
+				System.out.println("Please enter the size of the complete graph to be found");
+			}
 		}catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("Please provide the graph file as a command line argument");
 		}

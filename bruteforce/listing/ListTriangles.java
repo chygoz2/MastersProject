@@ -11,7 +11,7 @@ import general.Graph.Vertex;
 public class ListTriangles {
 	
 	private  String p1time = "-";
-	private  String found = "found";
+	private  int found = 0;
 	
 	public static void main(String[] args) {
 		UndirectedGraph<Integer,Integer> graph = null;
@@ -19,7 +19,6 @@ public class ListTriangles {
 			graph = Utility.makeGraphFromFile(args[0]);
 			ListTriangles d = new ListTriangles();
 			List<Collection<Vertex<Integer>>> tris = d.detect(graph);
-			System.out.println("Number of triangles found: "+tris.size());
 			System.out.print(d.getResult());
 		}catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("Please provide the graph file as a command line argument");
@@ -33,9 +32,7 @@ public class ListTriangles {
 		List<Collection<Vertex<Integer>>> triangles = find(graph);
 		long stop = System.currentTimeMillis();
 		p1time = ""+(stop-start);
-		if(triangles.isEmpty()){
-			found = "not found";
-		}
+		found = triangles.size();
 		return triangles;
 	}
 	
@@ -85,10 +82,10 @@ public class ListTriangles {
 	
 	/**
 	*	method to return the time taken to run the listing	
-	*	and whether a triangle was found or not
+	*	and the number of triangles found
 	*/
 	public String getResult(){
-		String result = String.format("%-10s%-10s", p1time,found);
+		String result = String.format("%-10s%10d", p1time,found);
 		return result;
 	}
 }

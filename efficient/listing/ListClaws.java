@@ -10,7 +10,7 @@ import general.Utility;
 public class ListClaws {
 	
 	private  String p1time = "-";
-	private  String found = "found";
+	private  int found = 0;
 	
 	public static void main(String [] args){		
 		UndirectedGraph<Integer,Integer> graph = null;
@@ -18,7 +18,6 @@ public class ListClaws {
 			graph = Utility.makeGraphFromFile(args[0]);
 			ListClaws d = new ListClaws();
 			List<List<Vertex<Integer>>> claws = d.detect(graph);
-			System.out.println("Number of claws found: "+claws.size());
 			System.out.print(d.getResult());
 		}catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("Please provide the graph file as a command line argument");
@@ -32,9 +31,7 @@ public class ListClaws {
 		List<List<Vertex<Integer>>> claws = find(graph);
 		long stop = System.currentTimeMillis();
 		p1time = ""+(stop-start);
-		if(claws.isEmpty()){
-			found = "not found";
-		}
+		found = claws.size();
 		return claws;
 	}
 
@@ -109,10 +106,10 @@ public class ListClaws {
 	
 	/**
 	*	method to return the time taken to run the listing	
-	*	and whether a claw was found or not
+	*	and the number of claws found
 	*/
 	public String getResult(){
-		String result = String.format("%-10s%-10s", p1time,found);
+		String result = String.format("%-10s%10d", p1time,found);
 		return result;
 	}
 

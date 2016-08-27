@@ -11,7 +11,7 @@ import general.Graph.Vertex;
 public class ListDiamonds {
 
 	private  String p1time = "-";
-	private  String found = "found";
+	private  int found = 0;
 	
 	public static void main(String [] args) throws IOException{
 		UndirectedGraph<Integer,Integer> graph = null;
@@ -19,7 +19,6 @@ public class ListDiamonds {
 			graph = Utility.makeGraphFromFile(args[0]);
 			ListDiamonds d = new ListDiamonds();
 			List<Collection<Vertex<Integer>>> diamonds = d.detect(graph);
-			System.out.println("Number of diamonds found: "+diamonds.size());
 			System.out.print(d.getResult());
 		}catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("Please provide the graph file as a command line argument");
@@ -38,9 +37,7 @@ public class ListDiamonds {
 		List<Collection<Vertex<Integer>>> diamonds = find(graph);
 		long stop = System.currentTimeMillis();
 		p1time = ""+(stop-start);
-		if(diamonds.isEmpty()){
-			found = "not found";
-		}
+		found=diamonds.size();
 		return diamonds;
 	}
 	
@@ -138,10 +135,10 @@ public class ListDiamonds {
 	
 	/**
 	*	method to return the time taken to run the listing	
-	*	and whether a diamond was found or not
+	*	and the number of diamonds found
 	*/
 	public String getResult(){
-		String result = String.format("%-10s%-10s", p1time,found);
+		String result = String.format("%-10s%10d", p1time,found);
 		return result;
 	}
 }

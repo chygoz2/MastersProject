@@ -8,7 +8,7 @@ import general.Graph.Vertex;
 public class ListKL {
 	
 	private  String time = "-";
-	private  String found = "found";
+	private  int found = 0;
 	
 	public static void main(String [] args){
 		UndirectedGraph<Integer,Integer> graph = null;
@@ -18,7 +18,6 @@ public class ListKL {
 			if(args.length>1){
 				int l = Integer.parseInt(args[1]);
 				List<List<Vertex<Integer>>> kls = d.detect(graph,l);
-				System.out.println("Number of kl found: "+kls.size());
 				System.out.print(d.getResult());
 			}else{
 				System.out.println("Please enter the size of the complete graph to be found");
@@ -39,8 +38,7 @@ public class ListKL {
 		long stoptime = System.currentTimeMillis();
 		time = ""+(stoptime-starttime);
 		
-		if(kls.isEmpty())
-			found = "not found";
+		found = kls.size();
 		return kls;
 	}
 	
@@ -279,8 +277,12 @@ public class ListKL {
 		return klList;
 	}
 	
-	public  String getResult(){
-		String result = String.format("%-10s%-10s", time,found);
+	/**
+	*	method to return the time taken to run the listing	
+	*	and the number of KLs found
+	*/
+	public String getResult(){
+		String result = String.format("%-10s%10d", time,found);
 		return result;
 	}
 
