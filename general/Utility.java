@@ -7,7 +7,6 @@ import exception.GraphFileReaderException;
 import exception.MatrixException;
 import generate.RandomGraphGenerator;
 
-
 public final class Utility {
 	
 	public static String validateInput(String fileName){		

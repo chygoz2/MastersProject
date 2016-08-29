@@ -81,13 +81,14 @@ public class ListDiamonds {
 	 * @return 			the vertex list if found
 	 */
 	public List<Collection<Graph.Vertex<Integer>>> checkP3InComponent(UndirectedGraph<Integer,Integer> graph){
+		List<Collection<Graph.Vertex<Integer>>> p3s = new ArrayList<Collection<Graph.Vertex<Integer>>>(); //stores vertices of p3s found
+		
 		//if the no of vertices in graph is less than 3, then graph cannot have a p3
 		
 		if(graph.size()<3){
-			return null;
+			return p3s;
 		}
 		
-		List<Collection<Graph.Vertex<Integer>>> p3s = new ArrayList<Collection<Graph.Vertex<Integer>>>(); //stores vertices of p3s found
 		Set<Set<Integer>> marked = new HashSet<Set<Integer>>(); //to prevent creating the same p3 more than once
 	
 		//create mapping between matrix indices and vertex
