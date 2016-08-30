@@ -35,8 +35,7 @@ public class ListTriangles {
 		return triangles;
 	}
 	
-	public List<List<Graph.Vertex<Integer>>> find(UndirectedGraph<Integer,Integer> graph2){
-		UndirectedGraph<Integer,Integer> graph = graph2.clone();
+	public List<List<Graph.Vertex<Integer>>> find(UndirectedGraph<Integer,Integer> graph){
 		List<List<Graph.Vertex<Integer>>> triangles = new ArrayList<List<Graph.Vertex<Integer>>>();
 		
 		//sort the vertices in non increasing order of degree

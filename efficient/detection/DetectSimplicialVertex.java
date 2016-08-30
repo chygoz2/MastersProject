@@ -117,8 +117,7 @@ public class DetectSimplicialVertex {
 	 * @param highDegreeVertices	the list of high degree vertices
 	 * @return						a simplicial vertex if found
 	 */
-	public  Graph.Vertex<Integer> phaseTwo(UndirectedGraph<Integer,Integer> graph2, Collection<Graph.Vertex<Integer>> lowDegreeVertices, Collection<Graph.Vertex<Integer>> highDegreeVertices){
-		UndirectedGraph<Integer,Integer> graph = graph2.clone();
+	public  Graph.Vertex<Integer> phaseTwo(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> lowDegreeVertices, Collection<Graph.Vertex<Integer>> highDegreeVertices){
 		
 		//mark high degree vertices that have a low degree neighbour
 		List<Graph.Vertex<Integer>> markedVertices = new ArrayList<Graph.Vertex<Integer>>();

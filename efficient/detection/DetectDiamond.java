@@ -215,9 +215,8 @@ public class DetectDiamond {
 	 * @param lowDegreeVertices 	a list of low degree vertices
 	 * @return						a diamond subgraph if found
 	 */
-	public  List<Graph.Vertex<Integer>> phaseThree(UndirectedGraph<Integer,Integer> graph2, List<Graph.Vertex<Integer>> lowDegreeVertices){
+	public  List<Graph.Vertex<Integer>> phaseThree(UndirectedGraph<Integer,Integer> graph, List<Graph.Vertex<Integer>> lowDegreeVertices){
 		//remove low degree vertices from graph G
-		UndirectedGraph<Integer,Integer> graph = graph2.clone();
 		for(Graph.Vertex<Integer> v: lowDegreeVertices){
 			graph.removeVertex(graph.getVertexWithElement(v.getElement()));
 		}

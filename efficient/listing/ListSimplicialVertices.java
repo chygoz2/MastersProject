@@ -78,8 +78,7 @@ public class ListSimplicialVertices {
 		return simplicialVertices;
 	}
 	
-	public List<Graph.Vertex<Integer>> phaseTwo(UndirectedGraph<Integer,Integer> graph2, Collection<Graph.Vertex<Integer>> lowDegreeVertices, Collection<Graph.Vertex<Integer>> highDegreeVertices){
-		UndirectedGraph<Integer,Integer> graph = graph2.clone();
+	public List<Graph.Vertex<Integer>> phaseTwo(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> lowDegreeVertices, Collection<Graph.Vertex<Integer>> highDegreeVertices){
 		
 		//marked high degree vertices that have a low degree neighbour
 		List<Graph.Vertex<Integer>> markedVertices = new ArrayList<Graph.Vertex<Integer>>();
