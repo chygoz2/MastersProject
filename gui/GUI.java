@@ -10,13 +10,14 @@ import java.io.File;
 import java.util.Enumeration;
 import java.util.List;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import general.Graph;
 import general.Utility;
 
-public class GUI extends JFrame 
-		implements ActionListener, ItemListener{
+public class GUI extends JFrame {
 
 	private JPanel contentPane;
 	private JRadioButton diamondRadioButton;		
@@ -83,7 +84,7 @@ public class GUI extends JFrame
 	 * Create the frame.
 	 */
 	public GUI() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setResizable(false);
 		setTitle("Small Induced Subgraph Identification Tool");
 		setBounds(300, 100, 800, 350);
@@ -257,138 +258,18 @@ public class GUI extends JFrame
 		
 		generatePanel.add(centerPanel, BorderLayout.CENTER);
 		
-		
-		detectButton.addActionListener(this);
-		listButton.addActionListener(this);
-		generateButton.addActionListener(this);
-		selectFileButton.addActionListener(this);
-		selectFileButton2.addActionListener(this);
-		kLRadioButton.addItemListener(this);
-		kLRadioButton2.addItemListener(this);
-		klFreeButton.addItemListener(this);
+		Controller controller = new Controller(this);
+		detectButton.addActionListener(controller);
+		listButton.addActionListener(controller);
+		generateButton.addActionListener(controller);
+		selectFileButton.addActionListener(controller);
+		selectFileButton2.addActionListener(controller);
+		kLRadioButton.addItemListener(controller);
+		kLRadioButton2.addItemListener(controller);
+		klFreeButton.addItemListener(controller);
+		tabbedPane.addChangeListener(controller);
 		
 	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		JButton source = (JButton)e.getSource();
-		if(source.equals(detectButton)){
-			String selectedButton = getSelectedButtonText(buttonGroup);
-			String fileName = selectFileField.getText().trim();
-			int l=0;
-			try{
-				if(fileName.length()==0){
-					JOptionPane.showMessageDialog(null, "Please select input file");
-					return;
-				}
-				if(selectedButton.equals("KL")){
-					String s = sizeField.getText().trim();
-					if(s.length()==0){
-						JOptionPane.showMessageDialog(null, "Please enter size of the complete subgraph to be listed");
-						return;
-					}
-					l = Integer.parseInt(s);
-					if(l<1){
-						JOptionPane.showMessageDialog(null, "Size of the complete subgraph should be greater than 0");
-						return;
-					}
-				}
-				
-				DetectWorker w = new DetectWorker(selectedButton,fileName,l, outputArea);
-				w.execute();
-			}catch(NumberFormatException f){
-				JOptionPane.showMessageDialog(null, "The size of the complete subgraph entered is not an integer");
-				return;
-			}
-			
-		}else if(source.equals(listButton)){
-			String selectedButton = getSelectedButtonText(buttonGroup2);
-			String fileName = selectFileField2.getText().trim();
-			int l=0;
-			try{
-				if(fileName.length()==0){
-					JOptionPane.showMessageDialog(null, "Please select input file");
-					return;
-				}
-				if(selectedButton.equals("KL")){
-					String s = sizeField2.getText().trim();
-					if(s.length()==0){
-						JOptionPane.showMessageDialog(null, "Please enter size of the complete subgraph to be listed");
-						return;
-					}
-					l = Integer.parseInt(s);
-					if(l<1){
-						JOptionPane.showMessageDialog(null, "Size of the complete subgraph should be greater than 0");
-						return;
-					}
-				}
-				ListWorker w = new ListWorker(selectedButton,fileName,l,outputArea);
-				w.execute();
-			}catch(NumberFormatException f){
-				JOptionPane.showMessageDialog(null, "The size of the complete subgraph entered is not an integer");
-				return;
-			}
-		}
-		else if(source.equals(generateButton)){
-			String selectedButton = getSelectedButtonText(buttonGroup3);
-			int n = 0, l=0;
-			try{
-				n = Integer.parseInt(vertexCountField.getText().trim());
-				String s = sizeField3.getText().trim();
-				if(s.length()>0)
-					l = Integer.parseInt(s);
-				if(n<1){
-					JOptionPane.showMessageDialog(null, "Number of vertices should be greater than zero");
-				}else if(l<1 && selectedButton.equals("KL-free")){
-					JOptionPane.showMessageDialog(null, "Size of complete subgraph should be greater than zero");
-				}else{
-					
-					GenerateWorker w = new GenerateWorker(selectedButton,n,l,outputArea);
-					w.execute();
-				}
-			}catch(NumberFormatException f){
-				JOptionPane.showMessageDialog(null, "The size entered is not an integer");
-				return;
-			}
-		}
-		else if(source.equals(selectFileButton)){
-			JFileChooser chooser = new JFileChooser();
-			chooser.setCurrentDirectory(new File(new File("").getAbsolutePath()));
-		    FileNameExtensionFilter filter = new FileNameExtensionFilter(
-		        "txt files", "txt");
-		    chooser.setFileFilter(filter);
-		    int returnVal = chooser.showOpenDialog(getParent());
-		    if(returnVal == JFileChooser.APPROVE_OPTION) {
-		       String name = chooser.getCurrentDirectory().getAbsolutePath()+File.separator+chooser.getSelectedFile().getName();
-		       selectFileField.setText(name);
-		    }
-		}
-		else if(source.equals(selectFileButton2)){
-			JFileChooser chooser = new JFileChooser();
-			chooser.setCurrentDirectory(new File(new File("").getAbsolutePath()));
-		    FileNameExtensionFilter filter = new FileNameExtensionFilter(
-		        "txt files", "txt");
-		    chooser.setFileFilter(filter);
-		    int returnVal = chooser.showOpenDialog(getParent());
-		    if(returnVal == JFileChooser.APPROVE_OPTION) {
-		       String name = chooser.getCurrentDirectory().getAbsolutePath()+File.separator+chooser.getSelectedFile().getName();
-		       selectFileField2.setText(name);
-		    }
-		}
-	}
-	
-	public String getSelectedButtonText(ButtonGroup buttonGroup) {
-		Enumeration<AbstractButton> bs = buttonGroup.getElements();
-        while (bs.hasMoreElements()) {
-            AbstractButton button = bs.nextElement();
-
-            if (button.isSelected()) {
-                return button.getText();
-            }
-        }
-
-        return null;
-    }
 	
 	public String printList(List<Graph.Vertex<Integer>> list){
 		String out = "";
@@ -411,35 +292,255 @@ public class GUI extends JFrame
 		return time;
 	}
 
-	@Override
-	public void itemStateChanged(ItemEvent e) {
-		JRadioButton source = (JRadioButton) e.getItem();
-		if(source.equals(kLRadioButton)){
-			if(e.getStateChange()==ItemEvent.SELECTED){
-				klPanel.setVisible(true);
-			}
-			else{
-				klPanel.setVisible(false);
-				sizeField.setText("");
-			}
-		}
-		else if(source.equals(kLRadioButton2)){
-			if(e.getStateChange()==ItemEvent.SELECTED){
-				klPanel2.setVisible(true);
-			}
-			else{
-				klPanel2.setVisible(false);
-				sizeField2.setText("");
-			}
-		}
-		else if(source.equals(klFreeButton)){
-			if(e.getStateChange()==ItemEvent.SELECTED){
-				klPanel3.setVisible(true);
-			}
-			else{
-				klPanel3.setVisible(false);
-				sizeField3.setText("");
-			}
-		}
+	/**
+	 * @return the diamondRadioButton
+	 */
+	public JRadioButton getDiamondRadioButton() {
+		return diamondRadioButton;
+	}
+
+	/**
+	 * @return the clawRadioButton
+	 */
+	public JRadioButton getClawRadioButton() {
+		return clawRadioButton;
+	}
+
+	/**
+	 * @return the k4RadioButton
+	 */
+	public JRadioButton getK4RadioButton() {
+		return k4RadioButton;
+	}
+
+	/**
+	 * @return the simpVertexRadioButton
+	 */
+	public JRadioButton getSimpVertexRadioButton() {
+		return simpVertexRadioButton;
+	}
+
+	/**
+	 * @return the triangleRadioButton
+	 */
+	public JRadioButton getTriangleRadioButton() {
+		return triangleRadioButton;
+	}
+
+	/**
+	 * @return the kLRadioButton
+	 */
+	public JRadioButton getkLRadioButton() {
+		return kLRadioButton;
+	}
+
+	/**
+	 * @return the detectButton
+	 */
+	public JButton getDetectButton() {
+		return detectButton;
+	}
+
+	/**
+	 * @return the diamondRadioButton2
+	 */
+	public JRadioButton getDiamondRadioButton2() {
+		return diamondRadioButton2;
+	}
+
+	/**
+	 * @return the clawRadioButton2
+	 */
+	public JRadioButton getClawRadioButton2() {
+		return clawRadioButton2;
+	}
+
+	/**
+	 * @return the k4RadioButton2
+	 */
+	public JRadioButton getK4RadioButton2() {
+		return k4RadioButton2;
+	}
+
+	/**
+	 * @return the simpVertexRadioButton2
+	 */
+	public JRadioButton getSimpVertexRadioButton2() {
+		return simpVertexRadioButton2;
+	}
+
+	/**
+	 * @return the triangleRadioButton2
+	 */
+	public JRadioButton getTriangleRadioButton2() {
+		return triangleRadioButton2;
+	}
+
+	/**
+	 * @return the kLRadioButton2
+	 */
+	public JRadioButton getkLRadioButton2() {
+		return kLRadioButton2;
+	}
+
+	/**
+	 * @return the listButton
+	 */
+	public JButton getListButton() {
+		return listButton;
+	}
+
+	/**
+	 * @return the vertexCountField
+	 */
+	public JTextField getVertexCountField() {
+		return vertexCountField;
+	}
+
+	/**
+	 * @return the selectFileField
+	 */
+	public JTextField getSelectFileField() {
+		return selectFileField;
+	}
+
+	/**
+	 * @return the selectFileField2
+	 */
+	public JTextField getSelectFileField2() {
+		return selectFileField2;
+	}
+
+	/**
+	 * @return the selectFileButton
+	 */
+	public JButton getSelectFileButton() {
+		return selectFileButton;
+	}
+
+	/**
+	 * @return the selectFileButton2
+	 */
+	public JButton getSelectFileButton2() {
+		return selectFileButton2;
+	}
+
+	/**
+	 * @return the outputArea
+	 */
+	public JEditorPane getOutputArea() {
+		return outputArea;
+	}
+
+	/**
+	 * @return the generateButton
+	 */
+	public JButton getGenerateButton() {
+		return generateButton;
+	}
+
+	/**
+	 * @return the buttonGroup
+	 */
+	public ButtonGroup getButtonGroup() {
+		return buttonGroup;
+	}
+
+	/**
+	 * @return the buttonGroup2
+	 */
+	public ButtonGroup getButtonGroup2() {
+		return buttonGroup2;
+	}
+
+	/**
+	 * @return the buttonGroup3
+	 */
+	public ButtonGroup getButtonGroup3() {
+		return buttonGroup3;
+	}
+
+	/**
+	 * @return the klPanel
+	 */
+	public JPanel getKlPanel() {
+		return klPanel;
+	}
+
+	/**
+	 * @return the sizeField
+	 */
+	public JTextField getSizeField() {
+		return sizeField;
+	}
+
+	/**
+	 * @return the klPanel2
+	 */
+	public JPanel getKlPanel2() {
+		return klPanel2;
+	}
+
+	/**
+	 * @return the sizeField2
+	 */
+	public JTextField getSizeField2() {
+		return sizeField2;
+	}
+
+	/**
+	 * @return the klPanel3
+	 */
+	public JPanel getKlPanel3() {
+		return klPanel3;
+	}
+
+	/**
+	 * @return the sizeField3
+	 */
+	public JTextField getSizeField3() {
+		return sizeField3;
+	}
+
+	/**
+	 * @return the tabbedPane
+	 */
+	public JTabbedPane getTabbedPane() {
+		return tabbedPane;
+	}
+
+	/**
+	 * @return the triangleFreeButton
+	 */
+	public JRadioButton getTriangleFreeButton() {
+		return triangleFreeButton;
+	}
+
+	/**
+	 * @return the diamondFreeButton
+	 */
+	public JRadioButton getDiamondFreeButton() {
+		return diamondFreeButton;
+	}
+
+	/**
+	 * @return the clawFreeButton
+	 */
+	public JRadioButton getClawFreeButton() {
+		return clawFreeButton;
+	}
+
+	/**
+	 * @return the k4FreeButton
+	 */
+	public JRadioButton getK4FreeButton() {
+		return k4FreeButton;
+	}
+
+	/**
+	 * @return the klFreeButton
+	 */
+	public JRadioButton getKlFreeButton() {
+		return klFreeButton;
 	}
 }

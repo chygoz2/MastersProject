@@ -9,39 +9,40 @@ import generate.RandomGraphGenerator;
 
 public final class Utility {
 	
-	public static String validateInput(String fileName){		
+//	public static String validateInput(String fileName){		
+//		FileReader reader = null;
+//		try {
+//			reader = new FileReader(fileName);
+//		} catch (FileNotFoundException e1) {
+//			return "Input file not found";
+//		}
+//		Scanner scanner;
+//		scanner = new Scanner(reader);
+//
+//		if(!scanner.hasNextLine()){
+//			scanner.close();
+//			return "Input file is empty";
+//		}
+//		scanner.close();
+//		return null;
+//	}
+	
+	public static UndirectedGraph<Integer,Integer> makeGraphFromFile(String fileName) throws GraphFileReaderException{
+	
 		FileReader reader = null;
 		try {
 			reader = new FileReader(fileName);
 		} catch (FileNotFoundException e1) {
-			return "Input file not found";
+			throw new GraphFileReaderException("Input file not found");
 		}
 		Scanner scanner;
 		scanner = new Scanner(reader);
 
 		if(!scanner.hasNextLine()){
 			scanner.close();
-			return "Input file is empty";
+			throw new GraphFileReaderException("Input file is empty");
 		}
-		scanner.close();
-		return null;
-	}
 	
-	public static UndirectedGraph<Integer,Integer> makeGraphFromFile(String fileName) throws GraphFileReaderException{
-	
-		String r = validateInput(fileName);
-		if(r!=null){
-			throw new GraphFileReaderException(r);
-		}
-		
-		FileReader reader = null;
-		try {
-			reader = new FileReader(fileName);
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		Scanner scanner = new Scanner(reader);
 		int vertexCount = -1;
 		
 		List<String> lines = new ArrayList<String>();
@@ -60,7 +61,7 @@ public final class Utility {
 				scanner.close();
 				throw new GraphFileReaderException("The number of columns in file do not match the required Vertex count");
 			}
-			for(int j=i+1; j<vertexCount; j++){
+			for(int j=i; j<vertexCount; j++){
 				try{
 					int val = Integer.parseInt(stringI[j]);
 					if(val>1 || val<0)
@@ -68,6 +69,7 @@ public final class Utility {
 					adjMatrix[i][j] = val;
 					adjMatrix[j][i] = val;
 				}catch(NumberFormatException e){
+					scanner.close();
 					throw new GraphFileReaderException("Entries in the graph file should consist of zeros and ones only");
 				}
 			}
@@ -148,7 +150,7 @@ public final class Utility {
 		//create folder for saving generated graphs if none exists
 		File f = new File("");
 		String path = f.getAbsolutePath();
-		String ggFolder = "generated_graphs2";
+		String ggFolder = "generated_graphs";
 		File dir = new File(path+File.separator+ggFolder);
 		dir.mkdir();
 		
@@ -265,6 +267,14 @@ public final class Utility {
 		System.out.println();
 	}
 	
+	/**
+	 * method to multiply two matrices 
+	 * idea was obtained from https://www.daniweb.com/programming/software-development/code/355645/optimizing-matrix-multiplication
+	 * @param a 				two-dimensional array representing first matrix to be multiplied
+	 * @param b					two-dimensional array representing second matrix to be multiplied
+	 * @return					two-dimensional array containing the results
+	 * @throws MatrixException	exception thrown if the dimensions of the matrices are not valid 
+	 */
 	public static int[][] multiplyMatrix(int[][] a, int[][] b) throws MatrixException{
 		if (a.length==0 || b.length==0) 
 			throw new MatrixException(0);
@@ -287,38 +297,37 @@ public final class Utility {
         return result;
 	}
 	
-	public static void main(String [] args){
-//		String fileName = "matrix.txt";
-//		Utility.makeGraphFromFile(fileName);
-//		generateRandomGraphFile(10,0.9,1);
-		
+	public static void main(String [] args){		
 //		int[][] a = {{1,2,3,3},{4,5,6,6},{7,8,9,9},{10,11,12,13}};
 		Random r = new Random(System.currentTimeMillis());
-		int n = 1000;
-		int[][] a = new int[n][n];
-		int[][] b = new int[n][n];
-		for(int i=0; i<a.length; i++){
-			for(int j=0; j<a.length; j++){
-				a[i][j] = r.nextInt(10000);
-				b[i][j] = r.nextInt(10000);
-			}
-		}
-		int[][] res = null;
-		try {
-			long start = System.currentTimeMillis();
-			res = multiplyMatrix(a,b);
-			long stop= System.currentTimeMillis();
-			System.out.println("Time taken: " + (stop-start));
-		} catch (MatrixException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-//		for(int i=0; i<res.length; i++){
-//			for(int j=0; j<res[i].length; j++){
-//				System.out.print((int)res[i][j]+" ");
-//			}
-//			System.out.println();
-//		}
 		
+		String out = "";
+		
+		for(int m=100; m<=2000; m+=100){
+			int n = m;
+			int[][] a = new int[n][n];
+			int[][] b = new int[n][n];
+			for(int i=0; i<a.length; i++){
+				for(int j=0; j<a.length; j++){
+					a[i][j] = r.nextInt(10000);
+					b[i][j] = r.nextInt(10000);
+				}
+			}
+			int[][] res = null;
+			try {
+				long start = System.currentTimeMillis();
+				res = multiplyMatrix(a,b);
+				long stop= System.currentTimeMillis();
+				long time = stop - start;
+				String s = String.format("n=%d, time=%d%n", n, time);
+				out += s;
+//				System.out.println("Time taken: " + (stop-start));
+				
+			} catch (MatrixException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}		
+		System.out.println(out);
 	}
 }

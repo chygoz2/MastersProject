@@ -21,13 +21,11 @@ import general.Graph.Vertex;
  */
 public class ListTrianglesTest {
 	UndirectedGraph<Integer,Integer> graph;
-//	List<Graph.Vertex<Integer>> lowDegreeVertices;
 
 	@Before
 	public void before() throws GraphFileReaderException{
 		String fileName = "test\\testdata\\triangletestdata.txt";
 		graph = Utility.makeGraphFromFile(fileName);
-//		lowDegreeVertices = Utility.partitionVertices(graph)[0];
 	}
 	
 	/**
@@ -36,7 +34,7 @@ public class ListTrianglesTest {
 	@Test
 	public void testDetect() {
 		List<List<Vertex<Integer>>> actualResult = new ListTriangles().detect(graph);
-		int[][] expectedResult = {{2,3,4},{0,2,4},{0,1,2}}; //expected result should have 3 triangles 
+		int[][] expectedResult = {{2,1,0},{2,4,0},{2,4,3}}; //expected result should have 3 triangles 
 															//with the specified vertex elements
 		
 		for(int i=0; i<expectedResult.length;i++){

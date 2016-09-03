@@ -69,7 +69,6 @@ public class ListWorker extends SwingWorker<String,String>{
 				out = String.format("Claw found%nVertices:%n%s", out);
 				out += String.format("Number of claws found: %d%n", claws.size());
 				out += String.format("CPU time taken: %d milliseconds", getTotalTime(d.getResult()));
-				System.out.println(out);
 			}else{
 				out = String.format("Claw not found%nCPU time taken: %d milliseconds", getTotalTime(d.getResult()));
 			}
@@ -137,11 +136,12 @@ public class ListWorker extends SwingWorker<String,String>{
 		String out = null;
 		try {
 			out = get();
-		} catch (InterruptedException e) {
-			outputArea.setText(outputArea.getText() + "Execution was interrupted\n\n");
 		} catch (ExecutionException e) {
 			outputArea.setText(outputArea.getText() + "Error occured while executing\n\n");
+		}catch(InterruptedException e){
+			outputArea.setText(outputArea.getText() + "Graph generation interrupted\n\n");
 		}
+		
 		if(out!=null)
 			outputArea.setText(outputArea.getText()+out+"\n\n");
 	}	

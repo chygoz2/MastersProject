@@ -121,9 +121,12 @@ public class DetectWorker extends SwingWorker<String,String>{
 		String out = null;
 		try {
 			out = get();
-		} catch (InterruptedException | ExecutionException e) {
+		} catch (ExecutionException e) {
 			outputArea.setText(outputArea.getText() + "Error occured while executing\n\n");
+		}catch(InterruptedException e){
+			outputArea.setText(outputArea.getText() + "Graph generation interrupted\n\n");
 		}
+		
 		if(out!=null)
 			outputArea.setText(outputArea.getText()+out+"\n\n");
 	}	

@@ -3,119 +3,78 @@ import static org.junit.Assert.*;
 
 import java.util.*;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
+import exception.GraphFileReaderException;
 import general.Graph;
 import general.UndirectedGraph;
+import general.Utility;
 
 public class UndirectedGraphTest {
+	
+	UndirectedGraph<Integer,Integer> graph;
+	
+	@Before
+	public void initialize(){
+		try {
+			graph = Utility.makeGraphFromFile("test\\testdata\\graphtestdata.txt");
+		} catch (GraphFileReaderException e) {
+			System.out.println(e.getError());
+		}
+	}
 
 	@Test
-	public void testOrder() {
-		//fail("Not yet implemented");
-		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
-		
-		Graph.Vertex<Integer> v1 = graph.addVertex(1);
-		Graph.Vertex<Integer> v2 = graph.addVertex(3);
-		Graph.Vertex<Integer> v3 = graph.addVertex(4);
-		Graph.Vertex<Integer> v4 = graph.addVertex(2);
-		graph.addEdge(v1, v2);
-		graph.addEdge(v3, v2);
-		graph.addEdge(v3, v4);
-		
-		assertEquals("Graph order",4,graph.size());
-//		assertEquals("Graph size",3,graph.size());
-		assertFalse("Graph order 2", 3==graph.size());
+	public void testSize() {
+		assertEquals(4,graph.size());
+		assertNotEquals(3,graph.size());
 	}
 	
 	@Test
-	public void testEdgeCount(){
-		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
+	public void testEdgeCount(){		
+		List<Graph.Vertex<Integer>> vertices = new ArrayList<Graph.Vertex<Integer>>();
+		Iterator<Graph.Vertex<Integer>> vIt = graph.vertices();
+		while(vIt.hasNext())
+			vertices.add(vIt.next());
 		
-		Graph.Vertex<Integer> v1 = graph.addVertex(1);
-		Graph.Vertex<Integer> v2 = graph.addVertex(3);
-		Graph.Vertex<Integer> v3 = graph.addVertex(4);
-		Graph.Vertex<Integer> v4 = graph.addVertex(2);
-		graph.addEdge(v1, v2);
-		Graph.Edge<Integer> e2 = graph.addEdge(v3, v2);
-		Graph.Edge<Integer> e3 = graph.addEdge(v3, v4);
-		
-		assertEquals(3,graph.getEdgeCount());
-		graph.addEdge(v2, v4);
 		assertEquals(4,graph.getEdgeCount());
-		graph.removeVertex(v2);
-		assertEquals(1,graph.getEdgeCount());
+		graph.addEdge(vertices.get(1), vertices.get(3));
+		assertEquals(5,graph.getEdgeCount());
+		graph.removeVertex(vertices.get(1));
+		assertEquals(2,graph.getEdgeCount());
 	}
 
 	@Test
 	public void testDegree() {
-		//fail("Not yet implemented");
-		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
-		
-		Graph.Vertex<Integer> v1 = graph.addVertex(1);
-		Graph.Vertex<Integer> v2 = graph.addVertex(3);
-		Graph.Vertex<Integer> v3 = graph.addVertex(4);
-		Graph.Vertex<Integer> v4 = graph.addVertex(2);
-		graph.addEdge(v1, v2);
-		graph.addEdge(v3, v2);
-		graph.addEdge(v3, v4);
-		graph.addEdge(v1, v3);
-		
-		assertTrue("Degree testing for v2", 2==graph.degree(v2));
-		assertTrue("Degree testing for v3", 3==graph.degree(v3));
+		List<Graph.Vertex<Integer>> vertices = new ArrayList<Graph.Vertex<Integer>>();
+		Iterator<Graph.Vertex<Integer>> vIt = graph.vertices();
+		while(vIt.hasNext())
+			vertices.add(vIt.next());
+		assertTrue(2==graph.degree(vertices.get(1)));
+		assertTrue(3==graph.degree(vertices.get(2)));
+		assertFalse(5==graph.degree(vertices.get(3)));
 	}
 
 	@Test
 	public void testContainsEdge() {
-		//fail("Not yet implemented");
+		List<Graph.Vertex<Integer>> vertices = new ArrayList<Graph.Vertex<Integer>>();
+		Iterator<Graph.Vertex<Integer>> vIt = graph.vertices();
+		while(vIt.hasNext())
+			vertices.add(vIt.next());
 	
-		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
-		
-		Graph.Vertex<Integer> v1 = graph.addVertex(1);
-		Graph.Vertex<Integer> v2 = graph.addVertex(3);
-		Graph.Vertex<Integer> v3 = graph.addVertex(4);
-		Graph.Vertex<Integer> v4 = graph.addVertex(2);
-		graph.addEdge(v1, v2);
-		graph.addEdge(v3, v2);
-		graph.addEdge(v3, v4);
-		graph.addEdge(v1, v3);
-		
-	
-		assertTrue("Testing edge presence 1", graph.containsEdge(v1, v2));
-		assertFalse("Testing edge presence 2", graph.containsEdge(v1, v4));
+		assertTrue(graph.containsEdge(vertices.get(0), vertices.get(1)));
+		assertFalse(graph.containsEdge(vertices.get(0), vertices.get(3)));
 	}
 
 	@Test
-	public void testClear() {
-		//fail("Not yet implemented");
-		
-		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
-		
-		Graph.Vertex<Integer> v1 = graph.addVertex(1);
-		Graph.Vertex<Integer> v2 = graph.addVertex(3);
-		Graph.Vertex<Integer> v3 = graph.addVertex(4);
-		Graph.Vertex<Integer> v4 = graph.addVertex(2);
-		graph.addEdge(v1, v2);
-		graph.addEdge(v3, v2);
-		graph.addEdge(v3, v4);
-		graph.addEdge(v1, v3);
-		
+	public void testClear() {	
 		assertFalse(0==graph.size());
 		graph.clear();
 		assertTrue(0==graph.size());
 	}
 
 	@Test
-	public void testAddVertex() {
-		//fail("Not yet implemented");
-		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
-		
-		Graph.Vertex<Integer> v1 = graph.addVertex(1);
-		Graph.Vertex<Integer> v2 = graph.addVertex(3);
-		Graph.Vertex<Integer> v3 = graph.addVertex(4);
-		Graph.Vertex<Integer> v4 = graph.addVertex(2);
-		
+	public void testAddVertex() {		
 		Iterator<Graph.Vertex<Integer>> it = graph.vertices();
 		
 		String out = "";
@@ -124,23 +83,16 @@ public class UndirectedGraphTest {
 			out += v.getElement()+", ";
 		}
 		
-		assertEquals("1, 2, 3, 4, ", out);
-		assertEquals(4,graph.size());
+		assertEquals("0, 1, 2, 3, ", out);
+		assertNotEquals("0, 1, 2, 3, 4, ", out);
+		graph.addVertex(4);
+		assertNotEquals("0, 1, 2, 3, 4, ", out);
+		assertEquals(5,graph.size());
 	
 	}
 
 	@Test
-	public void testAddEdgeVertexOfEVertexOfE() {
-		//fail("Not yet implemented");
-		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
-		
-		Graph.Vertex<Integer> v1 = graph.addVertex(1);
-		Graph.Vertex<Integer> v2 = graph.addVertex(3);
-		Graph.Vertex<Integer> v3 = graph.addVertex(4);
-		Graph.Vertex<Integer> v4 = graph.addVertex(2);
-		graph.addEdge(v1, v2);
-		graph.addEdge(v3, v2);
-		
+	public void testAddEdge() {		
 		Iterator<Graph.Edge<Integer>> it = graph.edges();
 		
 		String out = "";
@@ -149,10 +101,14 @@ public class UndirectedGraphTest {
 			out += e.getSource().getElement()+", "+e.getDestination().getElement()+", ";
 		}
 		
-		assertEquals("4, 3, 1, 3, ", out);
+		assertEquals("2, 3, 1, 2, 0, 2, 0, 1, ", out);
 		
-		graph.addEdge(v3, v4);
-		graph.addEdge(v1, v3);
+		List<Graph.Vertex<Integer>> vertices = new ArrayList<Graph.Vertex<Integer>>();
+		Iterator<Graph.Vertex<Integer>> vIt = graph.vertices();
+		while(vIt.hasNext())
+			vertices.add(vIt.next());
+		
+		graph.addEdge(vertices.get(0), vertices.get(3));
 		
 		it = graph.edges();
 		
@@ -162,31 +118,12 @@ public class UndirectedGraphTest {
 			out += e.getSource().getElement()+", "+e.getDestination().getElement()+", ";
 		}
 		
-		assertEquals("1, 4, 4, 2, 4, 3, 1, 3, ", out);
+		assertEquals("0, 3, 2, 3, 1, 2, 0, 2, 0, 1, ", out);
 		
-	}
-
-	//@Test
-	public void testAddEdgeVertexOfEVertexOfEA() {
-		//fail("Not yet implemented");
 	}
 
 	@Test
 	public void testRemoveVertex() {
-		//fail("Not yet implemented");
-		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
-		
-		Graph.Vertex<Integer> v1 = graph.addVertex(1);
-		Graph.Vertex<Integer> v2 = graph.addVertex(3);
-		Graph.Vertex<Integer> v3 = graph.addVertex(4);
-		Graph.Vertex<Integer> v4 = graph.addVertex(2);
-		graph.addEdge(v1, v2);
-		graph.addEdge(v3, v2);
-		Graph.Edge<Integer> e3 = graph.addEdge(v3, v4);
-		graph.addEdge(v1, v3);
-		
-		graph.removeVertex(v4);
-		
 		
 		Iterator<Graph.Edge<Integer>> it = graph.edges();
 		
@@ -196,7 +133,13 @@ public class UndirectedGraphTest {
 			out += e.getSource().getElement()+", "+e.getDestination().getElement()+", ";
 		}
 		
-		assertEquals("1, 4, 4, 3, 1, 3, ", out);
+		assertEquals("2, 3, 1, 2, 0, 2, 0, 1, ", out);
+		List<Graph.Vertex<Integer>> vertices = new ArrayList<Graph.Vertex<Integer>>();
+		Iterator<Graph.Vertex<Integer>> vIt = graph.vertices();
+		while(vIt.hasNext())
+			vertices.add(vIt.next());
+		
+		graph.removeVertex(vertices.get(3));
 		assertEquals(3,graph.size());
 		Iterator<Graph.Vertex<Integer>> it2 = graph.vertices();
 		
@@ -206,27 +149,19 @@ public class UndirectedGraphTest {
 			out2 += v.getElement()+", ";
 		}
 		
-		assertEquals("1, 3, 4, ", out2);
-		assertEquals(3,graph.size());
+		assertEquals("0, 1, 2, ", out2);
 		
 	}
 
 	@Test
 	public void testRemoveEdge() {
-		//fail("Not yet implemented");
-		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
+		List<Graph.Edge<Integer>> edges = new ArrayList<Graph.Edge<Integer>>();
+		Iterator<Graph.Edge<Integer>> eIt = graph.edges();
+		while(eIt.hasNext())
+			edges.add(eIt.next());
 		
-		Graph.Vertex<Integer> v1 = graph.addVertex(1);
-		Graph.Vertex<Integer> v2 = graph.addVertex(3);
-		Graph.Vertex<Integer> v3 = graph.addVertex(4);
-		Graph.Vertex<Integer> v4 = graph.addVertex(2);
-		graph.addEdge(v1, v2);
-		graph.addEdge(v3, v2);
-		Graph.Edge<Integer> e3 = graph.addEdge(v3, v4);
-		Graph.Edge<Integer> e4 = graph.addEdge(v1, v3);
-		
-		graph.removeEdge(e3);
-		graph.removeEdge(e4);
+		graph.removeEdge(edges.get(2));
+		graph.removeEdge(edges.get(3));
 		
 		Iterator<Graph.Edge<Integer>> it = graph.edges();
 		
@@ -236,54 +171,26 @@ public class UndirectedGraphTest {
 			out += e.getSource().getElement()+", "+e.getDestination().getElement()+", ";
 		}
 		
-		assertEquals("4, 3, 1, 3, ", out);
+		assertEquals("2, 3, 1, 2, ", out);
 	}
 
 	@Test
-	public void testVertices() {
-		//fail("Not yet implemented");
-		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
-		
-		Graph.Vertex<Integer> v1 = graph.addVertex(1);
-		Graph.Vertex<Integer> v2 = graph.addVertex(3);
-		Graph.Vertex<Integer> v3 = graph.addVertex(4);
-		Graph.Vertex<Integer> v4 = graph.addVertex(2);
-		
-		Set<Integer> resultSet = new HashSet<Integer>();
-		Set<Integer> resultSet2 = new HashSet<Integer>();
-		resultSet2.add(1); resultSet2.add(3); resultSet2.add(4); resultSet2.add(2); 
-		
+	public void testVertices() {		
 		Iterator<Graph.Vertex<Integer>> it = graph.vertices();
 		
 		String out = "";
 		while (it.hasNext()){
 			Graph.Vertex<Integer> v = it.next();
-//			resultSet.add(v.getElement());
 			out += v.getElement()+", ";
 		}
 		
-		
-		assertEquals("1, 2, 3, 4, ", out);
+		assertEquals("0, 1, 2, 3, ", out);
 		assertEquals(4,graph.size());
 	}
 
 	@Test
-	public void testEdges() {
-		//fail("Not yet implemented");
-		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
-		
-		Graph.Vertex<Integer> v1 = graph.addVertex(1);
-		Graph.Vertex<Integer> v2 = graph.addVertex(3);
-		Graph.Vertex<Integer> v3 = graph.addVertex(4);
-		Graph.Vertex<Integer> v4 = graph.addVertex(2);
-		
-		Iterator<Graph.Edge<Integer>> it = graph.edges();
-		assertFalse(it.hasNext());
-		
-		graph.addEdge(v1, v2);
-		graph.addEdge(v3, v2);
-		Graph.Edge<Integer> e3 = graph.addEdge(v3, v4);
-		
+	public void testEdges() {		
+		Iterator<Graph.Edge<Integer>> it = graph.edges();		
 		it = graph.edges();
 		
 		String out = "";
@@ -292,25 +199,18 @@ public class UndirectedGraphTest {
 			out += e.getSource().getElement()+", "+e.getDestination().getElement()+", ";
 		}
 		
-		assertEquals("4, 2, 4, 3, 1, 3, ", out);
+		assertEquals("2, 3, 1, 2, 0, 2, 0, 1, ", out);
 		
 	}
 
 	@Test
-	public void testNeighbours() {
-		//fail("Not yet implemented");
-		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
+	public void testNeighbours() {	
+		List<Graph.Vertex<Integer>> vertices = new ArrayList<Graph.Vertex<Integer>>();
+		Iterator<Graph.Vertex<Integer>> vIt = graph.vertices();
+		while(vIt.hasNext())
+			vertices.add(vIt.next());
 		
-		Graph.Vertex<Integer> v1 = graph.addVertex(1);
-		Graph.Vertex<Integer> v2 = graph.addVertex(3);
-		Graph.Vertex<Integer> v3 = graph.addVertex(4);
-		Graph.Vertex<Integer> v4 = graph.addVertex(2);
-		graph.addEdge(v1, v2);
-		graph.addEdge(v3, v2);
-		Graph.Edge<Integer> e3 = graph.addEdge(v3, v4);
-		graph.addEdge(v1, v3);
-		
-		Iterator<Graph.Vertex<Integer>> it = graph.neighbours(v3);
+		Iterator<Graph.Vertex<Integer>> it = graph.neighbours(vertices.get(2));
 		
 		String out = "";
 		while (it.hasNext()){
@@ -318,9 +218,9 @@ public class UndirectedGraphTest {
 			out += v.getElement()+", ";
 		}
 		
-		assertEquals("3, 2, 1, ", out);
+		assertEquals("0, 1, 3, ", out);
 		
-		it = graph.neighbours(v2);
+		it = graph.neighbours(vertices.get(1));
 		
 		out = "";
 		while (it.hasNext()){
@@ -328,10 +228,10 @@ public class UndirectedGraphTest {
 			out += v.getElement()+", ";
 		}
 		
-		assertEquals("1, 4, ", out);
+		assertEquals("0, 2, ", out);
 		
 		
-		graph.removeVertex(v3);
+		graph.removeVertex(vertices.get(2));
 		it = graph.vertices();
 		out = "";
 		while (it.hasNext()){
@@ -339,9 +239,9 @@ public class UndirectedGraphTest {
 			out += v.getElement()+", ";
 		}
 		
-		assertEquals("1, 2, 3, ", out);
+		assertEquals("0, 1, 3, ", out);
 		
-		it = graph.neighbours(v1);
+		it = graph.neighbours(vertices.get(0));
 		
 		out = "";
 		while (it.hasNext()){
@@ -349,43 +249,17 @@ public class UndirectedGraphTest {
 			out += v.getElement()+", ";
 		}
 		
-		assertEquals("3, ", out);
-		
-		graph = new UndirectedGraph<Integer,Integer>();
-		
-		v1 = graph.addVertex(1);
-		v2 = graph.addVertex(3);
-		v3 = graph.addVertex(4);
-		v4 = graph.addVertex(2);
-		Graph.Vertex<Integer> v5 = graph.addVertex(5);
-		graph.addEdge(v1, v2);
-		graph.addEdge(v3, v2);
-		graph.addEdge(v3, v4);
-		graph.addEdge(v1, v3);
-		graph.addEdge(v1, v5);
-		
-//		Iterator<Graph.Vertex<Integer>> vit = graph.neighbours(v2);
-//		while(vit.hasNext())
-//			System.out.print(vit.next().getElement()+", ");
-//		System.out.println();
-		
+		assertEquals("1, ", out);	
 	}
 
 	@Test
 	public void testConnectingEdges() {
-		//fail("Not yet implemented");
-		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
+		List<Graph.Vertex<Integer>> vertices = new ArrayList<Graph.Vertex<Integer>>();
+		Iterator<Graph.Vertex<Integer>> vIt = graph.vertices();
+		while(vIt.hasNext())
+			vertices.add(vIt.next());
 		
-		Graph.Vertex<Integer> v1 = graph.addVertex(1);
-		Graph.Vertex<Integer> v2 = graph.addVertex(3);
-		Graph.Vertex<Integer> v3 = graph.addVertex(4);
-		Graph.Vertex<Integer> v4 = graph.addVertex(2);
-		graph.addEdge(v1, v2);
-		graph.addEdge(v3, v2);
-		Graph.Edge<Integer> e3 = graph.addEdge(v3, v4);
-		graph.addEdge(v1, v3);
-		
-		Iterator<Graph.Edge<Integer>> it = graph.connectingEdges(v2);
+		Iterator<Graph.Edge<Integer>> it = graph.connectingEdges(vertices.get(1));
 		
 		String out = "";
 		while (it.hasNext()){
@@ -393,27 +267,19 @@ public class UndirectedGraphTest {
 			out += e.getSource().getElement()+", "+e.getDestination().getElement()+", ";
 		}
 		
-		assertEquals("4, 3, 1, 3, ", out);
+		assertEquals("1, 2, 0, 1, ", out);
 	}
 	
 	@Test
-	public void testDepthFirstTraversal(){
-		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
+	public void testDepthFirstTraversal(){		
+		Graph.Vertex<Integer> v5 = graph.addVertex(4);
+		List<Graph.Vertex<Integer>> vertices = new ArrayList<Graph.Vertex<Integer>>();
+		Iterator<Graph.Vertex<Integer>> vIt = graph.vertices();
+		while(vIt.hasNext())
+			vertices.add(vIt.next());
 		
-		Graph.Vertex<Integer> v1 = graph.addVertex(1);
-		Graph.Vertex<Integer> v2 = graph.addVertex(2);
-		Graph.Vertex<Integer> v3 = graph.addVertex(3);
-		Graph.Vertex<Integer> v4 = graph.addVertex(4);
-		Graph.Vertex<Integer> v5 = graph.addVertex(5);
-		graph.addEdge(v1, v2);
-		graph.addEdge(v3, v2);
-		Graph.Edge<Integer> e3 = graph.addEdge(v3, v4);
-		graph.addEdge(v1, v3);
-		graph.addEdge(v1, v5);
-		
-		List<Graph.Vertex<Integer>> list = graph.depthFirstTraversal(v2);
-//		list.add(v2); list.add(v1); list.add(v5); list.add(v3); list.add(v4); 
-		
+		graph.addEdge(vertices.get(0), vertices.get(4));
+		List<Graph.Vertex<Integer>> list = graph.depthFirstTraversal(vertices.get(1));		
 		Iterator<Graph.Vertex<Integer>> it = graph.vertices();
 		
 		String out = "";
@@ -427,27 +293,20 @@ public class UndirectedGraphTest {
 			out2 += v.getElement()+", ";
 		}
 		
-		assertEquals("2, 3, 4, 1, 5, ", out2);
-		assertEquals("1, 2, 3, 4, 5, ", out);
+		assertEquals("1, 2, 3, 0, 4, ", out2);
+		assertEquals("0, 1, 2, 3, 4, ", out);
 	}
 	
 	@Test
 	public void testBreadthFirstTraversal(){
-		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
+		Graph.Vertex<Integer> v5 = graph.addVertex(4);
+		List<Graph.Vertex<Integer>> vertices = new ArrayList<Graph.Vertex<Integer>>();
+		Iterator<Graph.Vertex<Integer>> vIt = graph.vertices();
+		while(vIt.hasNext())
+			vertices.add(vIt.next());
 		
-		Graph.Vertex<Integer> v1 = graph.addVertex(1);
-		Graph.Vertex<Integer> v2 = graph.addVertex(2);
-		Graph.Vertex<Integer> v3 = graph.addVertex(3);
-		Graph.Vertex<Integer> v4 = graph.addVertex(4);
-		Graph.Vertex<Integer> v5 = graph.addVertex(5);
-		graph.addEdge(v1, v2);
-		graph.addEdge(v3, v2);
-		Graph.Edge<Integer> e3 = graph.addEdge(v3, v4);
-		graph.addEdge(v1, v3);
-		graph.addEdge(v1, v5);
-		
-		List<Graph.Vertex<Integer>> list = graph.breadthFirstTraversal(v2);
-//		list.add(v2); list.add(v3); list.add(v1); list.add(v4); list.add(v5); 
+		graph.addEdge(vertices.get(0), vertices.get(4));
+		List<Graph.Vertex<Integer>> list = graph.breadthFirstTraversal(vertices.get(1)); 
 		
 		Iterator<Graph.Vertex<Integer>> it = graph.vertices();
 		
@@ -462,8 +321,7 @@ public class UndirectedGraphTest {
 			out2 += v.getElement()+", ";
 		}
 		
-		assertEquals("2, 1, 3, 5, 4, ", out2);
-		assertEquals("1, 2, 3, 4, 5, ", out);
+		assertEquals("1, 0, 2, 4, 3, ", out2);
 	}
 
 }

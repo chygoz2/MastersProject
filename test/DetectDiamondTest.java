@@ -18,17 +18,19 @@ public class DetectDiamondTest {
 	
 	UndirectedGraph<Integer,Integer> graph;
 	List<Graph.Vertex<Integer>> lowDegreeVertices;
+	DetectDiamond detector;
 
 	@Before
 	public void before() throws GraphFileReaderException{
 		String fileName = "test\\testdata\\diamondtestdata.txt";
 		graph = Utility.makeGraphFromFile(fileName);
-		lowDegreeVertices = new DetectDiamond().partitionVertices(graph)[0];
+		detector = new DetectDiamond();
+		lowDegreeVertices = detector.partitionVertices(graph)[0];
 	}
 	
 	@Test
 	public void testDetect(){
-		List<Graph.Vertex<Integer>> d = new DetectDiamond().detect(graph);
+		List<Graph.Vertex<Integer>> d = detector.detect(graph);
 		
 		List<Integer> actualResult = new ArrayList<Integer>();
 		for(Graph.Vertex<Integer> v: d){

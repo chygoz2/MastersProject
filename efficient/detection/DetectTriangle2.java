@@ -156,7 +156,7 @@ public class DetectTriangle2 {
 		int noOfEdges = graph.getEdgeCount();
 		
 		//calculate D for Vertex partitioning
-		double alpha = 3; //from standard matrix multiplication
+		double alpha = 3; //exponent of matrix multiplication from standard matrix multiplication
 		double pow = (alpha-1)/(alpha+1);
 		double D = Math.pow(noOfEdges, pow);
 		

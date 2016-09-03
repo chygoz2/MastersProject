@@ -21,6 +21,7 @@ import general.*;
 import general.Graph.Vertex;
 import generate.PatternFreeGraphGenerator;
 import gui.GUI;
+import test.RunTest;
 
 public class RunMe {
 	public static void main(String[] args){
@@ -366,7 +367,7 @@ public class RunMe {
 				}
 			}
 			else if(words[0].equals("test")){
-				
+				RunTest.run();
 			}
 			else if(words[0].equals("gui")){
 				EventQueue.invokeLater(new Runnable() {
