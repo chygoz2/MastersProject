@@ -18,15 +18,21 @@ public class DetectTriangle {
 	private String time; //stores time taken to execute the operation
 	private String found;  //stores whether a triangle was found
 	
+	/**
+	 * constructor to initialize instance variables
+	 */
 	public DetectTriangle(){
 		this.time = "-";
 		this.found = "found";
 	}
 	
+	/**
+	 * main method which allows direct access to the class via the command line terminal.
+	 * @param args		command line arguments
+	 */
 	public static void main(String[] args) {
 		try{
-			UndirectedGraph<Integer,Integer> graph = null;
-			graph = Utility.makeGraphFromFile(args[0]); //create graph from input file
+			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]); //create graph from input file
 			
 			//create a DetectTriangle object to detect a triangle in a graph
 			DetectTriangle d = new DetectTriangle();
@@ -60,7 +66,7 @@ public class DetectTriangle {
 		long starttime = System.currentTimeMillis();
 		List<Graph.Vertex<Integer>> triangle= find(graph);
 		long stoptime = System.currentTimeMillis();
-		time = ""+(stoptime-starttime);
+		time = ""+(stoptime-starttime); //calculate time taken to execute 
 		
 		if(triangle==null)
 			found = "not found";

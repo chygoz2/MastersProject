@@ -19,17 +19,23 @@ public class DetectSimplicialVertex {
 	private  String p2time; //measures time taken to execute phase two
 	private  String found; //stores results of the operation
 	
+	/**
+	 * constructor to initialize instance variables
+	 */
 	public DetectSimplicialVertex(){
 		this.p1time = "-";
 		this.p2time = "-";
 		this.found = "found";
 	}
 	
+	/**
+	 * main method which allows direct access to the class via the command line terminal.
+	 * @param args		command line arguments
+	 */
 	public static void main(String [] args){
 		try{
-			UndirectedGraph<Integer,Integer> graph = null;
-			graph = Utility.makeGraphFromFile(args[0]);
-			
+			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]);//create graph from file
+			//run detection on graph
 			DetectSimplicialVertex d = new DetectSimplicialVertex();
 			Graph.Vertex<Integer> simpVertex = d.detect(graph);
 			String out = "";
@@ -39,6 +45,7 @@ public class DetectSimplicialVertex {
 			}else{
 				out = String.format("Simplicial vertex not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
 			}
+			//print out result
 			System.out.println(out);
 		}catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("Please provide the graph file as a command line argument");
@@ -67,7 +74,7 @@ public class DetectSimplicialVertex {
 		long stoptime = System.currentTimeMillis();
 		p1time = ""+(stoptime-starttime);
 		
-		if(simplicialVertex==null){
+		if(simplicialVertex==null){ //if no simplicial vertex was found in phase one
 			//measure execution time of phase two
 			starttime = System.currentTimeMillis();
 			simplicialVertex = phaseTwo(graph, lowDegreeVertices, highDegreeVertices);
@@ -124,7 +131,7 @@ public class DetectSimplicialVertex {
 	
 	/**
 	 * method to check the presence of a simplicial vertices of high degree whose neighbours
-	 * are also high degree verticesin a graph
+	 * are also high degree vertices in a graph
 	 * @param graph2				the graph to be checked
 	 * @param lowDegreeVertices		the list of low degree vertices
 	 * @param highDegreeVertices	the list of high degree vertices
@@ -151,14 +158,15 @@ public class DetectSimplicialVertex {
 			graph.removeVertex(graph.getVertexWithElement(v.getElement()));
 		}	
 		
-		int[][] A = graph.getAdjacencyMatrix();
+		int[][] A = graph.getAdjacencyMatrix(); //get adjacency matrix of graph
 		
-		//put 1's on the diagonal
+		//put 1's on the diagonal of the adjacency matrix
 		for(int i=0;i<A.length;i++){
 			A[i][i] = 1;
 		}
 		
-		//create a map between vertices and matrix indices
+		/*create a mapping between vertices and matrix indices. Useful in knowing which matrix index
+		 * belongs to which vertex*/ 
 		Map<Integer, Integer> vertexIndexMap = new HashMap<Integer, Integer>();
 		int a = 0;
 		
@@ -179,9 +187,11 @@ public class DetectSimplicialVertex {
 		}
 		
 		vIt1 = graph.vertices();
+		/*
+		 *for every unmarked vertex from earlier, check if A^2(x,y)=A^2(x,x) from theorem 1 of Kloks et al. if condition
+		 *is satisfied, then vertex is simplicial 
+		 */
 		while(vIt1.hasNext()){
-			//get v's neighbours
-
 			Graph.Vertex<Integer> x = vIt1.next();
 			if(!markedVertices.contains(graph.getVertexWithElement(x.getElement()))) //do check only on unmarked vertices
 			{
@@ -229,7 +239,7 @@ public class DetectSimplicialVertex {
 		int noOfEdges = graph.getEdgeCount();
 		
 		//calculate D for Vertex partitioning
-		double alpha = 3; //from standard matrix multiplication
+		double alpha = 3; //exponent of matrix multiplication from standard matrix multiplication
 		double pow = (alpha-1)/(alpha+1);
 		double D = Math.pow(noOfEdges, pow);
 		

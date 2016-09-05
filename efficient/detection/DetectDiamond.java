@@ -23,6 +23,9 @@ public class DetectDiamond {
 	private String p3time; //measures time taken for phase three to execute
 	private String found; //stores whether a diamond was found or now
 	
+	/**
+	 * constructor to initialize instance variables
+	 */
 	public DetectDiamond(){
 		this.p1time = "-";
 		this.p2time = "-";
@@ -30,11 +33,15 @@ public class DetectDiamond {
 		this.found = "found";
 	}
 	
+	/**
+	 * main method which allows direct access to the class via the command line terminal.
+	 * @param args		command line arguments
+	 */
 	public static void main(String [] args) throws IOException{
 		try{
-			UndirectedGraph<Integer,Integer> graph = null;
-			graph = Utility.makeGraphFromFile(args[0]);
+			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]); //create graph from file
 			
+			//run diamond detecton on graph
 			DetectDiamond d = new DetectDiamond();
 			List<Graph.Vertex<Integer>> diamond = d.detect(graph);
 			String out = "";
@@ -45,6 +52,7 @@ public class DetectDiamond {
 			}else{
 				out = String.format("Diamond not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
 			}
+			//print out results
 			System.out.println(out);
 		}catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("Please provide the graph file as a command line argument");
@@ -69,24 +77,23 @@ public class DetectDiamond {
 		long starttime = System.currentTimeMillis();
 		Map<String,Object> phase1Results = phaseOne(lowDegreeVertices, graph);
 		long stoptime = System.currentTimeMillis();
-		p1time = ""+(stoptime-starttime);
+		p1time = ""+(stoptime-starttime); //compute time taken for phase one to execute
 		
 		//get cliques found in phase one
 		Map<Integer,UndirectedGraph<Integer,Integer>> cli = (HashMap<Integer,UndirectedGraph<Integer,Integer>>)phase1Results.get("cliques");
-		 
 
 		List<Graph.Vertex<Integer>> diamond = (List<Vertex<Integer>>) phase1Results.get("diamond");
 		if(diamond==null){ //if no diamond found in phase one, check for diamond in phase two and measure time taken
 			starttime = System.currentTimeMillis();
 			diamond = phaseTwo(cli, graph);
 			stoptime = System.currentTimeMillis();
-			p2time = ""+(stoptime-starttime);
+			p2time = ""+(stoptime-starttime); //compute time taken for phase two to execute
 			
 			if(diamond==null){ //if no diamond found in phase two, check for diamond in phase three and measure time taken
 				starttime = System.currentTimeMillis();
 				diamond = phaseThree(graph, lowDegreeVertices);
 				stoptime = System.currentTimeMillis();
-				p3time = ""+(stoptime-starttime);
+				p3time = ""+(stoptime-starttime); //compute time taken for phase three to execute
 				
 			}
 		}
@@ -98,7 +105,7 @@ public class DetectDiamond {
 	}
 	
 	/**
-	 * method that checks a graph for a diamond by checking for a diamond with a low degree vertex in it
+	 * method that checks a graph for a diamond by checking for a diamond with a low degree vertex of degree 3
 	 * @param lowDegreeVertices 	a list of low degree vertices of the graph
 	 * @param graph 				the graph to be checked
 	 * @return 						a map object containing a diamond if found, as well as a collection of cliques mapped to each low degree
@@ -185,9 +192,9 @@ public class DetectDiamond {
 				Iterator<Graph.Edge<Integer>> edgeIt = cliq.edges();
 				while(edgeIt.hasNext()){
 					//get pair in clique(as vertices at edges)
-					UndirectedGraph.UnEdge ee = (UndirectedGraph.UnEdge)edgeIt.next();
-					Graph.Vertex<Integer> y = (UndirectedGraph.UnVertex) ee.getSource();
-					Graph.Vertex<Integer> z = (UndirectedGraph.UnVertex) ee.getDestination();
+					Graph.Edge<Integer> ee = edgeIt.next();
+					Graph.Vertex<Integer> y = ee.getSource();
+					Graph.Vertex<Integer> z = ee.getDestination();
 					
 					//get ids of y and z
 					int yId = (int) y.getElement();
@@ -203,7 +210,7 @@ public class DetectDiamond {
 								Iterator<Graph.Vertex<Integer>> zIt = graph.neighbours(graph.getVertexWithElement(zId));
 								while(zIt.hasNext()){
 									Graph.Vertex<Integer> t = zIt.next();
-									if(t.getElement() != lowVertex) //we don't want to add the vertex that the clique belongs to
+									if(t.getElement() != lowVertex){ //we don't want to add the vertex that the clique belongs to
 										if(s.getElement()==t.getElement()){
 											//create a diamond and return it
 											diamond = new ArrayList<Graph.Vertex<Integer>>();
@@ -213,6 +220,7 @@ public class DetectDiamond {
 											diamond.add(s);
 											break here;
 										}
+									}
 								}
 							}
 						} 
@@ -237,8 +245,8 @@ public class DetectDiamond {
 		}
 		
 		List<Graph.Vertex<Integer>> diamond = null;
-		//look for a diamond in graph using the method listed in phase 1 applied on all vertices 
-		//of the graph
+		/*look for a diamond in resulting graph using the method described in phase 1 applied on all vertices 
+		of the graph*/
 		
 		//get the vertices into a list
 		Iterator<Graph.Vertex<Integer>> vIt = graph.vertices();
@@ -285,8 +293,8 @@ public class DetectDiamond {
 		
 		while(vIt.hasNext()){
 			Graph.Vertex<Integer> v = vIt.next();
-			//do a breadth first search on each vertex of graph in search for a P3
-			//stop once a p3 has been found
+			/*do a breadth first search on each vertex of graph in search for a P3.
+			stop once a p3 has been found*/
 			List<Graph.Vertex<Integer>> bfVertices = graph.breadthFirstTraversal(v);
 			if(bfVertices.size()> 2){
 				Graph.Vertex<Integer> v1 = bfVertices.get(0);

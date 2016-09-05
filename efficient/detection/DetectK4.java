@@ -14,21 +14,28 @@ import general.Utility;
 public class DetectK4 {
 	
 	//instance variables
-	private  String p1time; //measures time taken for phase one to execute
-	private  String p2time; //measures time taken for phase two to execute
+	private  String p1time; //stores time taken for phase one to execute
+	private  String p2time; //stores time taken for phase two to execute
 	private  String found; //stores outcome of the test
 	
+	/**
+	 * constructor to initialize instance variables
+	 */
 	public DetectK4(){
 		this.p1time = "-";
 		this.p2time = "-";
 		this.found = "found";
 	}
 	
+	/**
+	 * main method which allows direct access to the class via the command line terminal.
+	 * @param args		command line arguments
+	 */
 	public static void main(String [] args){
 		try{
-			UndirectedGraph<Integer,Integer> graph = null;
-			graph = Utility.makeGraphFromFile(args[0]);
+			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]); //create graph from file
 			
+			//run K4 detection on graph
 			DetectK4 d = new DetectK4();
 			List<Graph.Vertex<Integer>> k4 = d.detect(graph);
 			String out = "";
@@ -39,6 +46,7 @@ public class DetectK4 {
 			}else{
 				out = String.format("K4 not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
 			}
+			//print out results
 			System.out.println(out);
 		}catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("Please provide the graph file as a command line argument");
@@ -67,7 +75,7 @@ public class DetectK4 {
 		long stoptime = System.currentTimeMillis();
 		p1time = ""+(stoptime-starttime);
 		
-		if(k4==null){
+		if(k4==null){ //if k4 was not found in phase one
 			//measure time taken for phase two to execute
 			starttime = System.currentTimeMillis();
 			k4 = phaseTwo(graph, lowDegreeVertices);
@@ -88,21 +96,21 @@ public class DetectK4 {
 	 */
 	public  List<Graph.Vertex<Integer>> phaseOne(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> highDegreeVertices){
 			
-		//check the intersection of the neighbourhood vertices of each high degree vertex and the
-		//high degree vertices 
+		/*check the intersection of the neighbourhood vertices of each high degree vertex and the
+		high degree vertices*/ 
 		for(Graph.Vertex<Integer> x: highDegreeVertices){
 			//get x's neighbourhood graph
 			Iterator<Graph.Vertex<Integer>> nXIter = graph.neighbours(x);
-			List<Graph.Vertex<Integer>> nXList = new ArrayList<Graph.Vertex<Integer>>();
 
 			//get the intersection of the neighbourhood vertices of x with the high degree vertices
+			List<Graph.Vertex<Integer>> nXList = new ArrayList<Graph.Vertex<Integer>>();
 			while(nXIter.hasNext()){
 				Graph.Vertex<Integer> v = nXIter.next();
 				if(highDegreeVertices.contains(v))
 					nXList.add(v);
 			}
 			
-			//if x's neighbourhood does not have any high degree vertex, then continue
+			//if x's neighbourhood does not have any high degree vertex, then check the next high degree vertex
 			if(nXList.isEmpty())
 				continue;
 			
@@ -114,14 +122,14 @@ public class DetectK4 {
 			List<Graph.Vertex<Integer>> triangle = d.detect(graph2);
 			if(triangle!=null){ //if triangle is found
 				List<Graph.Vertex<Integer>> k4Vertices = new ArrayList<Graph.Vertex<Integer>>(); //list to store k4 vertices
-				k4Vertices.addAll(triangle);
-				k4Vertices.add(x);
+				k4Vertices.addAll(triangle); //add triangles vertices
+				k4Vertices.add(x); //add the last vertex to complete the k4
 				
-				return k4Vertices;
+				return k4Vertices; //return the vertices of the k4
 			}	
 		}
 		
-		return null;
+		return null; //no k4 was found
 	}
 	
 	/**
@@ -139,7 +147,7 @@ public class DetectK4 {
 			//check for triangle in the neighbourhood
 			DetectTriangle d = new DetectTriangle();
 			List<Graph.Vertex<Integer>> triangle = d.detect(graph2);
-			if(triangle!=null){
+			if(triangle!=null){ //if triangle is found, create a k4 from the triangles vertices and the low degree vertex 
 				List<Graph.Vertex<Integer>> k4Vertices = new ArrayList<Graph.Vertex<Integer>>(); //list to store k4 vertices
 				k4Vertices.addAll(triangle);
 				k4Vertices.add(x);
@@ -148,10 +156,14 @@ public class DetectK4 {
 			}
 			
 		}
-		return null;
+		return null; //no k4 was found
 	}
 
-	//method to partition the vertices into low degree vertices and high degree vertices
+	/**
+	 * method to partition the vertices into low degree vertices and high degree vertices
+	 * @param graph		the graph whose vertices are to be partitioned
+	 * @return			the partitions
+	 */
 	public  List<Graph.Vertex<Integer>>[] partitionVertices(UndirectedGraph<Integer,Integer> graph){
 		List<Graph.Vertex<Integer>>[] vertices = new List[2];
 		vertices[0] = new ArrayList<Graph.Vertex<Integer>>();

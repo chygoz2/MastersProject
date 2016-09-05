@@ -5,20 +5,33 @@ import exception.GraphFileReaderException;
 import general.*;
 import general.Graph.Vertex;
 
+/**
+ * class that lists complete graphs found in a graph
+ * @author Chigozie Ekwonu
+ *
+ */
 public class ListKL {
 	
-	private  String time;
-	private  int found;
+	//instance variables
+	private  String time; //stores time taken to execute operation
+	private  int found;	  //stores number of Kls found
 	
+	/**
+	 * constructor to initialize instance variables
+	 */
 	public ListKL(){
 		this.time = "-";
 		this.found = 0;
 	}
 	
+	/**
+	 * main method which allows direct access to the class via the command line terminal.
+	 * @param args		command line arguments
+	 */
 	public static void main(String [] args){
-		UndirectedGraph<Integer,Integer> graph = null;
 		try{
-			graph = Utility.makeGraphFromFile(args[0]);
+			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]);//create graph from file
+			//run the listing operation
 			ListKL d = new ListKL();
 			if(args.length>1){
 				int l = Integer.parseInt(args[1]);
@@ -29,12 +42,13 @@ public class ListKL {
 					for(List<Graph.Vertex<Integer>> kl: kls){
 						out += Utility.printList(kl)+"\n";
 					}
-					out = String.format("K"+l+" found%nVertices:%n%s", out);
-					out += String.format("Number of K"+l+"s found: %d%n", kls.size());
+					out = String.format("K%d found%nVertices:%n%s",l,out);
+					out += String.format("Number of K%ds found: %d%n",l, kls.size());
 					out += String.format("CPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
 				}else{
-					out = String.format("K"+l+" not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
+					out = String.format("K%d not found%nCPU time taken: %d milliseconds", l,Utility.getTotalTime(d.getResult()));
 				}
+				//print out results
 				System.out.println(out);
 			}else{
 				System.out.println("Please enter the size of the complete graph to be found");
@@ -62,15 +76,17 @@ public class ListKL {
 	 * method to detect the presence of a complete graph of size l
 	 * @param graph graph to be checked
 	 * @param l	size of the complete subgraph to be found
-	 * @return	the list of complete subgraphs
+	 * @return	the list of complete subgraphs found if any
 	 */
 	public  List<List<Graph.Vertex<Integer>>> find(UndirectedGraph<Integer,Integer> graph, int l){
-		List<List<Graph.Vertex<Integer>>> klList = new ArrayList<List<Graph.Vertex<Integer>>>();
+		List<List<Graph.Vertex<Integer>>> klList = new ArrayList<List<Graph.Vertex<Integer>>>();//list of all Kls found
 		
+		//if size of complete subgraph to be found is greater than the graph size, then return an empty list
 		if(l>graph.size()){
 			return klList;
 		}
 		
+		//if l = 1, return list of vertices of graph
 		if(l == 1){
 			//create subgraphs with only one vertex
 			Iterator<Graph.Vertex<Integer>> vertices = graph.vertices();
@@ -80,6 +96,7 @@ public class ListKL {
 				klList.add(temp);
 			}
 		}
+		//if l=2, return list of vertices of each edge of graph
 		else if(l==2){
 			//create subgraphs formed by each edge in graph
 			Iterator<Graph.Edge<Integer>> edges = graph.edges();
@@ -91,29 +108,30 @@ public class ListKL {
 				klList.add(temp);
 			}
 		}
-
+		//if l=3, return triangles in graph
 		else if(l==3){
 			//get all triangles in graph
 			List<List<Graph.Vertex<Integer>>> k3 = new ListTriangles().detect(graph);
 			klList.addAll(k3);
 		}
 		else if(l>3){
-			int q = l/3;
-			int r = l%3;
+			int q = l/3; //quotient after division
+			int r = l%3; //remainder after division
 			
-			if(r==1){
-				Set<Set<Integer>> marked = new HashSet<Set<Integer>>(); //to prevent creating the same K(l-1) more than once
+			if(r==1){ //if remainder is 1
+				Set<Set<Integer>> seen = new HashSet<Set<Integer>>(); //to prevent creating the same K(l-1) more than once
 				//get the vertices in graph
 				Iterator<Graph.Vertex<Integer>> vertices = graph.vertices();
+				//for each vertex x, 
 				while(vertices.hasNext()){
 					Graph.Vertex<Integer> x = vertices.next();
 					//get the neighbourhood graph of x
 					UndirectedGraph<Integer,Integer> nx = Utility.getNeighbourGraph(graph, x);
-					//check if nx contains a k(l-1)
+					//check if neighbourhood of x contains a k(l-1)
 					List<List<Graph.Vertex<Integer>>> kqList = find(nx,l-1);
 					for(List<Graph.Vertex<Integer>> kq: kqList){
 						List<Graph.Vertex<Integer>> kqPlusVertices = new ArrayList<Graph.Vertex<Integer>>();
-						Set<Integer> hh = new HashSet<Integer>(); //to store elements of the K(l-1) vertices
+						Set<Integer> hh = new HashSet<Integer>(); //to store elements of the K(l-1) vertices used to prevent duplication
 						
 						//add k(l-1) vertices
 						for(Graph.Vertex<Integer> v: kq){
@@ -124,18 +142,17 @@ public class ListKL {
 						kqPlusVertices.add(x); //add x
 						hh.add(x.getElement());
 						
-						//check in the marked list for an entry that contains all 3 vertex elements
-						boolean contains = marked.add(hh);					
+						//check if the kl was found before. "contains" is true if kl was not already found previously
+						boolean contains = seen.add(hh);					
 						
-						if(contains){
-							//create Kl from kqPlusVertices list
-							klList.add(kqPlusVertices);						
+						if(contains){//if kl was not previously found
+							klList.add(kqPlusVertices);//add kl to kl list						
 						}
 					}
 				}
 			}
-			else if(r==2){
-				Set<Set<Integer>> marked = new HashSet<Set<Integer>>(); //to prevent creating the same K(l-2) more than once
+			else if(r==2){ //if remainder is 2
+				Set<Set<Integer>> seen = new HashSet<Set<Integer>>(); //to prevent creating the same K(l-2) more than once
 				//get edges
 				Iterator<Graph.Edge<Integer>> edges = graph.edges();
 				while(edges.hasNext()){
@@ -144,7 +161,7 @@ public class ListKL {
 					Graph.Vertex<Integer> source = edge.getSource();
 					Graph.Vertex<Integer> destination = edge.getDestination();
 					
-					//get the common neighbours of source and destination
+					//get the common neighbours of source and destination vertices
 					List<Graph.Vertex<Integer>> commonNeighbours = new ArrayList<Graph.Vertex<Integer>>();
 					Set<Integer> sourceNeighbours = new HashSet<Integer>();
 					Iterator<Graph.Vertex<Integer>> sNIt = graph.neighbours(source);
@@ -163,12 +180,12 @@ public class ListKL {
 					//make graph from common neighbours
 					if(commonNeighbours.isEmpty())
 						continue;
-					UndirectedGraph<Integer,Integer> nXY = Utility.makeGraphFromVertexSet(graph, commonNeighbours);
+					UndirectedGraph<Integer,Integer> nXY = Utility.makeGraphFromVertexSet(graph, commonNeighbours);//graph induced by vertices common to X and Y
 					
-					//check if nXY has a K(l-2)
+					//check if the common neighbouhood graph of X and Y has a K(l-2)
 					List<List<Graph.Vertex<Integer>>> kqList = find(nXY,l-2);
 					for(List<Graph.Vertex<Integer>> kq: kqList){
-						Set<Integer> hh = new HashSet<Integer>(); //to store elements of the K(l-1) vertices
+						Set<Integer> hh = new HashSet<Integer>(); //to store elements of the K(l-1) vertices used to prevent duplication
 						
 						List<Graph.Vertex<Integer>> kqPlusVertices = new ArrayList<Graph.Vertex<Integer>>();
 						kqPlusVertices.add(source); //add source
@@ -183,11 +200,11 @@ public class ListKL {
 							hh.add(v.getElement());
 						}
 						
-						//check in the marked list for an entry that contains all 3 vertex elements
-						boolean contains = marked.add(hh);
+						//check if the kl was found before. "contains" is true if kl was not already found previously
+						boolean contains = seen.add(hh);
 						
-						if(contains){
-							//create Kl from kqPlusVertices list
+						if(contains){//if kl wasn't previously found,
+							//add kl to list
 							klList.add(kqPlusVertices);
 						}
 					}
@@ -263,11 +280,11 @@ public class ListKL {
 				//look for triangles in H
 				List<List<Graph.Vertex<Integer>>> triangles = find(H, 3);
 				
-				Set<Set<Integer>> marked = new HashSet<Set<Integer>>(); //to prevent creating the same Kl more than once
+				Set<Set<Integer>> seen = new HashSet<Set<Integer>>(); //to prevent creating the same Kl more than once
 				
 				//get a triangle and get its corresponding vertices in G
 				for(List<Graph.Vertex<Integer>> triangle:triangles){
-					Set<Integer> hh = new HashSet<Integer>();
+					Set<Integer> hh = new HashSet<Integer>(); //stores elements of the kl vertices used to prevent duplication
 					for(Graph.Vertex<Integer> next: triangle){
 						Integer vElem = next.getElement();
 						Set<Integer> corr = hToGMapping.get(vElem);
@@ -276,8 +293,8 @@ public class ListKL {
 						}
 					}
 										
-					//check if such kl with those vertices has been created previously
-					if(marked.add(hh)){						
+					//check if such kl with those vertices has been created previously. If not, add it to the Kl list
+					if(seen.add(hh)){						
 						List<Graph.Vertex<Integer>> klVertices = new ArrayList<Graph.Vertex<Integer>>();
 						for(Integer i: hh)
 							klVertices.add(graph.getVertexWithElement(i));

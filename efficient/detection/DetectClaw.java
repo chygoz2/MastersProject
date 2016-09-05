@@ -17,18 +17,25 @@ public class DetectClaw {
 	private  String p2time; //keeps track of time take for phase two to execute
 	private  String found; //stores whether a claw was found or not
 	
+	/**
+	 * constructor to initialize instance variables
+	 */
 	public DetectClaw(){
 		this.p1time = "-";
 		this.p2time = "-";
 		this.found = "found";
 	}
 	
+	/**
+	 * main method which allows direct access to the class via the command line terminal.
+	 * @param args		command line arguments
+	 */
 	public static void main(String [] args){
 		
-		UndirectedGraph<Integer,Integer> graph = null;
 		try{
-			graph = Utility.makeGraphFromFile(args[0]);
-			DetectClaw d = new DetectClaw();
+			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]); //create graph from file
+			//run claw detection on graph
+			DetectClaw d = new DetectClaw(); 
 			List<Graph.Vertex<Integer>> claw = d.detect(graph);
 			String out = "";
 			if(claw!=null){
@@ -38,8 +45,9 @@ public class DetectClaw {
 			}else{
 				out = String.format("Claw not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
 			}
+			//print out result
 			System.out.println(out);
-		}catch(ArrayIndexOutOfBoundsException e){
+		}catch(ArrayIndexOutOfBoundsException e){//notify user if graph file was not provided
 			System.out.println("Please provide the graph file as a command line argument");
 		}catch(GraphFileReaderException e){
 			System.out.println(e.getError());
@@ -56,15 +64,15 @@ public class DetectClaw {
 	public  List<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph){
 		List<Graph.Vertex<Integer>> claw = null;
 		long starttime = System.currentTimeMillis();
-		claw = phaseOne(graph);
+		claw = phaseOne(graph); //execute phase one
 		long stoptime = System.currentTimeMillis();
-		p1time = ""+(stoptime-starttime);
+		p1time = ""+(stoptime-starttime); //calculate time taken for phase one to execute
 		
-		if(claw==null){
+		if(claw==null){ //if claw was not found in phase one,
 			starttime = System.currentTimeMillis();
-			claw = phaseTwo(graph);
+			claw = phaseTwo(graph); //execute phase two
 			stoptime = System.currentTimeMillis();
-			p2time = ""+(stoptime-starttime);
+			p2time = ""+(stoptime-starttime); //calculate time taken for phase two to execute
 		}
 		
 		if(claw==null)

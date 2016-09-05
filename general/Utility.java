@@ -7,28 +7,22 @@ import exception.GraphFileReaderException;
 import exception.MatrixException;
 import generate.RandomGraphGenerator;
 
+/**
+ * class containing methods that are commonly used by the other classes
+ * @author Chigozie Ekwonu
+ *
+ */
 public final class Utility {
 	
-//	public static String validateInput(String fileName){		
-//		FileReader reader = null;
-//		try {
-//			reader = new FileReader(fileName);
-//		} catch (FileNotFoundException e1) {
-//			return "Input file not found";
-//		}
-//		Scanner scanner;
-//		scanner = new Scanner(reader);
-//
-//		if(!scanner.hasNextLine()){
-//			scanner.close();
-//			return "Input file is empty";
-//		}
-//		scanner.close();
-//		return null;
-//	}
-	
+	/**
+	 * method that creates a graph object from adjacency matrix present in a file
+	 * @param fileName						the name of the file
+	 * @return								the adjacency matrix created
+	 * @throws GraphFileReaderException		exception thrown if the graph file is not valid
+	 */
 	public static UndirectedGraph<Integer,Integer> makeGraphFromFile(String fileName) throws GraphFileReaderException{
 	
+		//open file
 		FileReader reader = null;
 		try {
 			reader = new FileReader(fileName);
@@ -43,8 +37,9 @@ public final class Utility {
 			throw new GraphFileReaderException("Input file is empty");
 		}
 	
-		int vertexCount = -1;
+		int vertexCount = -1; //initial default vertex size
 		
+		//read each line of file into a list
 		List<String> lines = new ArrayList<String>();
 		while(scanner.hasNextLine()){
 			lines.add(scanner.nextLine());
@@ -54,7 +49,7 @@ public final class Utility {
 		vertexCount = lines.get(0).split("[ ]+").length;
 		int[][] adjMatrix = new int[vertexCount][vertexCount];
 		
-		//read adjacency matrix 
+		//create adjacency matrix from read data 
 		for(int i=0; i<vertexCount; i++){
 			String[] stringI = lines.get(i).split("[ ]+");
 			if(stringI.length != vertexCount){
@@ -78,6 +73,7 @@ public final class Utility {
 		//create graph and add vertices
 		UndirectedGraph<Integer,Integer> graph = makeGraphFromAdjacencyMatrix(adjMatrix);
 		
+		//close scanner and file reader objects
 		try {
 			scanner.close();
 			reader.close();
@@ -87,7 +83,13 @@ public final class Utility {
 		return graph;
 	}
 	
+	/**
+	 * method that creates a graph from adjacency matrix
+	 * @param adjMatrix		the adjacency matrix
+	 * @return				the created graph
+	 */
 	public static UndirectedGraph<Integer,Integer> makeGraphFromAdjacencyMatrix(int[][] adjMatrix){
+		//create empty graph
 		UndirectedGraph<Integer,Integer> graph = new UndirectedGraph<Integer,Integer>();
 		Graph.Vertex<Integer>[] vertices = new Graph.Vertex[adjMatrix.length];
 		
@@ -108,6 +110,12 @@ public final class Utility {
 		return graph;
 	}
 	
+	/**
+	 * method that creates a graph induced by a vertex set
+	 * @param graph			the original graph or supergraph
+	 * @param vertices		the vertex set
+	 * @return				the induced subgraph created
+	 */
 	public static UndirectedGraph<Integer,Integer> makeGraphFromVertexSet(UndirectedGraph<Integer,Integer> graph, Collection<Graph.Vertex<Integer>> vertices){
 		UndirectedGraph<Integer,Integer> g1 = new UndirectedGraph<Integer,Integer>();
 		
@@ -116,6 +124,7 @@ public final class Utility {
 			g1.addVertex(ve.getElement());
 		}		
 		
+		//add the edges
 		for(Graph.Vertex<Integer> one: vertices){
 			for(Graph.Vertex<Integer> two: vertices){
 				if(two.getElement()!=one.getElement()){
@@ -133,10 +142,18 @@ public final class Utility {
 		return g1;
 	}
 	
+	/**
+	 * method that saves a graph to file as an adjacency matrix. 
+	 * The file is named according to its size, density and an index
+	 * @param A		the adjacency matrix
+	 * @param p		the edge probability
+	 * @param no	the graph index
+	 */
 	public static void saveGraphToFile(int[][] A, double p, int no){
-		StringBuilder out = new StringBuilder();
+		StringBuilder out = new StringBuilder(); //create StringBuilder object
 		String pp = String.format("%.1f", p); 
 		
+		//convert adjacency matrix to a StringBuilder object representation
 		for(int i=0; i<A.length; i++){
 			for(int j=0; j<A[i].length; j++){
 				out.append(A[i][j]+" ");
@@ -161,6 +178,7 @@ public final class Utility {
 		//select suitable file name for the generated graph
 		String graphFileName = dir2.getAbsolutePath()+File.separator+"graph_"+size+"_"+pp+"_"+no+".txt";
 		
+		//write the stringbuilder object to file
 		try {
 			FileWriter writer = new FileWriter(graphFileName);
 			writer.write(out.toString());
@@ -170,9 +188,18 @@ public final class Utility {
 		}
 	}
 	
+	/**
+	 * method that saves a randomly generated patter-free graph to file as an adjacency matrix depending on graph size, type 
+	 * of pattern-free graph it is
+	 * @param A			the adjacency matrix
+	 * @param no		a random number to make graph file names unique
+	 * @param type		the type of pattern-free graph it is
+	 * @return			the name of the file where the graph is saved to
+	 */
 	public static String saveGraphToFile(int[][] A, long no, String type){
-		StringBuilder out = new StringBuilder();
+		StringBuilder out = new StringBuilder(); //create a stringbuilder object
 		
+		//convert adjacency matrix to a StringBuilder object representation
 		for(int i=0; i<A.length; i++){
 			for(int j=0; j<A[i].length; j++){
 				out.append(A[i][j]+" ");
@@ -201,6 +228,7 @@ public final class Utility {
 		//select suitable file name for the generated graph
 		String graphFileName = dir2.getAbsolutePath()+File.separator+"graph_"+size+"_"+no+".txt";
 		
+		//write stringbuilder object to file
 		try {
 			FileWriter writer = new FileWriter(graphFileName);
 			writer.write(out.toString());
@@ -212,17 +240,27 @@ public final class Utility {
 		return graphFileName;
 	}
 	
-	//method to create subgraph in the neighbourhood of Graph.Vertex v
+	/**
+	 * method to get the neighbourhood graph of a vertex
+	 * @param graph			the original graph/supergraph that the neighbourhood graph is to be created from
+	 * @param v				the vertex whose neighbourhood graph is to be computed
+	 * @return				the neighbourhood graph
+	 */
 	public static UndirectedGraph<Integer,Integer> getNeighbourGraph(UndirectedGraph<Integer,Integer> graph, Graph.Vertex<Integer> v){
 		//get v's neighbours;
-		List<Graph.Vertex<Integer>> neighbours = new ArrayList<Graph.Vertex<Integer>>();
+		List<Graph.Vertex<Integer>> neighbours = new ArrayList<Graph.Vertex<Integer>>(); //list of the neighbours of the graph
 		Iterator<Graph.Vertex<Integer>> it = graph.neighbours(v);
 		while(it.hasNext()){
 			neighbours.add(it.next());
 		}
-		return makeGraphFromVertexSet(graph, neighbours);
+		return makeGraphFromVertexSet(graph, neighbours); //get the graph induced by the neighbour list
 	}
 	
+	/**
+	 * method that gets the components of a graph. The components are computed using depth first traversal
+	 * @param graph		the graph whose components are required
+	 * @return			list containing the components of the graph
+	 */
 	public static List<UndirectedGraph<Integer,Integer>> getComponents(UndirectedGraph<Integer,Integer> graph){
 		List<UndirectedGraph<Integer,Integer>> components = new ArrayList<UndirectedGraph<Integer,Integer>>();
 		//get vertices list
@@ -239,8 +277,11 @@ public final class Utility {
 				next = i;
 				break;
 			}
+			//find list of vertices reachable from the first vertex in the vertex set
 			List<Graph.Vertex<Integer>> compList = graph.depthFirstTraversal(graph.getVertexWithElement(next));
-			components.add(makeGraphFromVertexSet(graph, compList));
+			components.add(makeGraphFromVertexSet(graph, compList)); //create a graph from the list and add to the components list
+
+			//remove the vertices that have already been used in order to get another component if any
 			for(Graph.Vertex<Integer> v: compList){
 				verticesElem.remove(v.getElement());
 			}
@@ -279,6 +320,11 @@ public final class Utility {
         return result;
 	}
 	
+	/**
+	 * method that returns a string containing the elements of vertices in a list
+	 * @param list		the list of vertices
+	 * @return			the string representation of the vertices' elements
+	 */
 	public static String printList(List<Graph.Vertex<Integer>> list){
 		String out = "";
 
@@ -289,6 +335,12 @@ public final class Utility {
 		return out;
 	}
 	
+	/**
+	 * method that extracts the total time taken for a detection operation to run from a string
+	 * returned by the detection class
+	 * @param s		the string containing the results
+	 * @return		the time taken for the detection or listing operation to run
+	 */
 	public static int getTotalTime(String s){
 		String[] tokens = s.split("[ ]+");
 		int time = 0;
@@ -299,38 +351,4 @@ public final class Utility {
 		}
 		return time;
 	}
-	
-//	public static void main(String [] args){		
-////		int[][] a = {{1,2,3,3},{4,5,6,6},{7,8,9,9},{10,11,12,13}};
-//		Random r = new Random(System.currentTimeMillis());
-//		
-//		String out = "";
-//		
-//		for(int m=100; m<=2000; m+=100){
-//			int n = m;
-//			int[][] a = new int[n][n];
-//			int[][] b = new int[n][n];
-//			for(int i=0; i<a.length; i++){
-//				for(int j=0; j<a.length; j++){
-//					a[i][j] = r.nextInt(10000);
-//					b[i][j] = r.nextInt(10000);
-//				}
-//			}
-//			int[][] res = null;
-//			try {
-//				long start = System.currentTimeMillis();
-//				res = multiplyMatrix(a,b);
-//				long stop= System.currentTimeMillis();
-//				long time = stop - start;
-//				String s = String.format("n=%d, time=%d%n", n, time);
-//				out += s;
-////				System.out.println("Time taken: " + (stop-start));
-//				
-//			} catch (MatrixException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}		
-//		System.out.println(out);
-//	}
 }

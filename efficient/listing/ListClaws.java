@@ -26,10 +26,14 @@ public class ListClaws {
 		this.found = 0;
 	}
 	
+	/**
+	 * main method which allows direct access to the class via the command line terminal.
+	 * @param args		command line arguments
+	 */
 	public static void main(String [] args){		
-		UndirectedGraph<Integer,Integer> graph = null;
 		try{
-			graph = Utility.makeGraphFromFile(args[0]);
+			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]);//create graph from file
+			//run the listing operation
 			ListClaws d = new ListClaws();
 			List<List<Vertex<Integer>>> claws = d.detect(graph);
 			String out = "";
@@ -43,6 +47,7 @@ public class ListClaws {
 			}else{
 				out = String.format("Claw not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
 			}
+			//print out results
 			System.out.println(out);
 		}catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("Please provide the graph file as a command line argument");
@@ -51,21 +56,33 @@ public class ListClaws {
 		}
 	}	
 	
+	/**
+	* method that lists claws in a given graph. Uses the helper method "find" to achieve that and 
+	* computes time taken
+	* @param graph 		the graph to be checked for a claw
+	* @return			the vertices of each of the claws if found
+	*/
 	public List<List<Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph){
 		long start = System.currentTimeMillis();
 		List<List<Vertex<Integer>>> claws = find(graph);
 		long stop = System.currentTimeMillis();
-		p1time = ""+(stop-start);
-		found = claws.size();
+		p1time = ""+(stop-start); //calculate time taken to run the listing operation
+		found = claws.size(); //store number of claws found
 		return claws;
 	}
 
+	/**
+	* method that lists claws in a given graph. 
+	* @param graph 		the graph to be checked for a claw
+	* @return			the vertices of each of the claws if found
+	*/
 	public List<List<Vertex<Integer>>> find(UndirectedGraph<Integer,Integer> graph){
 		//for each vertex, check if the complement of its neighbour contains a triangle
-		List<List<Graph.Vertex<Integer>>> claws = new ArrayList<List<Graph.Vertex<Integer>>>();
+		List<List<Graph.Vertex<Integer>>> claws = new ArrayList<List<Graph.Vertex<Integer>>>();//list to store claws found
 		
-		Iterator<Graph.Vertex<Integer>> vertices = graph.vertices();
+		Iterator<Graph.Vertex<Integer>> vertices = graph.vertices(); //get graph vertices
 		
+		//for each vertex, get its neighbourhood graph and check the complement of the neighbourhood for a triangle
 		while(vertices.hasNext()){
 			//get neighbourhood graph
 			Graph.Vertex<Integer> v = vertices.next();
@@ -74,14 +91,13 @@ public class ListClaws {
 			if(vNeighGraph.size()<3)
 				continue;
 			
+			//check the neighbourhood's complement for presence of a triangles
 			List<List<Graph.Vertex<Integer>>> cls = getClawVerticesFromNeighbourGraph(vNeighGraph);
-			if(!cls.isEmpty()){
-				
+			if(!cls.isEmpty()){ //if triangles are found, create claws
 				for(List<Graph.Vertex<Integer>> claw: cls){
 					//add v to the collection
 					claw.add(v);
-					
-					claws.add((List<Vertex<Integer>>) claw);
+					claws.add(claw);
 				}
 			}
 			

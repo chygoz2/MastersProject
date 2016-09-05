@@ -21,14 +21,29 @@ import general.UndirectedGraph;
 import general.Utility;
 import general.Graph.Vertex;
 
+/**
+ * worker class for listing subgraphs in a graph. It calls on the respective
+ * listing classes for the operation
+ * @author Chigozie Ekwonu
+ *
+ */
 public class ListWorker extends SwingWorker<String,String>{
 
-	private String type;
-	private String filename;
-	private int l;
-	private JEditorPane outputArea;
-	private JButton listButton;
+	//instance variables
+	private String type; //type of subgraph to be listed
+	private String filename; //name of graph file
+	private int l;			//size of complete subgraph to be listed. It is only needed for complete subgraph listing
+	private JEditorPane outputArea; //output area of GUI
+	private JButton listButton;	//list button of GUI
 	
+	/**
+	 * constructor to initialize instance variables
+	 * @param type			type of subgraph to be listed
+	 * @param filename		name of graph file
+	 * @param l				size of complete subgraph to be listed. It is only needed for complete subgraph listing
+	 * @param a				output area of GUI
+	 * @param b				detect button of GUI
+	 */
 	public ListWorker(String type, String filename, int l, JEditorPane a, JButton b){
 		this.type = type;
 		this.filename = filename;
@@ -37,11 +52,13 @@ public class ListWorker extends SwingWorker<String,String>{
 		this.listButton = b;
 	}
 	
-	@Override
+	/**
+	 * method that performs the listing operation
+	 */
 	protected String doInBackground() {
 		UndirectedGraph<Integer, Integer> graph = null;
 		try {
-			graph = Utility.makeGraphFromFile(filename);
+			graph = Utility.makeGraphFromFile(filename); //create graph from file
 		} catch (GraphFileReaderException e) {
 			JOptionPane.showMessageDialog(null, e.getError());
 		}
@@ -50,7 +67,7 @@ public class ListWorker extends SwingWorker<String,String>{
 		
 		publish("Listing...\n");
 		String out = "";
-		if(type.equals("Diamond")){
+		if(type.equals("Diamond")){ //for diamond listing
 			ListDiamonds d = new ListDiamonds();
 			List<List<Vertex<Integer>>> diamonds = d.detect(graph);
 			if(!diamonds.isEmpty()){
@@ -63,7 +80,7 @@ public class ListWorker extends SwingWorker<String,String>{
 			}else{
 				out = String.format("Diamond not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
 			}
-		}else if(type.equals("Claw")){
+		}else if(type.equals("Claw")){ //for claw listing
 			ListClaws d = new ListClaws();
 			List<List<Vertex<Integer>>> claws = d.detect(graph);
 			if(!claws.isEmpty()){
@@ -76,7 +93,7 @@ public class ListWorker extends SwingWorker<String,String>{
 			}else{
 				out = String.format("Claw not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
 			}
-		}else if(type.equals("K4")){
+		}else if(type.equals("K4")){ //for K4 listing
 			ListK4 d = new ListK4();
 			List<List<Vertex<Integer>>> k4s = d.detect(graph);
 			if(!k4s.isEmpty()){
@@ -89,7 +106,7 @@ public class ListWorker extends SwingWorker<String,String>{
 			}else{
 				out = String.format("K4 not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
 			}
-		}else if(type.equals("Simplicial Vertex")){
+		}else if(type.equals("Simplicial Vertex")){ //for simplicial vertices listing
 			ListSimplicialVertices d = new ListSimplicialVertices();
 			List<Graph.Vertex<Integer>> simpVertex = d.detect(graph);
 			if(!simpVertex.isEmpty()){
@@ -99,7 +116,7 @@ public class ListWorker extends SwingWorker<String,String>{
 			}else{
 				out = String.format("Simplicial vertices not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
 			}
-		}else if(type.equals("Triangle")){
+		}else if(type.equals("Triangle")){ //for triangle listing
 			ListTriangles d = new ListTriangles();
 			List<List<Vertex<Integer>>> triangles = d.detect(graph);
 			if(!triangles.isEmpty()){
@@ -112,7 +129,7 @@ public class ListWorker extends SwingWorker<String,String>{
 			}else{
 				out = String.format("Triangle not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
 			}
-		}else if(type.equals("KL")){
+		}else if(type.equals("KL")){ //for general complete subgraph listing
 			ListKL d = new ListKL();
 			List<List<Vertex<Integer>>> kls = d.detect(graph, l);
 			if(!kls.isEmpty()){
@@ -130,12 +147,17 @@ public class ListWorker extends SwingWorker<String,String>{
 		return out;
 	}
 
+	/**
+	 * method that writes out data to the GUI output area while worker thread is executing
+	 */
 	protected void process(List<String> data){
 		String s = data.get(data.size()-1);
 		outputArea.setText(outputArea.getText()+s);
 	}
 	
-	@Override
+	/**
+	 * method that displays the output after the listing operation is complete, interrupted or is cancelled
+	 */
 	protected void done() {
 		String out = null;
 		try {

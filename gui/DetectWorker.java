@@ -20,14 +20,29 @@ import general.Graph;
 import general.UndirectedGraph;
 import general.Utility;
 
+/**
+ * worker class for detecting presence of subgraph in a graph. It calls on the respective
+ * detect classes for the operation
+ * @author Chigozie Ekwonu
+ *
+ */
 public class DetectWorker extends SwingWorker<String,String>{
 
-	private String type;
-	private String filename;
-	private int l;
-	private JEditorPane outputArea;
-	private JButton detectButton;
+	//instance variables
+	private String type; //type of subgraph to be detected
+	private String filename; //name of graph file
+	private int l;			//size of complete subgraph to be detected. It is only needed for complete subgraph detection
+	private JEditorPane outputArea; //output area of GUI
+	private JButton detectButton;	//detect button of GUI
 	
+	/**
+	 * constructor to initialize instance variables
+	 * @param type			type of subgraph to be detected
+	 * @param filename		name of graph file
+	 * @param l				size of complete subgraph to be detected. It is only needed for complete subgraph detection
+	 * @param a				output area of GUI
+	 * @param detectButton	detect button of GUI
+	 */
 	public DetectWorker(String type, String filename, int l, JEditorPane a,JButton detectButton){
 		this.type = type;
 		this.filename = filename;
@@ -36,12 +51,14 @@ public class DetectWorker extends SwingWorker<String,String>{
 		this.detectButton = detectButton;
 	}
 	
-	@Override
+	/**
+	 * method that performs the detection process
+	 */
 	protected String doInBackground() {			
 		UndirectedGraph<Integer, Integer> graph = null;
 		try {
-			graph = Utility.makeGraphFromFile(filename);
-		} catch (GraphFileReaderException e) {
+			graph = Utility.makeGraphFromFile(filename); //create graph from file
+		} catch (GraphFileReaderException e) { //notify user if error occurs
 			JOptionPane.showMessageDialog(null, e.getError());
 		}
 		
@@ -50,7 +67,7 @@ public class DetectWorker extends SwingWorker<String,String>{
 		
 		publish("Detecting...\n");
 		String out = "";
-		if(type.equals("Diamond")){
+		if(type.equals("Diamond")){ //for diamond detection
 			DetectDiamond d = new DetectDiamond();
 			List<Graph.Vertex<Integer>> diamond = d.detect(graph);
 			if(diamond!=null){
@@ -60,8 +77,7 @@ public class DetectWorker extends SwingWorker<String,String>{
 			}else{
 				out = String.format("Diamond not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
 			}
-		}else if(type.equals("Claw")){
-			
+		}else if(type.equals("Claw")){ //for claw detection
 			DetectClaw d = new DetectClaw();
 			List<Graph.Vertex<Integer>> claw = d.detect(graph);
 			if(claw!=null){
@@ -71,7 +87,7 @@ public class DetectWorker extends SwingWorker<String,String>{
 			}else{
 				out = String.format("Claw not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
 			}
-		}else if(type.equals("K4")){
+		}else if(type.equals("K4")){ //for K4 detection
 			DetectK4 d = new DetectK4();
 			List<Graph.Vertex<Integer>> k4 = d.detect(graph);
 			if(k4!=null){
@@ -81,7 +97,7 @@ public class DetectWorker extends SwingWorker<String,String>{
 			}else{
 				out = String.format("K4 not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
 			}
-		}else if(type.equals("Simplicial Vertex")){
+		}else if(type.equals("Simplicial Vertex")){ //for simplicial vertex detection
 			DetectSimplicialVertex d = new DetectSimplicialVertex();
 			Graph.Vertex<Integer> simpVertex = d.detect(graph);
 			if(simpVertex!=null){
@@ -91,7 +107,7 @@ public class DetectWorker extends SwingWorker<String,String>{
 			}else{
 				out = String.format("Simplicial vertex not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
 			}
-		}else if(type.equals("Triangle")){
+		}else if(type.equals("Triangle")){ //for triangle detection
 			DetectTriangle d = new DetectTriangle();
 			List<Graph.Vertex<Integer>> triangle = d.detect(graph);
 			if(triangle!=null){
@@ -101,7 +117,7 @@ public class DetectWorker extends SwingWorker<String,String>{
 			}else{
 				out = String.format("Triangle not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
 			}
-		}else if(type.equals("KL")){
+		}else if(type.equals("KL")){ //for general complete subgraph detection
 			DetectKL d = new DetectKL();
 			List<Graph.Vertex<Integer>> kl = d.detect(graph, l);
 			if(kl!=null){
@@ -115,12 +131,17 @@ public class DetectWorker extends SwingWorker<String,String>{
 		return out;
 	}
 	
+	/**
+	 * method that writes out data to the GUI output area while worker thread is executing
+	 */
 	protected void process(List<String> data){
 		String s = data.get(data.size()-1);
 		outputArea.setText(outputArea.getText()+s);
 	}
 	
-	@Override
+	/**
+	 * method that displays the output after the detection operation is complete, interrupted or is cancelled
+	 */
 	protected void done() {
 		String out = null;
 		try {

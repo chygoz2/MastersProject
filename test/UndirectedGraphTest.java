@@ -97,7 +97,7 @@ public class UndirectedGraphTest {
 		
 		String out = "";
 		while (it.hasNext()){
-			UndirectedGraph.UnEdge e = (UndirectedGraph.UnEdge) it.next();
+			Graph.Edge<Integer> e =  it.next();
 			out += e.getSource().getElement()+", "+e.getDestination().getElement()+", ";
 		}
 		
@@ -114,7 +114,7 @@ public class UndirectedGraphTest {
 		
 		out = "";
 		while (it.hasNext()){
-			UndirectedGraph.UnEdge e = (UndirectedGraph.UnEdge) it.next();
+			Graph.Edge<Integer> e =  it.next();
 			out += e.getSource().getElement()+", "+e.getDestination().getElement()+", ";
 		}
 		
@@ -129,7 +129,7 @@ public class UndirectedGraphTest {
 		
 		String out = "";
 		while (it.hasNext()){
-			UndirectedGraph.UnEdge e = (UndirectedGraph.UnEdge) it.next();
+			Graph.Edge<Integer> e =  it.next();
 			out += e.getSource().getElement()+", "+e.getDestination().getElement()+", ";
 		}
 		
@@ -167,7 +167,7 @@ public class UndirectedGraphTest {
 		
 		String out = "";
 		while (it.hasNext()){
-			UndirectedGraph.UnEdge e = (UndirectedGraph.UnEdge) it.next();
+			Graph.Edge<Integer> e =  it.next();
 			out += e.getSource().getElement()+", "+e.getDestination().getElement()+", ";
 		}
 		
@@ -195,7 +195,7 @@ public class UndirectedGraphTest {
 		
 		String out = "";
 		while (it.hasNext()){
-			UndirectedGraph.UnEdge e = (UndirectedGraph.UnEdge)it.next();
+			Graph.Edge<Integer> e = it.next();
 			out += e.getSource().getElement()+", "+e.getDestination().getElement()+", ";
 		}
 		
@@ -263,7 +263,7 @@ public class UndirectedGraphTest {
 		
 		String out = "";
 		while (it.hasNext()){
-			UndirectedGraph.UnEdge e = (UndirectedGraph.UnEdge) it.next();
+			Graph.Edge<Integer> e =  it.next();
 			out += e.getSource().getElement()+", "+e.getDestination().getElement()+", ";
 		}
 		
@@ -295,6 +295,7 @@ public class UndirectedGraphTest {
 		
 		assertEquals("1, 2, 3, 0, 4, ", out2);
 		assertEquals("0, 1, 2, 3, 4, ", out);
+		
 	}
 	
 	@Test

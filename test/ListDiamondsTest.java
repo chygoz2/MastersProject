@@ -21,13 +21,11 @@ import general.Graph.Vertex;
  */
 public class ListDiamondsTest {
 	UndirectedGraph<Integer,Integer> graph;
-	List<Graph.Vertex<Integer>> lowDegreeVertices;
 
 	@Before
 	public void before() throws GraphFileReaderException{
 		String fileName = "test\\testdata\\diamondtestdata.txt";
 		graph = Utility.makeGraphFromFile(fileName);
-		lowDegreeVertices = new ListDiamonds().partitionVertices(graph)[0];
 	}
 	
 	/**

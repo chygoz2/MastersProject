@@ -2,10 +2,8 @@ package efficient.detection;
 import java.util.*;
 
 import efficient.listing.ListKL;
-import efficient.listing.ListTriangles;
 import exception.GraphFileReaderException;
 import general.*;
-import general.Graph.Vertex;
 
 /**
  * class that detects the presence of a complete subgraph of a given size
@@ -19,17 +17,24 @@ public class DetectKL {
 	private String p2time; //measures time taken for phase two to execute
 	private  String found; //stores whether the complete subgraph was found
 	
+	/**
+	 * constructor to initialize instance variables
+	 */
 	public DetectKL(){
 		this.p1time = "-";
 		this.p2time = "-";
 		this.found = "found";
 	}
 	
+	/**
+	 * main method which allows direct access to the class via the command line terminal.
+	 * @param args		command line arguments
+	 */
 	public static void main(String [] args){
 		try{
-			UndirectedGraph<Integer,Integer> graph = null;
-			graph = Utility.makeGraphFromFile(args[0]);
+			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]); //create graph from file
 			
+			//run Kl detection on graph
 			DetectKL d = new DetectKL();
 			if(args.length>1){
 				int l = Integer.parseInt(args[1]);
@@ -42,6 +47,7 @@ public class DetectKL {
 				}else{
 					out = String.format("K"+l+" not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
 				}
+				//print out result
 				System.out.println(out);
 			}else{
 				System.out.println("Please enter the size of the complete graph to be found");
@@ -74,7 +80,7 @@ public class DetectKL {
 			long stoptime = System.currentTimeMillis();
 			p1time = ""+(stoptime-starttime);
 			
-			if(kl==null){
+			if(kl==null){ //if no kl was found in phase 1, run phase two
 				//measure time taken for phase two
 				starttime = System.currentTimeMillis();
 				kl = phaseTwo(graph, l, highDegreeVertices);
@@ -90,7 +96,7 @@ public class DetectKL {
 	}
 	
 	/**
-	 * method to detect a Kl in a graph. Looks for a Kl that has at least one low degree vertex
+	 * method to detect a Kl in a graph. Checks for a Kl that has at least one low degree vertex
 	 * @param graph					the graph to be checked
 	 * @param l						the size of the subgraph to be detected
 	 * @param lowDegreeVertices		the list of low degree vertices
@@ -99,7 +105,7 @@ public class DetectKL {
 	public List<Graph.Vertex<Integer>> phaseOne(UndirectedGraph<Integer,Integer> graph, int l, Collection<Graph.Vertex<Integer>> lowDegreeVertices){
 		List<Graph.Vertex<Integer>> kl = null;
 		for(Graph.Vertex<Integer> v: lowDegreeVertices){
-			//if l = 1, return the vertex
+			//if l = 1, return any vertex
 			if (l==1){
 				kl = new ArrayList<Graph.Vertex<Integer>>();
 				kl.add(v);
@@ -138,7 +144,7 @@ public class DetectKL {
 	}
 	
 	/**
-	 * method to detect the presence of a complete graph of size l
+	 * method to detect the presence of a complete graph of size l. It makes use of the ListKL class 
 	 * @param graph graph to be checked
 	 * @param l	size of the complete subgraph to be found
 	 * @return	the list of complete subgraphs
