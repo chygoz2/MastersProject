@@ -1,7 +1,5 @@
 package generate;
 
-import java.util.Random;
-
 import general.Utility;
 
 public class RandomGraphGenerator {

@@ -14,9 +14,15 @@ import general.Utility;
 public class DetectK4 {
 	
 	//instance variables
-	private  String p1time = "-"; //measures time taken for phase one to execute
-	private  String p2time = "-"; //measures time taken for phase two to execute
-	private  String found = "found"; //stores outcome of the test
+	private  String p1time; //measures time taken for phase one to execute
+	private  String p2time; //measures time taken for phase two to execute
+	private  String found; //stores outcome of the test
+	
+	public DetectK4(){
+		this.p1time = "-";
+		this.p2time = "-";
+		this.found = "found";
+	}
 	
 	public static void main(String [] args){
 		try{
@@ -25,7 +31,15 @@ public class DetectK4 {
 			
 			DetectK4 d = new DetectK4();
 			List<Graph.Vertex<Integer>> k4 = d.detect(graph);
-			System.out.print(d.getResult());
+			String out = "";
+			if(k4!=null){
+				out = Utility.printList(k4);
+				out = String.format("K4 found%nVertices: %s%n", out);
+				out += String.format("CPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
+			}else{
+				out = String.format("K4 not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
+			}
+			System.out.println(out);
 		}catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("Please provide the graph file as a command line argument");
 		}

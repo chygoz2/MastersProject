@@ -9,16 +9,32 @@ import general.Graph.Vertex;
 
 public class ListTriangles {
 	
-	private  String p1time = "-";
-	private  int found = 0;
+	private  String p1time;
+	private  int found;
+	
+	public ListTriangles(){
+		this.p1time = "-";
+		this.found = 0;
+	}
 	
 	public static void main(String[] args) {
 		UndirectedGraph<Integer,Integer> graph = null;
 		try{
 			graph = Utility.makeGraphFromFile(args[0]);
 			ListTriangles d = new ListTriangles();
-			List<List<Vertex<Integer>>> tris = d.detect(graph);
-			System.out.print(d.getResult());
+			List<List<Vertex<Integer>>> triangles = d.detect(graph);
+			String out = "";
+			if(!triangles.isEmpty()){
+				for(List<Graph.Vertex<Integer>> triangle: triangles){
+					out += Utility.printList(triangle)+"\n";
+				}
+				out = String.format("Triangle found%nVertices:%n%s", out);
+				out += String.format("Number of triangles found: %d%n", triangles.size());
+				out += String.format("CPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
+			}else{
+				out = String.format("Triangle not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
+			}
+			System.out.println(out);
 		}catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("Please provide the graph file as a command line argument");
 		}catch(GraphFileReaderException e){
@@ -35,7 +51,9 @@ public class ListTriangles {
 		return triangles;
 	}
 	
-	public List<List<Graph.Vertex<Integer>>> find(UndirectedGraph<Integer,Integer> graph){
+	public List<List<Graph.Vertex<Integer>>> find(UndirectedGraph<Integer,Integer> graph2){
+		UndirectedGraph<Integer,Integer> graph = graph2.clone();
+		
 		List<List<Graph.Vertex<Integer>>> triangles = new ArrayList<List<Graph.Vertex<Integer>>>();
 		
 		//sort the vertices in non increasing order of degree

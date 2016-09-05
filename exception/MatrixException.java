@@ -2,16 +2,16 @@ package exception;
 
 
 public class MatrixException extends Exception{
-	private int status;
+	private String status;
 	
-	public MatrixException(int s){
+	public MatrixException(String s){
 		this.status = s;
 	}
 
 	/**
 	 * @return the status
 	 */
-	public int getStatus() {
+	public String getStatus() {
 		return status;
 	}
 }

@@ -10,8 +10,13 @@ import general.Graph.Vertex;
 
 public class ListK4 {
 	
-	private  String p1time = "-";
-	private  int found = 0;
+	private  String p1time;
+	private  int found;
+	
+	public ListK4(){
+		this.p1time = "-";
+		this.found = 0;
+	}
 	
 	public static void main(String [] args) throws IOException{
 		UndirectedGraph<Integer,Integer> graph = null;
@@ -19,7 +24,18 @@ public class ListK4 {
 			graph = Utility.makeGraphFromFile(args[0]);
 			ListK4 d = new ListK4();
 			List<List<Vertex<Integer>>> k4s = d.detect(graph);
-			System.out.print(d.getResult());
+			String out = "";
+			if(!k4s.isEmpty()){
+				for(List<Graph.Vertex<Integer>> k4: k4s){
+					out += Utility.printList(k4)+"\n";
+				}
+				out = String.format("K4 found%nVertices:%n%s", out);
+				out += String.format("Number of K4s found: %d%n", k4s.size());
+				out += String.format("CPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
+			}else{
+				out = String.format("K4 not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
+			}
+			System.out.println(out);
 		}catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("Please provide the graph file as a command line argument");
 		}catch(GraphFileReaderException e){

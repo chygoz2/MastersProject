@@ -15,9 +15,15 @@ import general.Graph.Vertex;
 public class DetectKL {
 	
 	//instance variables
-	private String p1Time = "-"; //measures time taken for phase one to execute
-	private String p2Time = "-"; //measures time taken for phase two to execute
-	private  String found = "found"; //stores whether the complete subgraph was found
+	private String p1time; //measures time taken for phase one to execute
+	private String p2time; //measures time taken for phase two to execute
+	private  String found; //stores whether the complete subgraph was found
+	
+	public DetectKL(){
+		this.p1time = "-";
+		this.p2time = "-";
+		this.found = "found";
+	}
 	
 	public static void main(String [] args){
 		try{
@@ -28,7 +34,15 @@ public class DetectKL {
 			if(args.length>1){
 				int l = Integer.parseInt(args[1]);
 				List<Graph.Vertex<Integer>> kl = d.detect(graph,l);
-				System.out.print(d.getResult());
+				String out = "";
+				if(kl!=null){
+					out = Utility.printList(kl);
+					out = String.format("K"+l+" found%nVertices: %s%n", out);
+					out += String.format("CPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
+				}else{
+					out = String.format("K"+l+" not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
+				}
+				System.out.println(out);
 			}else{
 				System.out.println("Please enter the size of the complete graph to be found");
 			}
@@ -47,24 +61,26 @@ public class DetectKL {
 	 * @return				the vertices of the complete subgraph if found
 	 */
 	public  List<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph, int l){
-		
-		//partition vertices into low and high degree vertices
-		List<Graph.Vertex<Integer>>[] verticesPartition = partitionVertices(graph, l);
-		List<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
-		List<Graph.Vertex<Integer>> highDegreeVertices = verticesPartition[1];
-		
-		//measure time taken for phase one
-		long starttime = System.currentTimeMillis();
-		List<Graph.Vertex<Integer>> kl = phaseOne(graph, l, lowDegreeVertices);
-		long stoptime = System.currentTimeMillis();
-		p1Time = ""+(stoptime-starttime);
-		
-		if(kl==null){
-			//measure time taken for phase two
-			starttime = System.currentTimeMillis();
-			kl = phaseTwo(graph, l, highDegreeVertices);
-			stoptime = System.currentTimeMillis();
-			p2Time = ""+(stoptime-starttime);
+		List<Graph.Vertex<Integer>> kl=null;
+		if(l<=graph.size()){
+			//partition vertices into low and high degree vertices
+			List<Graph.Vertex<Integer>>[] verticesPartition = partitionVertices(graph, l);
+			List<Graph.Vertex<Integer>> lowDegreeVertices = verticesPartition[0];
+			List<Graph.Vertex<Integer>> highDegreeVertices = verticesPartition[1];
+			
+			//measure time taken for phase one
+			long starttime = System.currentTimeMillis();
+			kl = phaseOne(graph, l, lowDegreeVertices);
+			long stoptime = System.currentTimeMillis();
+			p1time = ""+(stoptime-starttime);
+			
+			if(kl==null){
+				//measure time taken for phase two
+				starttime = System.currentTimeMillis();
+				kl = phaseTwo(graph, l, highDegreeVertices);
+				stoptime = System.currentTimeMillis();
+				p2time = ""+(stoptime-starttime);
+			}
 		}
 		
 		if(kl==null)
@@ -176,7 +192,7 @@ public class DetectKL {
 	 * @return		the result for analysis
 	 */
 	public  String getResult(){
-		String result = String.format("%-10s%-10s%-10s", p1Time,p2Time,found);
+		String result = String.format("%-10s%-10s%-10s", p1time,p2time,found);
 		return result;
 	}
 	

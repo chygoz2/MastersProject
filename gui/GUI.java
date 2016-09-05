@@ -45,6 +45,10 @@ public class GUI extends JFrame {
 	private JEditorPane outputArea;
 	private JButton generateButton;
 	
+	private JButton cancelButton1;
+	private JButton cancelButton2;
+	private JButton cancelButton3;
+	
 	private ButtonGroup buttonGroup;
 	private ButtonGroup buttonGroup2;
 	private ButtonGroup buttonGroup3;
@@ -139,8 +143,9 @@ public class GUI extends JFrame {
 		JLabel blankLabel3 = new JLabel();
 		JLabel blankLabel4 = new JLabel();
 		JLabel blankLabel5 = new JLabel();
-		JLabel blankLabel6 = new JLabel();
 		JLabel blankLabel7 = new JLabel();
+		
+		cancelButton1 = new JButton("Cancel");
 		klPanel = new JPanel();
 		klPanel.setVisible(false);
 		JLabel klLabel = new JLabel("Enter size: ");
@@ -153,7 +158,7 @@ public class GUI extends JFrame {
 		detectPanel.add(simpVertexRadioButton);	detectPanel.add(blankLabel5);
 		detectPanel.add(k4RadioButton);			detectPanel.add(blankLabel4);
 		detectPanel.add(kLRadioButton);			detectPanel.add(klPanel);
-		detectPanel.add(blankLabel6);			detectPanel.add(detectButton);
+		detectPanel.add(cancelButton1);			detectPanel.add(detectButton);
 		
 		//for list panel
 		listPanel.setLayout(new GridLayout(9,2,5,5));
@@ -188,8 +193,9 @@ public class GUI extends JFrame {
 		JLabel blankLabel13 = new JLabel();
 		JLabel blankLabel14 = new JLabel();
 		JLabel blankLabel15 = new JLabel();
-		JLabel blankLabel16 = new JLabel();
 		JLabel blankLabel17 = new JLabel();
+		
+		cancelButton2 = new JButton("Cancel");
 		klPanel2 = new JPanel();
 		klPanel2.setVisible(false);
 		JLabel klLabel2 = new JLabel("Enter size: ");
@@ -202,7 +208,7 @@ public class GUI extends JFrame {
 		listPanel.add(simpVertexRadioButton2);	listPanel.add(blankLabel15);
 		listPanel.add(k4RadioButton2);			listPanel.add(blankLabel14);
 		listPanel.add(kLRadioButton2);			listPanel.add(klPanel2);
-		listPanel.add(blankLabel16);			listPanel.add(listButton);
+		listPanel.add(cancelButton2);			listPanel.add(listButton);
 		
 		JPanel panel4 = new JPanel();
 		panel4.setLayout(new BorderLayout());
@@ -254,7 +260,8 @@ public class GUI extends JFrame {
 		
 		centerPanel.add(klPanel3);
 		generateButton = new JButton("Generate");
-		centerPanel.add(new JLabel());			centerPanel.add(generateButton);
+		cancelButton3 = new JButton("Cancel");
+		centerPanel.add(cancelButton3);			centerPanel.add(generateButton);
 		
 		generatePanel.add(centerPanel, BorderLayout.CENTER);
 		
@@ -268,6 +275,9 @@ public class GUI extends JFrame {
 		kLRadioButton2.addItemListener(controller);
 		klFreeButton.addItemListener(controller);
 		tabbedPane.addChangeListener(controller);
+		cancelButton1.addActionListener(controller);
+		cancelButton2.addActionListener(controller);
+		cancelButton3.addActionListener(controller);
 		
 	}
 	
@@ -542,5 +552,26 @@ public class GUI extends JFrame {
 	 */
 	public JRadioButton getKlFreeButton() {
 		return klFreeButton;
+	}
+
+	/**
+	 * @return the cancelButton1
+	 */
+	public JButton getCancelButton1() {
+		return cancelButton1;
+	}
+
+	/**
+	 * @return the cancelButton2
+	 */
+	public JButton getCancelButton2() {
+		return cancelButton2;
+	}
+
+	/**
+	 * @return the cancelButton3
+	 */
+	public JButton getCancelButton3() {
+		return cancelButton3;
 	}
 }

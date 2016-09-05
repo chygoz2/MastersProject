@@ -34,7 +34,7 @@ public class ListClawsTest {
 	@Test
 	public void testDetect() {
 		List<List<Vertex<Integer>>> actualResult = new ListClaws().detect(graph);
-		int[][] expectedResult = {{0,3,1,2},{2,5,4,3},{2,6,4,3}}; //expected result should have 3 claws 
+		int[][] expectedResult = {{0,1,3,2},{2,4,6,3},{2,4,5,3}}; //expected result should have 3 claws 
 															//with the specified vertex elements
 		
 		for(int i=0; i<expectedResult.length;i++){

@@ -88,6 +88,24 @@ public class Controller implements ActionListener, ItemListener, ChangeListener{
 		else if(source.equals(frame.getGenerateButton())){
 			generateGraph();
 		}
+		else if(source.equals(frame.getCancelButton1())){
+			if(detectWorker!=null && !detectWorker.isDone()){
+				detectWorker.cancel(true);
+				detectWorker = null;
+			}
+		}
+		else if(source.equals(frame.getCancelButton2())){
+			if(listWorker!=null && !listWorker.isDone()){
+				listWorker.cancel(true);
+				listWorker = null;
+			}
+		}
+		else if(source.equals(frame.getCancelButton3())){
+			if(generateWorker!=null && !generateWorker.isDone()){
+				generateWorker.cancel(true);
+				generateWorker = null;
+			}
+		}
 		else if(source.equals(frame.getSelectFileButton()) ||
 				source.equals(frame.getSelectFileButton2())){
 			getSelectedFile();
@@ -128,8 +146,8 @@ public class Controller implements ActionListener, ItemListener, ChangeListener{
 					return;
 				}
 			}
-			
-			detectWorker = new DetectWorker(selectedButton,fileName,l, frame.getOutputArea());
+			detectWorker = new DetectWorker(selectedButton,fileName,l, frame.getOutputArea(),frame.getDetectButton());
+			frame.getDetectButton().setEnabled(false);
 			detectWorker.execute();
 		}catch(NumberFormatException f){
 			JOptionPane.showMessageDialog(null, "The size of the complete subgraph entered is not an integer");
@@ -158,7 +176,8 @@ public class Controller implements ActionListener, ItemListener, ChangeListener{
 					return;
 				}
 			}
-			listWorker = new ListWorker(selectedButton,fileName,l,frame.getOutputArea());
+			listWorker = new ListWorker(selectedButton,fileName,l,frame.getOutputArea(),frame.getListButton());
+			frame.getListButton().setEnabled(false);
 			listWorker.execute();
 		}catch(NumberFormatException f){
 			JOptionPane.showMessageDialog(null, "The size of the complete subgraph entered is not an integer");
@@ -176,11 +195,12 @@ public class Controller implements ActionListener, ItemListener, ChangeListener{
 				l = Integer.parseInt(s);
 			if(n<1){
 				JOptionPane.showMessageDialog(null, "Number of vertices should be greater than zero");
-			}else if(l<1 && selectedButton.equals("KL-free")){
-				JOptionPane.showMessageDialog(null, "Size of complete subgraph should be greater than zero");
+			}else if(l<2 && selectedButton.equals("KL-free")){
+				JOptionPane.showMessageDialog(null, "Size of complete subgraph should be greater than one");
 			}else{
 				
-				generateWorker = new GenerateWorker(selectedButton,n,l,frame.getOutputArea());
+				generateWorker = new GenerateWorker(selectedButton,n,l,frame.getOutputArea(),frame.getGenerateButton());
+				frame.getGenerateButton().setEnabled(false);
 				generateWorker.execute();
 			}
 		}catch(NumberFormatException f){

@@ -13,10 +13,15 @@ import general.Utility;
 public class DetectClaw {
 	
 	//instance variables
-	private  String p1time = "-"; //keeps track of time taken for phase one to execute
-	private  String p2time = "-"; //keeps track of time take for phase two to execute
-	private  String found = "found"; //stores whether a claw was found or not
+	private  String p1time; //keeps track of time taken for phase one to execute
+	private  String p2time; //keeps track of time take for phase two to execute
+	private  String found; //stores whether a claw was found or not
 	
+	public DetectClaw(){
+		this.p1time = "-";
+		this.p2time = "-";
+		this.found = "found";
+	}
 	
 	public static void main(String [] args){
 		
@@ -25,7 +30,15 @@ public class DetectClaw {
 			graph = Utility.makeGraphFromFile(args[0]);
 			DetectClaw d = new DetectClaw();
 			List<Graph.Vertex<Integer>> claw = d.detect(graph);
-			System.out.print(d.getResult());
+			String out = "";
+			if(claw!=null){
+				out = Utility.printList(claw);
+				out = String.format("Claw found%nVertices: %s%n", out);
+				out += String.format("CPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
+			}else{
+				out = String.format("Claw not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
+			}
+			System.out.println(out);
 		}catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("Please provide the graph file as a command line argument");
 		}catch(GraphFileReaderException e){

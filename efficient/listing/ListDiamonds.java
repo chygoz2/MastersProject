@@ -15,8 +15,17 @@ import java.io.*;
  *
  */
 public class ListDiamonds {
-	private  String p1time = "-";
-	private  int found = 0;
+	//instance variables
+	private  String p1time; //records time taken for listing
+	private  int found; //records number of diamonds found
+	
+	/**
+	 * constructor to initialize instance variables
+	 */
+	public ListDiamonds(){
+		this.p1time = "-";
+		this.found = 0;
+	}
 	
 	public static void main(String [] args) throws IOException{
 		UndirectedGraph<Integer,Integer> graph = null;
@@ -24,7 +33,18 @@ public class ListDiamonds {
 			graph = Utility.makeGraphFromFile(args[0]);
 			ListDiamonds d = new ListDiamonds();
 			List<List<Vertex<Integer>>> diamonds = d.detect(graph);
-			System.out.print(d.getResult());
+			String out = "";
+			if(!diamonds.isEmpty()){
+				for(List<Graph.Vertex<Integer>> diamond: diamonds){
+					out += Utility.printList(diamond)+"\n";
+				}
+				out = String.format("Diamond found%nVertices:%n%s", out);
+				out += String.format("Number of diamonds found: %d%n", diamonds.size());
+				out += String.format("CPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
+			}else{
+				out = String.format("Diamond not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
+			}
+			System.out.println(out);
 		}catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("Please provide the graph file as a command line argument");
 		}catch(GraphFileReaderException e){

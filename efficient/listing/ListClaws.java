@@ -7,10 +7,24 @@ import general.Graph.Vertex;
 import general.UndirectedGraph;
 import general.Utility;
 
+/**
+ * class to check for presence of claws in a graph and lists the vertices of the claws found if any
+ * @author Chigozie Ekwonu
+ *
+ */
 public class ListClaws {
 	
-	private  String p1time = "-";
-	private  int found = 0;
+	//instance variables
+	private  String p1time; //records time taken for listing 
+	private  int found; //records number of claws found
+	
+	/**
+	 * constructor to initialize the instance variables
+	 */
+	public ListClaws(){
+		this.p1time = "-";
+		this.found = 0;
+	}
 	
 	public static void main(String [] args){		
 		UndirectedGraph<Integer,Integer> graph = null;
@@ -18,7 +32,18 @@ public class ListClaws {
 			graph = Utility.makeGraphFromFile(args[0]);
 			ListClaws d = new ListClaws();
 			List<List<Vertex<Integer>>> claws = d.detect(graph);
-			System.out.print(d.getResult());
+			String out = "";
+			if(!claws.isEmpty()){
+				for(List<Graph.Vertex<Integer>> claw: claws){
+					out += Utility.printList(claw)+"\n";
+				}
+				out = String.format("Claw found%nVertices:%n%s", out);
+				out += String.format("Number of claws found: %d%n", claws.size());
+				out += String.format("CPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
+			}else{
+				out = String.format("Claw not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
+			}
+			System.out.println(out);
 		}catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("Please provide the graph file as a command line argument");
 		}catch(GraphFileReaderException e){

@@ -15,9 +15,15 @@ import general.Utility;
 public class DetectSimplicialVertex {
 	
 	//instance variables
-	private  String p1time = "-"; //measures time taken to execute phase one
-	private  String p2time = "-"; //measures time taken to execute phase two
-	private  String found = "found"; //stores results of the operation
+	private  String p1time; //measures time taken to execute phase one
+	private  String p2time; //measures time taken to execute phase two
+	private  String found; //stores results of the operation
+	
+	public DetectSimplicialVertex(){
+		this.p1time = "-";
+		this.p2time = "-";
+		this.found = "found";
+	}
 	
 	public static void main(String [] args){
 		try{
@@ -25,8 +31,15 @@ public class DetectSimplicialVertex {
 			graph = Utility.makeGraphFromFile(args[0]);
 			
 			DetectSimplicialVertex d = new DetectSimplicialVertex();
-			Graph.Vertex<Integer> s = d.detect(graph);
-			System.out.print(d.getResult());
+			Graph.Vertex<Integer> simpVertex = d.detect(graph);
+			String out = "";
+			if(simpVertex!=null){
+				out = String.format("Simplicial vertex found%nOne such vertex: %s%n", simpVertex.getElement());
+				out += String.format("CPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
+			}else{
+				out = String.format("Simplicial vertex not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
+			}
+			System.out.println(out);
 		}catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("Please provide the graph file as a command line argument");
 		}catch(GraphFileReaderException e){

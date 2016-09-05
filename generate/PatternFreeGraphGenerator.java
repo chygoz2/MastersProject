@@ -14,9 +14,12 @@ import general.Utility;
 
 public class PatternFreeGraphGenerator {
 	
+	private long time;
+	
 	public String generateDiamondFreeGraph(int n){		
-		int[][] adjMatrix = new int[n][n];
 		
+		long starttime = System.currentTimeMillis();
+		int[][] adjMatrix = new int[n][n];
 		Random random = new Random(System.currentTimeMillis());
 		for(int i=0; i<n; i++){
 			for(int j=i+1; j<n; j++){
@@ -34,12 +37,13 @@ public class PatternFreeGraphGenerator {
 				}
 			}
 		}
-		
+		time = System.currentTimeMillis()-starttime;
 		String file = new Utility().saveGraphToFile(adjMatrix, System.currentTimeMillis(), "diamond");
 		return file;
 	}
 	
 	public String generateTriangleFreeGraph(int n){
+		long starttime = System.currentTimeMillis();
 		int[][] adjMatrix = new int[n][n];
 		
 		Random random = new Random(System.currentTimeMillis());
@@ -60,11 +64,13 @@ public class PatternFreeGraphGenerator {
 			}
 		}
 		
+		time = System.currentTimeMillis()-starttime;
 		String file = new Utility().saveGraphToFile(adjMatrix, System.currentTimeMillis(), "triangle");
 		return file;
 	}
 	
 	public String generateK4FreeGraph(int n){
+		long starttime = System.currentTimeMillis();
 		int[][] adjMatrix = new int[n][n];
 		
 		Random random = new Random(System.currentTimeMillis());
@@ -85,11 +91,13 @@ public class PatternFreeGraphGenerator {
 			}
 		}
 		
+		time = System.currentTimeMillis()-starttime;
 		String file = new Utility().saveGraphToFile(adjMatrix, System.currentTimeMillis(), "k4");
 		return file;
 	}
 	
 	public String generateClawFreeGraph(int n){
+		long starttime = System.currentTimeMillis();
 		int[][] adjMatrix = new int[n][n];
 		
 		Random random = new Random(System.currentTimeMillis());
@@ -110,11 +118,13 @@ public class PatternFreeGraphGenerator {
 			}
 		}
 		
+		time = System.currentTimeMillis()-starttime;
 		String file = new Utility().saveGraphToFile(adjMatrix, System.currentTimeMillis(), "claw");
 		return file;
 	}
 	
 	public String generateKLFreeGraph(int n, int l){
+		long starttime = System.currentTimeMillis();
 		int[][] adjMatrix = new int[n][n];
 		
 		Random random = new Random(System.currentTimeMillis());
@@ -135,37 +145,13 @@ public class PatternFreeGraphGenerator {
 			}
 		}
 		
+		time = System.currentTimeMillis()-starttime;
 		String file = new Utility().saveGraphToFile(adjMatrix, System.currentTimeMillis(), "k"+l);
 		return file;
 	}
 	
-//	public int[][] generateSimplicialFreeGraph(int n){
-//		if(n<1){
-//			JOptionPane.showMessageDialog(null, "n should be greater than zero");
-//			System.exit(0);
-//		}
-//		
-//		int[][] adjMatrix = new int[n][n];
-//		
-//		ThreadLocalRandom random = ThreadLocalRandom.current();
-//		for(int i=0; i<n; i++){
-//			for(int j=i+1; j<n; j++){
-//				int rand = random.nextInt(10);
-//				if(rand>4){
-//					adjMatrix[i][j] = 1;
-//					adjMatrix[j][i] = 1;
-//					
-//					UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromAdjacencyMatrix(adjMatrix);
-//					List<Graph.Vertex<Integer>> v = ListSimplicialVertex.detect(graph);
-//					if(!v.isEmpty()){
-//						adjMatrix[i][j] = 0;
-//						adjMatrix[j][i] = 0;
-//					}
-//				}
-//			}
-//		}
-//		
-//		return adjMatrix;
-//	}
+	public long getTime(){
+		return time;
+	}
 	
 }

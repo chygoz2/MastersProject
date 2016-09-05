@@ -18,10 +18,17 @@ import java.io.*;
 public class DetectDiamond {
 	
 	//instance variables
-	private String p1time = "-"; //measures time taken for phase one to execute
-	private String p2time = "-"; //measures time taken for phase two to execute
-	private String p3time = "-"; //measures time taken for phase three to execute
-	private String found = "found"; //stores whether a diamond was found or now
+	private String p1time; //measures time taken for phase one to execute
+	private String p2time; //measures time taken for phase two to execute
+	private String p3time; //measures time taken for phase three to execute
+	private String found; //stores whether a diamond was found or now
+	
+	public DetectDiamond(){
+		this.p1time = "-";
+		this.p2time = "-";
+		this.p3time = "-";
+		this.found = "found";
+	}
 	
 	public static void main(String [] args) throws IOException{
 		try{
@@ -30,7 +37,15 @@ public class DetectDiamond {
 			
 			DetectDiamond d = new DetectDiamond();
 			List<Graph.Vertex<Integer>> diamond = d.detect(graph);
-			System.out.print(d.getResult());
+			String out = "";
+			if(diamond!=null){
+				out = Utility.printList(diamond);
+				out = String.format("Diamond found%nVertices: %s%n", out);
+				out += String.format("CPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
+			}else{
+				out = String.format("Diamond not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
+			}
+			System.out.println(out);
 		}catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("Please provide the graph file as a command line argument");
 		}

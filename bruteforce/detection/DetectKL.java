@@ -20,10 +20,7 @@ public class DetectKL {
 			long a = System.currentTimeMillis();
 			Thread t = new Thread(new Runnable(){
 				public void run(){
-					Collection<Graph.Vertex<Integer>> kl = d.detect(graph,l);	
-					if(kl!=null){
-						Utility.printGraph(Utility.makeGraphFromVertexSet(graph, kl));
-					}
+					List<Graph.Vertex<Integer>> kl = d.detect(graph,l);	
 				}
 			});
 			t.start();
@@ -48,9 +45,9 @@ public class DetectKL {
 		}
 	}
 	
-	public Collection<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph, int l){
+	public List<Graph.Vertex<Integer>> detect(UndirectedGraph<Integer,Integer> graph, int l){
 		long starttime = System.currentTimeMillis();
-		Collection<Graph.Vertex<Integer>> kl = find(graph,l);
+		List<Graph.Vertex<Integer>> kl = find(graph,l);
 		long stoptime = System.currentTimeMillis();
 		p1time = ""+(stoptime-starttime);
 		
@@ -59,8 +56,8 @@ public class DetectKL {
 		return kl;
 	}
 	
-	public Collection<Graph.Vertex<Integer>> find(UndirectedGraph<Integer,Integer> graph, int l){
-		Collection<Graph.Vertex<Integer>> kl = new ArrayList<Graph.Vertex<Integer>>();
+	public List<Graph.Vertex<Integer>> find(UndirectedGraph<Integer,Integer> graph, int l){
+		List<Graph.Vertex<Integer>> kl = new ArrayList<Graph.Vertex<Integer>>();
 		
 		if(l<1)
 			return null;

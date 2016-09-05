@@ -170,7 +170,7 @@ public final class Utility {
 		}
 	}
 	
-	public String saveGraphToFile(int[][] A, long no, String type){
+	public static String saveGraphToFile(int[][] A, long no, String type){
 		StringBuilder out = new StringBuilder();
 		
 		for(int i=0; i<A.length; i++){
@@ -249,24 +249,6 @@ public final class Utility {
 		return components;
 	}
 	
-	public static void printGraph(UndirectedGraph graph2){
-//		System.out.println("Graph size is "+graph2.size());
-		Iterator<Graph.Vertex> it = graph2.vertices();
-		
-//		System.out.println("Graph vertices");
-		while (it.hasNext()){
-			Graph.Vertex<Integer> v = it.next();
-			System.out.print(v.getElement()+", ");
-		}
-//		System.out.println("\nGraph edges:");
-//		Iterator<Graph.Edge> it2 = graph2.edges();
-//		while (it2.hasNext()){
-//			UndirectedGraph.UnEdge edge = (UndirectedGraph.UnEdge)it2.next();
-//			System.out.print("{"+edge.getSource().getElement()+", "+ edge.getDestination().getElement()+"},");
-//		}
-		System.out.println();
-	}
-	
 	/**
 	 * method to multiply two matrices 
 	 * idea was obtained from https://www.daniweb.com/programming/software-development/code/355645/optimizing-matrix-multiplication
@@ -277,10 +259,10 @@ public final class Utility {
 	 */
 	public static int[][] multiplyMatrix(int[][] a, int[][] b) throws MatrixException{
 		if (a.length==0 || b.length==0) 
-			throw new MatrixException(0);
+			throw new MatrixException("Matrix empty");
 		
 		if (a[0].length != b.length) 
-			throw new MatrixException(1);
+			throw new MatrixException("Invalid matrix dimensions found");
        
         int[][] result = new int[a.length][b[0].length];		
 		for(int i = 0; i < a.length; i++) {
@@ -297,37 +279,58 @@ public final class Utility {
         return result;
 	}
 	
-	public static void main(String [] args){		
-//		int[][] a = {{1,2,3,3},{4,5,6,6},{7,8,9,9},{10,11,12,13}};
-		Random r = new Random(System.currentTimeMillis());
-		
+	public static String printList(List<Graph.Vertex<Integer>> list){
 		String out = "";
-		
-		for(int m=100; m<=2000; m+=100){
-			int n = m;
-			int[][] a = new int[n][n];
-			int[][] b = new int[n][n];
-			for(int i=0; i<a.length; i++){
-				for(int j=0; j<a.length; j++){
-					a[i][j] = r.nextInt(10000);
-					b[i][j] = r.nextInt(10000);
-				}
-			}
-			int[][] res = null;
-			try {
-				long start = System.currentTimeMillis();
-				res = multiplyMatrix(a,b);
-				long stop= System.currentTimeMillis();
-				long time = stop - start;
-				String s = String.format("n=%d, time=%d%n", n, time);
-				out += s;
-//				System.out.println("Time taken: " + (stop-start));
-				
-			} catch (MatrixException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}		
-		System.out.println(out);
+
+		for(Graph.Vertex<Integer> v:list){
+			out+=v.getElement()+","; 
+		}
+		out = out.substring(0,out.length()-1);
+		return out;
 	}
+	
+	public static int getTotalTime(String s){
+		String[] tokens = s.split("[ ]+");
+		int time = 0;
+		int limit = tokens[tokens.length-2].equals("not") ? tokens.length-2: tokens.length-1;
+		for(int i=0; i<limit; i++){
+			if(!tokens[i].equals("-"))
+				time += Integer.parseInt(tokens[i]);
+		}
+		return time;
+	}
+	
+//	public static void main(String [] args){		
+////		int[][] a = {{1,2,3,3},{4,5,6,6},{7,8,9,9},{10,11,12,13}};
+//		Random r = new Random(System.currentTimeMillis());
+//		
+//		String out = "";
+//		
+//		for(int m=100; m<=2000; m+=100){
+//			int n = m;
+//			int[][] a = new int[n][n];
+//			int[][] b = new int[n][n];
+//			for(int i=0; i<a.length; i++){
+//				for(int j=0; j<a.length; j++){
+//					a[i][j] = r.nextInt(10000);
+//					b[i][j] = r.nextInt(10000);
+//				}
+//			}
+//			int[][] res = null;
+//			try {
+//				long start = System.currentTimeMillis();
+//				res = multiplyMatrix(a,b);
+//				long stop= System.currentTimeMillis();
+//				long time = stop - start;
+//				String s = String.format("n=%d, time=%d%n", n, time);
+//				out += s;
+////				System.out.println("Time taken: " + (stop-start));
+//				
+//			} catch (MatrixException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}		
+//		System.out.println(out);
+//	}
 }

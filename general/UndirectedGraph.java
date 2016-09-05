@@ -281,6 +281,23 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 		return vertexElementMap.get(i);
 	}
 	
+	public UndirectedGraph<E,A> clone(){
+		UndirectedGraph<E,A> clone = new UndirectedGraph<E,A>();
+		//add vertices
+		Iterator<Graph.Vertex<E>> vit = vertices();
+		while(vit.hasNext()){
+			clone.addVertex(vit.next().getElement());
+		}
+		//add edges
+		Iterator<Graph.Edge<A>> eit = edges();
+		while(eit.hasNext()){
+			Graph.Edge<A> e = eit.next();
+			clone.addEdge(clone.getVertexWithElement((int) e.getSource().getElement()), 
+					clone.getVertexWithElement((int) e.getDestination().getElement()));
+		}
+		return clone;
+	}
+	
 	private class EdgeIterator implements Iterator<Edge<A>>, Iterable<Edge<A>>{
 
 		private UnEdge pos;
@@ -376,8 +393,8 @@ public class UndirectedGraph<E,A> implements Graph<E,A>{
 	public class UnEdge implements Edge<A>{
 		
 		private A attribute;
-		public UnEdge pred;
-		public UnEdge succ;
+		private UnEdge pred;
+		private UnEdge succ;
 		private Vertex<E> source;
 		private Vertex<E> destination;
 		

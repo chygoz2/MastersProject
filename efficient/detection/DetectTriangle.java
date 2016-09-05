@@ -15,21 +15,37 @@ import general.Utility;
 public class DetectTriangle {
 
 	//instance variables
-	private String time = "-"; //stores time taken to execute the operation
-	private String found = "found";  //stores whether a triangle was found
+	private String time; //stores time taken to execute the operation
+	private String found;  //stores whether a triangle was found
+	
+	public DetectTriangle(){
+		this.time = "-";
+		this.found = "found";
+	}
 	
 	public static void main(String[] args) {
 		try{
 			UndirectedGraph<Integer,Integer> graph = null;
-			graph = Utility.makeGraphFromFile(args[0]);
+			graph = Utility.makeGraphFromFile(args[0]); //create graph from input file
 			
+			//create a DetectTriangle object to detect a triangle in a graph
 			DetectTriangle d = new DetectTriangle();
 			List<Graph.Vertex<Integer>> triangle = d.detect(graph);
-			System.out.print(d.getResult());
-		}catch(ArrayIndexOutOfBoundsException e){
+			String out = "";
+			
+			//print out the result of the detection
+			if(triangle!=null){
+				out = Utility.printList(triangle);
+				out = String.format("Triangle found%nVertices: %s%n", out);
+				out += String.format("CPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
+			}else{
+				out = String.format("Triangle not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
+			}
+			System.out.println(out);
+		}catch(ArrayIndexOutOfBoundsException e){ //inform user to provide the name of the input file
 			System.out.println("Please provide the graph file as a command line argument");
 		}
-		catch(GraphFileReaderException e){
+		catch(GraphFileReaderException e){ //notify user if something goes wrong while reading input file
 			System.out.println(e.getError());
 		}
 	}
@@ -66,8 +82,6 @@ public class DetectTriangle {
 		try{
 			aSquared = Utility.multiplyMatrix(A, A);
 		}catch(MatrixException e){
-			if(e.getStatus()==1)
-				System.out.println("Invalid matrix dimensions found");
 			return null;
 		}
 		

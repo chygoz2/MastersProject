@@ -10,16 +10,29 @@ import general.Graph.Vertex;
 
 public class ListSimplicialVertices {
 	
-	private  String p1time = "-";
-	private  int found = 0;
+	private  String p1time;
+	private  int found;
+	
+	public ListSimplicialVertices(){
+		this.p1time = "-";
+		this.found = 0;
+	}
 	
 	public static void main(String [] args){
 		UndirectedGraph<Integer,Integer> graph = null;
 		try{
 			graph = Utility.makeGraphFromFile(args[0]);
 			ListSimplicialVertices d = new ListSimplicialVertices();
-			Collection<Vertex<Integer>> svs = d.detect(graph);
-			System.out.print(d.getResult());
+			List<Vertex<Integer>> simpVertex = d.detect(graph);
+			String out = "";
+			if(!simpVertex.isEmpty()){
+				out = Utility.printList(simpVertex);
+				out = String.format("Simplicial vertices found%nVertices: %s%n", out);
+				out += String.format("CPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
+			}else{
+				out = String.format("Simplicial vertices not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
+			}
+			System.out.println(out);
 		}catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("Please provide the graph file as a command line argument");
 		}catch(GraphFileReaderException e){

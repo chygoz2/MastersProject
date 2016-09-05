@@ -7,8 +7,13 @@ import general.Graph.Vertex;
 
 public class ListKL {
 	
-	private  String time = "-";
-	private  int found = 0;
+	private  String time;
+	private  int found;
+	
+	public ListKL(){
+		this.time = "-";
+		this.found = 0;
+	}
 	
 	public static void main(String [] args){
 		UndirectedGraph<Integer,Integer> graph = null;
@@ -18,7 +23,19 @@ public class ListKL {
 			if(args.length>1){
 				int l = Integer.parseInt(args[1]);
 				List<List<Vertex<Integer>>> kls = d.detect(graph,l);
-				System.out.print(d.getResult());
+				String out = "";
+				if(!kls.isEmpty()){
+					out = "";
+					for(List<Graph.Vertex<Integer>> kl: kls){
+						out += Utility.printList(kl)+"\n";
+					}
+					out = String.format("K"+l+" found%nVertices:%n%s", out);
+					out += String.format("Number of K"+l+"s found: %d%n", kls.size());
+					out += String.format("CPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
+				}else{
+					out = String.format("K"+l+" not found%nCPU time taken: %d milliseconds", Utility.getTotalTime(d.getResult()));
+				}
+				System.out.println(out);
 			}else{
 				System.out.println("Please enter the size of the complete graph to be found");
 			}
@@ -32,7 +49,6 @@ public class ListKL {
 	}
 	
 	public  List<List<Graph.Vertex<Integer>>> detect(UndirectedGraph<Integer,Integer> graph, int l){
-		
 		long starttime = System.currentTimeMillis();
 		List<List<Graph.Vertex<Integer>>> kls = find(graph, l);
 		long stoptime = System.currentTimeMillis();
@@ -50,6 +66,10 @@ public class ListKL {
 	 */
 	public  List<List<Graph.Vertex<Integer>>> find(UndirectedGraph<Integer,Integer> graph, int l){
 		List<List<Graph.Vertex<Integer>>> klList = new ArrayList<List<Graph.Vertex<Integer>>>();
+		
+		if(l>graph.size()){
+			return klList;
+		}
 		
 		if(l == 1){
 			//create subgraphs with only one vertex
@@ -93,15 +113,15 @@ public class ListKL {
 					List<List<Graph.Vertex<Integer>>> kqList = find(nx,l-1);
 					for(List<Graph.Vertex<Integer>> kq: kqList){
 						List<Graph.Vertex<Integer>> kqPlusVertices = new ArrayList<Graph.Vertex<Integer>>();
-						kqPlusVertices.add(x); //add x
-						
 						Set<Integer> hh = new HashSet<Integer>(); //to store elements of the K(l-1) vertices
+						
 						//add k(l-1) vertices
 						for(Graph.Vertex<Integer> v: kq){
 							kqPlusVertices.add(v);
 							hh.add(v.getElement());
 						}
 						
+						kqPlusVertices.add(x); //add x
 						hh.add(x.getElement());
 						
 						//check in the marked list for an entry that contains all 3 vertex elements
@@ -126,16 +146,16 @@ public class ListKL {
 					
 					//get the common neighbours of source and destination
 					List<Graph.Vertex<Integer>> commonNeighbours = new ArrayList<Graph.Vertex<Integer>>();
-					List<Graph.Vertex<Integer>> sourceNeighbours = new ArrayList<Graph.Vertex<Integer>>();
+					Set<Integer> sourceNeighbours = new HashSet<Integer>();
 					Iterator<Graph.Vertex<Integer>> sNIt = graph.neighbours(source);
 					while(sNIt.hasNext()){
-						sourceNeighbours.add(sNIt.next());
+						sourceNeighbours.add(sNIt.next().getElement());
 					}
 					
 					Iterator<Graph.Vertex<Integer>> dNIt = graph.neighbours(destination);
 					while(dNIt.hasNext()){
 						Graph.Vertex<Integer> nv = dNIt.next();
-						if(sourceNeighbours.contains(nv)){
+						if(sourceNeighbours.contains(nv.getElement())){
 							commonNeighbours.add(nv);
 						}
 					}
@@ -197,9 +217,8 @@ public class ListKL {
 				
 				//for each K2q found in G, add edges between corresponding vertices in H
 				List<List<Graph.Vertex<Integer>>> k2qList = find(graph,(2*q));
-				
-				//make a list of vertex sets of each k2q found.
-				List<Set<Integer>> k2qvertexset = new ArrayList<Set<Integer>>();
+				//make a set of vertex sets of each k2q vertices elements found.
+				Set<Set<Integer>> k2qvertexset = new HashSet<Set<Integer>>();
 				for(List<Graph.Vertex<Integer>> k2q: k2qList){
 					Set<Integer> vElems = new HashSet<Integer>();
 					for(Graph.Vertex<Integer> v: k2q){
@@ -231,11 +250,9 @@ public class ListKL {
 							corrGVertices.addAll(vTwoCorrVertices);
 							
 							if(ssfound.add(corrGVertices)){
-								for(Set<Integer> innerSet: k2qvertexset){
-									if(innerSet.size()==corrGVertices.size() && innerSet.containsAll(corrGVertices)){
-										if(!H.containsEdge(H.getVertexWithElement(vOneElement), H.getVertexWithElement(vTwoElement))){
-											H.addEdge(H.getVertexWithElement(vOneElement), H.getVertexWithElement(vTwoElement));
-										}
+								if(k2qvertexset.contains(corrGVertices)){
+									if(!H.containsEdge(H.getVertexWithElement(vOneElement), H.getVertexWithElement(vTwoElement))){
+										H.addEdge(H.getVertexWithElement(vOneElement), H.getVertexWithElement(vTwoElement));
 									}
 								}
 							}
@@ -258,12 +275,9 @@ public class ListKL {
 							hh.add(i);
 						}
 					}
-					
-					//check in the marked list for an entry that contains all kl vertex elements
-					boolean contains = marked.add(hh);
 										
 					//check if such kl with those vertices has been created previously
-					if(contains){						
+					if(marked.add(hh)){						
 						List<Graph.Vertex<Integer>> klVertices = new ArrayList<Graph.Vertex<Integer>>();
 						for(Integer i: hh)
 							klVertices.add(graph.getVertexWithElement(i));
