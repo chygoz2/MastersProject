@@ -15,8 +15,8 @@ public class DetectDiamond {
 	public static void main(String [] args) throws IOException{
 		
 		try{			
-			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]);
-			DetectDiamond d = new DetectDiamond();
+			final UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]);
+			final DetectDiamond d = new DetectDiamond();
 			long a = System.currentTimeMillis();
 			Thread t = new Thread(new Runnable(){
 				public void run(){

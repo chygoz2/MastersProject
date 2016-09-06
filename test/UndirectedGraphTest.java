@@ -1,6 +1,7 @@
 package test;
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.util.*;
 
 import org.junit.Before;
@@ -18,7 +19,8 @@ public class UndirectedGraphTest {
 	@Before
 	public void initialize(){
 		try {
-			graph = Utility.makeGraphFromFile("test\\testdata\\graphtestdata.txt");
+			String fileName = "test"+File.separator+"testdata"+File.separator+"graphtestdata.txt";
+			graph = Utility.makeGraphFromFile(fileName);
 		} catch (GraphFileReaderException e) {
 			System.out.println(e.getError());
 		}

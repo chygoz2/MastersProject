@@ -13,8 +13,8 @@ public class DetectTriangle {
 	
 	public static void main(String[] args) {		
 		try{			
-			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]);
-			DetectTriangle d = new DetectTriangle();
+			final UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]);
+			final DetectTriangle d = new DetectTriangle();
 			long a = System.currentTimeMillis();
 			Thread t = new Thread(new Runnable(){
 				public void run(){

@@ -2,6 +2,7 @@ package test;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class ListSimplicialVertexTest {
 	
 	@Before
 	public void before() throws GraphFileReaderException{
-		String fileName = "test\\testdata\\simplicialtestdata.txt";
+		String fileName = "test"+File.separator+"testdata"+File.separator+"simplicialtestdata.txt";
 		graph = Utility.makeGraphFromFile(fileName);
 		lowDegreeVertices = new ListSimplicialVertices().partitionVertices(graph)[0];
 		highDegreeVertices = new ListSimplicialVertices().partitionVertices(graph)[1];

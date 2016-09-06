@@ -5,6 +5,7 @@ package test;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.util.*;
 
 import org.junit.Before;
@@ -24,7 +25,7 @@ public class ListTrianglesTest {
 
 	@Before
 	public void before() throws GraphFileReaderException{
-		String fileName = "test\\testdata\\triangletestdata.txt";
+		String fileName = "test"+File.separator+"testdata"+File.separator+"triangletestdata.txt";
 		graph = Utility.makeGraphFromFile(fileName);
 	}
 	

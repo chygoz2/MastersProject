@@ -19,9 +19,9 @@ public class DetectClaw {
 	
 	public static void main(String [] args){		
 		try{			
-			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]);
-			DetectClaw d = new DetectClaw();
-			long a = System.currentTimeMillis();
+			final UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]);
+			final DetectClaw d = new DetectClaw();
+			final long a = System.currentTimeMillis();
 			Thread t = new Thread(new Runnable(){
 				public void run(){
 					Collection<Graph.Vertex<Integer>> claw = d.detect(graph);	

@@ -2,6 +2,7 @@ package test;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -25,7 +26,7 @@ public class ListK4Test {
 
 	@Before
 	public void before() throws GraphFileReaderException{
-		String fileName = "test\\testdata\\k4testdata.txt";
+		String fileName = "test"+File.separator+"testdata"+File.separator+"k4testdata.txt";
 		graph = Utility.makeGraphFromFile(fileName);
 		lowDegreeVertices = new ListK4().partitionVertices(graph)[0];
 		highDegreeVertices = new ListK4().partitionVertices(graph)[1];

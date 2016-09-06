@@ -14,9 +14,9 @@ public class DetectKL {
 	
 	public static void main(String[] args){		
 		try{			
-			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]);
-			DetectKL d = new DetectKL();
-			int l = Integer.parseInt(args[1]);
+			final UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]);
+			final DetectKL d = new DetectKL();
+			final int l = Integer.parseInt(args[1]);
 			long a = System.currentTimeMillis();
 			Thread t = new Thread(new Runnable(){
 				public void run(){

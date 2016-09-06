@@ -2,6 +2,7 @@ package test;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class DetectDiamondTest {
 
 	@Before
 	public void before() throws GraphFileReaderException{
-		String fileName = "test\\testdata\\diamondtestdata.txt";
+		String fileName = "test"+File.separator+"testdata"+File.separator+"diamondtestdata.txt";
 		graph = Utility.makeGraphFromFile(fileName);
 		detector = new DetectDiamond();
 		lowDegreeVertices = detector.partitionVertices(graph)[0];

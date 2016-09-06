@@ -15,8 +15,8 @@ public class DetectK4 {
 	
 	public static void main(String [] args){
 		try{			
-			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]);
-			DetectK4 d = new DetectK4();
+			final UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]);
+			final DetectK4 d = new DetectK4();
 			long a = System.currentTimeMillis();
 			Thread t = new Thread(new Runnable(){
 				public void run(){

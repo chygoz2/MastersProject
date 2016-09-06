@@ -17,30 +17,11 @@ public class ListKL {
 			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]);
 			ListKL d = new ListKL();
 			int l = Integer.parseInt(args[1]);
-			long a = System.currentTimeMillis();
-			Thread t = new Thread(new Runnable(){
-				public void run(){
-					List<List<Graph.Vertex<Integer>>> kls = d.detect(graph,l);	
-				}
-			});
-			t.start();
-			while(!t.isInterrupted() && t.isAlive()){
-				long timeout = Long.MAX_VALUE; //timeout of 2 minutes
-				long b = System.currentTimeMillis();
-				if((b-a)>timeout){
-					d.found = -1;
-					t.interrupt();
-				}else{
-					Thread.sleep(500);
-				}
-			}
-			
+			List<List<Graph.Vertex<Integer>>> kls = d.detect(graph,l);			
 			System.out.print(d.getResult());
-			System.exit(0);
 		}catch(ArrayIndexOutOfBoundsException e){
 			System.out.println("Please provide the graph file and complete graph size as command line arguments");
 		}
-		catch(InterruptedException e){}
 		catch(GraphFileReaderException e){
 			System.out.println(e.getError());
 		}

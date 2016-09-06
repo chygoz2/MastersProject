@@ -14,9 +14,8 @@ public class DetectSimplicialVertex {
 	
 	public static void main(String [] args){		
 		try{			
-			UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]);
-			
-			DetectSimplicialVertex d = new DetectSimplicialVertex();
+			final UndirectedGraph<Integer,Integer> graph = Utility.makeGraphFromFile(args[0]);
+			final DetectSimplicialVertex d = new DetectSimplicialVertex();
 			long a = System.currentTimeMillis();
 			Thread t = new Thread(new Runnable(){
 				public void run(){
