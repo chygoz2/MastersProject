@@ -42,7 +42,7 @@ public class RunMe {
 
 		System.out.print("> ");
 		String input = sc.nextLine(); //get user input
-
+		input = input.toLowerCase(); //convert input to lower case
 		String[] words = input.split("[ ]+"); 
 		while(!words[0].equals("quit")){ //while user has not entered the quit command
 			if(words[0].equals("detect") || words[0].equals("list")){ //if user want to perform detection or listing
@@ -145,6 +145,7 @@ public class RunMe {
 			}
 			System.out.print("> ");
 			input = sc.nextLine();
+			input = input.toLowerCase();
 			words = input.split("[ ]+");
 		}
 		sc.close();
