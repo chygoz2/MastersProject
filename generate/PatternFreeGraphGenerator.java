@@ -71,8 +71,7 @@ public class PatternFreeGraphGenerator {
 				}
 			}catch(ArrayIndexOutOfBoundsException e){
 				System.out.println("Arguments should be in the form [generation_type] [graph_size] "
-						+ "[complete_subgraph_size].\nThe 3rd argument is needed only for complete subgraphs"
-						+ " whose size is greater than 4");
+						+ "[complete_subgraph_size].\nThe 3rd argument is needed only for complete subgraphs.");
 			}catch(NumberFormatException e){
 				System.out.println("The second argument should be an integer");
 			}
