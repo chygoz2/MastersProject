@@ -49,25 +49,36 @@ public final class Utility {
 		vertexCount = lines.get(0).split("[ ]+").length;
 		int[][] adjMatrix = new int[vertexCount][vertexCount];
 		
-		//create adjacency matrix from read data 
-		for(int i=0; i<vertexCount; i++){
-			String[] stringI = lines.get(i).split("[ ]+");
-			if(stringI.length != vertexCount){
-				scanner.close();
-				throw new GraphFileReaderException("The number of columns in file do not match the required Vertex count");
-			}
-			for(int j=i; j<vertexCount; j++){
-				try{
+		if(lines.size()!=vertexCount){ //inconsistent number of rows in file
+			scanner.close();
+			throw new GraphFileReaderException("The number of rows in file do not match the required Vertex count");
+		}
+		
+		//create adjacency matrix from read data
+		try{
+			for(int i=0; i<vertexCount; i++){
+				String[] stringI = lines.get(i).split("[ ]+");
+				if(stringI.length != vertexCount){ //inconsistent number of columns in file
+					scanner.close();
+					throw new GraphFileReaderException("The number of columns in file do not match the required Vertex count");
+				}
+				for(int j=i; j<vertexCount; j++){
 					int val = Integer.parseInt(stringI[j]);
-					if(val>1 || val<0)
+					if(val>1 || val<0){
+						scanner.close();
 						throw new GraphFileReaderException("Entries in the graph file should consist of zeros and ones only");
+					}
 					adjMatrix[i][j] = val;
 					adjMatrix[j][i] = val;
-				}catch(NumberFormatException e){
-					scanner.close();
-					throw new GraphFileReaderException("Entries in the graph file should consist of zeros and ones only");
+					
 				}
 			}
+		}catch(NumberFormatException e){ //invalid data present in file
+			scanner.close();
+			throw new GraphFileReaderException("Entries in the graph file should consist of zeros and ones only");
+		}catch(IndexOutOfBoundsException e){ //inconsistent number of rows in file
+			scanner.close();
+			throw new GraphFileReaderException("The number of rows in file do not match the required Vertex count");
 		}
 		
 		//create graph and add vertices

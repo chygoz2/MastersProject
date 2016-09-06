@@ -107,7 +107,7 @@ public class PatternFreeGraphGenerator {
 			}
 		}
 		time = System.currentTimeMillis()-starttime; //calculate time taken
-		String file = Utility.saveGraphToFile(adjMatrix, System.currentTimeMillis(), "diamond");//save generated graph to file
+		String file = Utility.saveGraphToFile(adjMatrix, new Random().nextInt(1000), "diamond");//save generated graph to file
 		return file;
 	}
 	
@@ -140,7 +140,7 @@ public class PatternFreeGraphGenerator {
 		}
 		
 		time = System.currentTimeMillis()-starttime; //calculate time taken
-		String file = Utility.saveGraphToFile(adjMatrix, System.currentTimeMillis(), "triangle");//save generated graph to file
+		String file = Utility.saveGraphToFile(adjMatrix, new Random().nextInt(1000), "triangle");//save generated graph to file
 		return file;
 	}
 	
@@ -173,7 +173,7 @@ public class PatternFreeGraphGenerator {
 		}
 		
 		time = System.currentTimeMillis()-starttime;//calculate time taken
-		String file = Utility.saveGraphToFile(adjMatrix, System.currentTimeMillis(), "k4");//save generated graph to file
+		String file = Utility.saveGraphToFile(adjMatrix, new Random().nextInt(1000), "k4");//save generated graph to file
 		return file;
 	}
 	
@@ -206,7 +206,7 @@ public class PatternFreeGraphGenerator {
 		}
 		
 		time = System.currentTimeMillis()-starttime;//calculate time taken
-		String file = Utility.saveGraphToFile(adjMatrix, System.currentTimeMillis(), "claw");//save generated graph to file
+		String file = Utility.saveGraphToFile(adjMatrix, new Random().nextInt(1000), "claw");//save generated graph to file
 		return file;
 	}
 	
@@ -240,7 +240,7 @@ public class PatternFreeGraphGenerator {
 		}
 		
 		time = System.currentTimeMillis()-starttime;//calculate time taken
-		String file = Utility.saveGraphToFile(adjMatrix, System.currentTimeMillis(), "k"+l);//save generated graph to file
+		String file = Utility.saveGraphToFile(adjMatrix, new Random().nextInt(1000), "k"+l);//save generated graph to file
 		return file;
 	}
 	
